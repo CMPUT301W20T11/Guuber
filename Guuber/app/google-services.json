@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "408122406685",
+    "firebase_url": "https://guuber-a5aa8.firebaseio.com",
+    "project_id": "guuber-a5aa8",
+    "storage_bucket": "guuber-a5aa8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:408122406685:android:1f4e2ea8fc0b0c4fc593f4",
+        "android_client_info": {
+          "package_name": "com.example.guuber"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "408122406685-1gu1np3netu5gvtncr2rbh3j3o8h9u3j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDu-Imc_melA2lrBKcIMlQCnDfHxFTQpI0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "408122406685-1gu1np3netu5gvtncr2rbh3j3o8h9u3j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
