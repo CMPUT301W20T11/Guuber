@@ -28,7 +28,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
 
-    private static int REQUEST_LOCATION_PERMISSION = 11;
+    private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
+
     private GoogleMap guuberMap;
 
 
@@ -63,34 +64,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         guuberMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
 
 
-        /**the map should be set based on permissions granted upon ride request**/
-        /**need error checking here !!!!
-         * if location services are not enabled --> crash.**/
-        checkUserPermission();
+        if (checkUserPermission()) {
+            guuberMap.setMyLocationEnabled(true);
+            guuberMap.setOnMyLocationButtonClickListener(this);
+            guuberMap.setOnMyLocationClickListener(this);
 
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
 
-        guuberMap.setMyLocationEnabled(true);
-        guuberMap.setOnMyLocationButtonClickListener(this);
-        guuberMap.setOnMyLocationClickListener(this);
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
 
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
+            if (location != null) {
 
-        Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                        .zoom(10)
+                        .build();
 
-        if (location != null){
+                guuberMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                    .zoom(5)
-                    .build();
-
-            guuberMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-        }else {
+            }
+        } else {
+            guuberMap.setMyLocationEnabled(false);
             LatLng Edmonton = new LatLng(53.5461, -113.4938);
             guuberMap.addMarker(new MarkerOptions().position(Edmonton).title("Marker in Edmonton"));
             guuberMap.moveCamera(CameraUpdateFactory.newLatLng(Edmonton));
+
+            /**make this a fragment that covers the app**/
+            Toast.makeText(this, "To use Guuber, enable location services", Toast.LENGTH_LONG).show();
+
         }
 
     }
@@ -98,14 +100,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**once app is further developed, this request should be made upon ride request, not on app open**/
     public boolean checkUserPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED &&
-                (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                        != PackageManager.PERMISSION_GRANTED)){
+                != PackageManager.PERMISSION_GRANTED ){
 
-            //if user hasn't been prompted yet, request to use their location
-            ActivityCompat.requestPermissions(this, new String[]
-                    {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQUEST_LOCATION_PERMISSION);
-            return true; //this wont necessarily be true
+            /**this dialog box appears only if the user has previously denied the request and has NOT selected don't ask again**/
+            if  (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                /**start activity disabling app usage until user has granted location permissions**/
+
+            }else{
+                ActivityCompat.requestPermissions(this, new String[]
+                        {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION_PERMISSION);
+            }
+            return false;
         } else {
             //user has already set location permission preferences
             return true;
@@ -115,18 +120,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     /**gives you the results what the users decision was for location preferences**/
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
+        if (requestCode == REQUEST_FINE_LOCATION_PERMISSION) {
             // If request is cancelled, the result arrays are empty.
             if (grantResults.length > 0
                     && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                /**set some kind of constant to determine how the map is set?**/
+                /**Fine location permission granted**/
+                Toast.makeText(this,"location services enabled. Welcome to Guuber!",Toast.LENGTH_LONG).show();
             } else {
-                /**set some kind of constant to determine how the map is set?**/
+                /**fine location permission denied**/
+                Toast.makeText(this,"To use Guuber, enable location services",Toast.LENGTH_LONG).show();
             }
 
         }
     }
-
 
 
     /**indicates current location button has been clicked... do we need?**/
