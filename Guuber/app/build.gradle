@@ -2,14 +2,6 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
-    signingConfigs {
-        debug {
-            storeFile file('C:\\Users\\LeahC\\Documents\\GitHub\\Guuber\\README.md')
-            storePassword 'qwerty123'
-            keyAlias = 'google_maps_key'
-            keyPassword '123qwerty'
-        }
-    }
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
