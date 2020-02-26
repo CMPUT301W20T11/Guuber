@@ -82,7 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                    .zoom(10)
+                    .zoom(5)
                     .build();
 
             guuberMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
