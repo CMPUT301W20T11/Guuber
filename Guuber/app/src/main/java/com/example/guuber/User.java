@@ -2,6 +2,11 @@ package com.example.guuber;
 
 public class User {
     private Wallet wallet;
+    private String phoneNumber;
+    private String email;
+    private String firstName;
+    private String lastName;
+
 
     public User(){
         wallet = new Wallet();
