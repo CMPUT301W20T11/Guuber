@@ -26,7 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
 
@@ -42,8 +42,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
-
 
     }
 
@@ -88,12 +86,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             }
         } else {
             guuberMap.setMyLocationEnabled(false);
-            LatLng Edmonton = new LatLng(53.5461, -113.4938);
+            new EnableLocationServices().show(getSupportFragmentManager(), "ENABLE_LOCATION");
+            /*LatLng Edmonton = new LatLng(53.5461, -113.4938);
             guuberMap.addMarker(new MarkerOptions().position(Edmonton).title("Marker in Edmonton"));
             guuberMap.moveCamera(CameraUpdateFactory.newLatLng(Edmonton));
 
-            /**make this a fragment that covers the app**/
-            Toast.makeText(this, "To use Guuber, enable location services", Toast.LENGTH_LONG).show();
+            /**make this a fragment that covers the app
+            Toast.makeText(this, "To use Guuber, enable location services", Toast.LENGTH_LONG).show();*/
 
         }
 
@@ -150,6 +149,5 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMyLocationClick(@NonNull Location mylocation) {
         Toast.makeText(this, "Current location:\n" + mylocation, Toast.LENGTH_LONG).show();
     }
-
 
 }
