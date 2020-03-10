@@ -132,16 +132,19 @@ public class GuuDb {
                 Log.d("AggRating","DocumentSnapshot successfully updated");
 
 
-                //user RatingCounter++ update - no need for failureListener since it should never fail?
+                // depends on if we want to handle the ratingCounter/AvgRating updating in the database
+                // probably preffered since the former is a varaible just used here and for the avgRating system
+                // then the user class can pull the avgrating from the database if the user wants to view their current avg
+                
+                //user RatingCounter++ update 
 
-
-                //update AvgRating - no need for failureListener since it should never fail?
-                doc.update("AvgRating", AvgRating).addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("AvgRating","Documentsnapshot updated");
-                    }
-                });
+                //update AvgRating 
+                //doc.update("AvgRating", AvgRating).addOnSuccessListener(new OnSuccessListener<Void>() {
+                //    @Override
+                //    public void onSuccess(Void aVoid) {
+                //        Log.d("AvgRating","Documentsnapshot updated");
+                //    }
+                //});
 
             }
         }).addOnFailureListener(new OnFailureListener() {
