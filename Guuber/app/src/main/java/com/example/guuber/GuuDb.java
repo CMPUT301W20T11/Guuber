@@ -96,13 +96,22 @@ public class GuuDb {
      * @param last - Last name of the user
      * @param username - the username that is displayed when they use the app
      * @param phone - the contact number of the user
+     * @param type - the type of account being created either rider of driver
      * */
-    public void setUpUser(String email, String first,String last,String username,String phone){
+    public void setUpUser(String email, String first,String last,String username,String phone,String type){
         Map<String,Object> user = new HashMap<>();
         user.put("first",first);
         user.put("last",last);
         user.put("username",username);
         user.put("phone",phone);
+        if (type.equals("rider")){
+            user.put("rider", true);
+//            user.put("driver",false);
+        }
+        else if(type.equals("driver")){
+            user.put("driver",true);
+//            user.put("rider", false);
+        }
 
         root.document(email).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
