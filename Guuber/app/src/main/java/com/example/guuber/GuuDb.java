@@ -123,7 +123,14 @@ public class GuuDb {
     public void updateUsername(String name){
         doc.update("username",name);
     }
+    /**
+     * updates the user's contact number
+     * @param number - new number to update to*/
+    public void updatePhone(String number){
+        doc.update("phone",number);
+    }
 
+//    public void  updatename ---------------do later not as important
     /**
      * Adds the ratings field if it doesn't exist or updates it in the database
      * The newest rating received by the user (newRating) should be used to update the AggRating which will then update the ratings counter (RatingCounter) and the new average rating (AvgRating)
