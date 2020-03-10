@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+    <Button
+        android:id="@+id/buttonRdEx"
+        android:layout_width="55dp"
+        android:layout_height="49dp"
+        android:text="Button"
+        tools:layout_editor_absoluteX="2dp" />
+
+    <ImageView
+        android:id="@+id/imageViewRdEx"
+        android:layout_width="134dp"
+        android:layout_height="132dp"
+        app:srcCompat="@drawable/guuber"
+        tools:layout_editor_absoluteX="124dp"
+        tools:layout_editor_absoluteY="49dp" />
+
+    <ImageView
+        android:id="@+id/likeButtonRdEx"
+        android:layout_width="90dp"
+        android:layout_height="100dp"
+        app:srcCompat="@drawable/guuber"
+        tools:layout_editor_absoluteX="80dp"
+        tools:layout_editor_absoluteY="187dp" />
+
+    <ImageView
+        android:id="@+id/dislikeButtonRdEx"
+        android:layout_width="90dp"
+        android:layout_height="100dp"
+        app:srcCompat="@drawable/guuber"
+        tools:layout_editor_absoluteX="233dp"
+        tools:layout_editor_absoluteY="187dp" />
+
+    <Button
+        android:id="@+id/deleteAccButtonRdEx"
+        android:layout_width="203dp"
+        android:layout_height="41dp"
+        android:text="DELETE ACCOUNT"
+        android:textColor="0xFF0000"
+        tools:layout_editor_absoluteX="189dp"
+        tools:layout_editor_absoluteY="672dp" />
+
+    <TextView
+        android:id="@+id/usernameLabelRdEx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Username"
+        tools:layout_editor_absoluteX="62dp"
+        tools:layout_editor_absoluteY="370dp" />
+
+    <TextView
+        android:id="@+id/phoneLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Phone"
+        tools:layout_editor_absoluteX="62dp"
+        tools:layout_editor_absoluteY="400dp" />
+
+    <TextView
+        android:id="@+id/emailLabelRdEx"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Email"
+        tools:layout_editor_absoluteX="62dp"
+        tools:layout_editor_absoluteY="430dp" />
+
+    <EditText
+        android:id="@+id/usernameTextRdEx"
+        android:layout_width="215dp"
+        android:layout_height="20dp"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name"
+        tools:layout_editor_absoluteX="140dp"
+        tools:layout_editor_absoluteY="370dp" />
+
+    <EditText
+        android:id="@+id/phoneTextRdEx"
+        android:layout_width="215dp"
+        android:layout_height="20dp"
+        android:ems="10"
+        android:inputType="phone"
+        tools:layout_editor_absoluteX="140dp"
+        tools:layout_editor_absoluteY="400dp" />
+
+    <EditText
+        android:id="@+id/emailTextRdEx"
+        android:layout_width="215dp"
+        android:layout_height="20dp"
+        android:ems="10"
+        android:inputType="textEmailAddress"
+        tools:layout_editor_absoluteX="140dp"
+        tools:layout_editor_absoluteY="430dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,4 +7,21 @@ public class Driver extends User {
 		super(phoneNumber, email, firstName, lastName);
 		this.vehicle = vehicle;
 	}
+
+
+	public void acceptOffer(){
+
+	}
+
+	public void rejectOffer(){
+
+	}
+
+	public void regVehicle(){}
+	public void scanQr(){}
+	public void displayProfExternal(){}
+
+	public void displayProfile(){
+
+	}
 }
