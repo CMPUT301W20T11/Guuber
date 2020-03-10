@@ -90,19 +90,21 @@ public class GuuDb {
     }
     /**
      * Creates and add the minimal info of the user into the database
+     * @param email - the user's email used as the key of the document id
      * @param username - the document id, as it has to be unique like a username
      * @param first - first name of the user
      * @param last - Last name of the user
-     * @param email - the user's email
+     * @param username - the username that is displayed when they use the app
+     * @param phone - the contact number of the user
      * */
-    public void setUpUser(String username, String first,String last,String email,String phone){
+    public void setUpUser(String email, String first,String last,String username,String phone){
         Map<String,Object> user = new HashMap<>();
         user.put("first",first);
         user.put("last",last);
-        user.put("email",email);
+        user.put("username",username);
         user.put("phone",phone);
 
-        root.document(username).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
+        root.document(email).set(user).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d("Document", "DocumentSnapshot successfully written");
@@ -114,6 +116,14 @@ public class GuuDb {
             }
         });
     }
+    /***
+     * updates the user's username
+     * @param name - the new name they want to use
+     */
+    public void updateUsername(String name){
+        doc.update("username",name);
+    }
+
     /**
      * Adds the ratings field if it doesn't exist or updates it in the database
      * The newest rating received by the user (newRating) should be used to update the AggRating which will then update the ratings counter (RatingCounter) and the new average rating (AvgRating)
