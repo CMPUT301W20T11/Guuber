@@ -235,8 +235,6 @@ public class GuuDb {
         return doc.collection("car").document("usercar").get().getResult();
     }
 
-<<<<<<< HEAD
-=======
     /**
      * Put the completed request in the user history
      * if the collection of request history does not exist it will create it
@@ -263,6 +261,6 @@ public class GuuDb {
         return doc.collection("reqHistory").get().getResult().getDocuments();
     }
 
->>>>>>> b2ec2037508dd7d52b88b8b2c4f2f5dd3b881cb3
+
 }
 
