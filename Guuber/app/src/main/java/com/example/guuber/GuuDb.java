@@ -26,6 +26,8 @@ import static androidx.constraintlayout.widget.Constraints.TAG;
 //    -other update methods most likely
 //    -creating a collection of ratings and able to add to that (maybe)
 //    -an average rating of the user (maybe)
+//          - will add once ratings has been established in user?
+
 
 
 public class GuuDb {
@@ -108,6 +110,51 @@ public class GuuDb {
         });
     }
     /**
+     * Adds the ratings field if it doesn't exist or updates it in the database
+     * The newest rating received by the user (newRating) should be used to update the AggRating which will then update the ratings counter (RatingCounter) and the new average rating (AvgRating)
+     * @param NewRating - the new rating for the user; amount to add to AggRating
+     * @param AggRating - Aggregation of all the ratings of the user
+     * @param RatingCounter - The amount of ratings for each user
+     * @param AvgRating - The average rating for each user; AggRating/RatingCounter
+     * */
+    public void Rating(int NewRating, int AggRating, final int RatingCounter, final double AvgRating)
+    {
+        doc.update("AggRating", AggRating).addOnSuccessListener(new OnSuccessListener<Void>()
+        {
+            @Override
+            public void onSuccess(Void aVoid)
+            {
+                Log.d("AggRating","DocumentSnapshot successfully updated");
+
+
+                //user RatingCounter++ update - no need for failureListener since it should never fail?
+
+
+                //update AvgRating - no need for failureListener since it should never fail?
+                doc.update("AvgRating", AvgRating).addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("AvgRating","Documentsnapshot updated");
+                    }
+                });
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.w("AggRating","DocumentSnapshot successfully updated",e);
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+    /**
      * Adds the balance field if it doesn't exist or updates it in the database
      * @param balance - amount to put in Database
      * */
@@ -172,9 +219,6 @@ public class GuuDb {
             }
         });
     }
-
-
-
 
 }
 
