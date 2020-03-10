@@ -15,6 +15,10 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -173,8 +177,22 @@ public class GuuDb {
         });
     }
 
+    /**
+     * Put the completed request in the user history
+     * @param cost - the cost of the request
+     * @param driver - There driver that completed their request
+     * */
+    public void addToRequestHist(int cost, String driver){
+        Calendar date = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = dateFormat.format(date.getTime());
 
-
+        Map<String,Object> requestDetail = new HashMap<>();
+        requestDetail.put("cost",cost);
+        requestDetail.put("driver",driver);
+        requestDetail.put("date",time);
+        doc.collection("reqHistory").add(requestDetail);
+    }
 
 }
 
