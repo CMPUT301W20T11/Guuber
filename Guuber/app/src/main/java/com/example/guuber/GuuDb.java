@@ -20,6 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static androidx.constraintlayout.widget.Constraints.TAG;
@@ -129,7 +130,6 @@ public class GuuDb {
         });
     }
 
-
     /**
      * Adds the registered car into the database
      * @param make - the maker of the car
@@ -176,9 +176,18 @@ public class GuuDb {
             }
         });
     }
+    /**
+     * Get the details of the vehicle the user has
+     * @return
+     *      DocumentSnapshot of the vehicle which contains info about it
+     * */
+    public DocumentSnapshot getVehicle(){
+        return doc.collection("car").document("usercar").get().getResult();
+    }
 
     /**
      * Put the completed request in the user history
+     * if the collection of request history does not exist it will create it
      * @param cost - the cost of the request
      * @param driver - There driver that completed their request
      * */
@@ -192,6 +201,14 @@ public class GuuDb {
         requestDetail.put("driver",driver);
         requestDetail.put("date",time);
         doc.collection("reqHistory").add(requestDetail);
+    }
+    /**
+     * Gets the request history of the user
+     * @return
+     *      Returns a list of documentssnapshots
+     * */
+    public List<DocumentSnapshot> getRequestHist(){
+        return doc.collection("reqHistory").get().getResult().getDocuments();
     }
 
 }
