@@ -6,14 +6,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonDrIn"
         android:layout_width="55dp"
         android:layout_height="49dp"
         android:text="Button"
         tools:layout_editor_absoluteX="2dp" />
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imageViewDrIn"
         android:layout_width="134dp"
         android:layout_height="132dp"
         app:srcCompat="@drawable/guuber"
@@ -21,7 +21,7 @@
         tools:layout_editor_absoluteY="80dp" />
 
     <ImageView
-        android:id="@+id/likeButton"
+        android:id="@+id/likeButtonDrIn"
         android:layout_width="90dp"
         android:layout_height="100dp"
         app:srcCompat="@drawable/guuber"
@@ -29,7 +29,7 @@
         tools:layout_editor_absoluteY="220dp" />
 
     <ImageView
-        android:id="@+id/dislikeButton"
+        android:id="@+id/dislikeButtonDrIn"
         android:layout_width="90dp"
         android:layout_height="100dp"
         app:srcCompat="@drawable/guuber"
@@ -37,7 +37,7 @@
         tools:layout_editor_absoluteY="220dp" />
 
     <Button
-        android:id="@+id/deleteAccButton"
+        android:id="@+id/deleteAccButtonDrIn"
         android:layout_width="203dp"
         android:layout_height="41dp"
         android:text="DELETE ACCOUNT"
@@ -46,7 +46,7 @@
         tools:layout_editor_absoluteY="672dp" />
 
     <TextView
-        android:id="@+id/carRegLabel"
+        android:id="@+id/carRegLabelDrIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Vehicle Registration"
@@ -54,7 +54,7 @@
         tools:layout_editor_absoluteY="370dp" />
 
     <TextView
-        android:id="@+id/usernameLabel"
+        android:id="@+id/usernameLabelDrIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Username"
@@ -62,7 +62,7 @@
         tools:layout_editor_absoluteY="400dp" />
 
     <TextView
-        android:id="@+id/passwordLabel"
+        android:id="@+id/passwordLabelDrIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Password"
@@ -70,7 +70,7 @@
         tools:layout_editor_absoluteY="430dp" />
 
     <TextView
-        android:id="@+id/phoneLabel"
+        android:id="@+id/phoneLabelDrIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Phone"
@@ -78,7 +78,7 @@
         tools:layout_editor_absoluteY="460dp" />
 
     <TextView
-        android:id="@+id/emailLabel"
+        android:id="@+id/emailLabelDrIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Email"
@@ -86,7 +86,7 @@
         tools:layout_editor_absoluteY="490dp" />
 
     <TextView
-        android:id="@+id/availabilityLabel"
+        android:id="@+id/availabilityLabelDrIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Status"
@@ -94,7 +94,7 @@
         tools:layout_editor_absoluteY="520dp" />
 
     <EditText
-        android:id="@+id/carRegText"
+        android:id="@+id/carRegTextDrIn"
         android:layout_width="160dp"
         android:layout_height="20dp"
         android:ems="10"
@@ -104,7 +104,7 @@
         tools:layout_editor_absoluteY="370dp" />
 
     <EditText
-        android:id="@+id/usernameText"
+        android:id="@+id/usernameTextDrIn"
         android:layout_width="215dp"
         android:layout_height="20dp"
         android:ems="10"
@@ -114,7 +114,7 @@
         tools:layout_editor_absoluteY="400dp" />
 
     <EditText
-        android:id="@+id/passwordText"
+        android:id="@+id/passwordTextDrIn"
         android:layout_width="215dp"
         android:layout_height="20dp"
         android:ems="10"
@@ -123,7 +123,7 @@
         tools:layout_editor_absoluteY="430dp" />
 
     <EditText
-        android:id="@+id/phoneText"
+        android:id="@+id/phoneTextDrIn"
         android:layout_width="215dp"
         android:layout_height="20dp"
         android:ems="10"
@@ -132,7 +132,7 @@
         tools:layout_editor_absoluteY="460dp" />
 
     <EditText
-        android:id="@+id/emailText"
+        android:id="@+id/emailTextDrIn"
         android:layout_width="215dp"
         android:layout_height="20dp"
         android:ems="10"
@@ -141,7 +141,7 @@
         tools:layout_editor_absoluteY="490dp" />
 
     <EditText
-        android:id="@+id/availabilityText"
+        android:id="@+id/availabilityTextDrIn"
         android:layout_width="215dp"
         android:layout_height="20dp"
         android:ems="10"

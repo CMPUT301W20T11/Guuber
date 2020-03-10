@@ -15,5 +15,10 @@ public class Rider extends User {
 
 	public void requestRide(){}
 	public void cancelReq(){}
+	public void displayProfExternal(){}
+
+	public void displayProfile(){
+
+	}
 
 }

@@ -19,4 +19,9 @@ public class Driver extends User {
 
 	public void regVehicle(){}
 	public void scanQr(){}
+	public void displayProfExternal(){}
+
+	public void displayProfile(){
+
+	}
 }
