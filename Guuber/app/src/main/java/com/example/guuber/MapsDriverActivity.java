@@ -35,11 +35,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
     private static final int MENU = 0;
-    private static final int VIEWTRIPS = 1;
+    private static final int VIEWTRIPS = 2;
     private static final int MYPROFILE = 2;
     private static final int  WALLET = 3;
 
-    private static final int  SIGNOUT = 3;
+    private static final int  SIGNOUT = 4;
     private GoogleMap guuberDriverMap;
     Spinner driverSpinner;
 
@@ -74,12 +74,14 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     //driverSpinner.setSelection(MENU);
                 }else if (position == VIEWTRIPS) {
                     /**start the my profile activity*/
+                    // Why does it work for myprofile only?
+                    viewTrips();
                     //spinner.setSelection(MENU);
                 }else if (position == WALLET){
                     /**start the walleett activity**/
                     //spinner.setSelection(OPTIONS);
                 }
-                else if (position == SIGNOUT+1){
+                else if (position == SIGNOUT){
                     /**start the walleett activity**/
                     signOut();
                     //spinner.setSelection(OPTIONS);
@@ -203,11 +205,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /**sign out of app**/
     public void signOut(){
         FirebaseAuth.getInstance().signOut();
-
-        final Intent restart = new Intent(MapsDriverActivity.this, LoginActivity.class);
-        startActivity(restart);
-
+        // TODO: get account to truly log out
         finish();
+        //final Intent restart = new Intent(MapsDriverActivity.this, LoginActivity.class);
+        //startActivity(restart);
+
     }
 
 }

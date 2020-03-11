@@ -22,10 +22,10 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-/**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
- * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
-/**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
- * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
+/**CITATION: Authenticate Using Google Sign-In on Android,
+ * published on  2020-03-09 Standard License, https://firebase.google.com/docs/auth/android/google-signin#next_steps **/
+/**CITATION: Integrating Google Sign-In into Your Android App,
+ * published on 2020-03-04 Standard License, https://developers.google.com/identity/sign-in/android/sign-in **/
 
 
 
@@ -74,6 +74,11 @@ public class LoginActivity extends AppCompatActivity {
 		});
 	}
 
+	private void signIn() {
+		Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+		startActivityForResult(signInIntent, RC_SIGN_IN);
+	}
+
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -93,10 +98,6 @@ public class LoginActivity extends AppCompatActivity {
 		}
 	}
 
-	private void signIn() {
-		Intent signInIntent = mGoogleSignInClient.getSignInIntent();
-		startActivityForResult(signInIntent, RC_SIGN_IN);
-	}
 
 //	private void handleSignInResult(Task<GoogleSignInAccount> completedTask) {
 //		try {
@@ -138,6 +139,9 @@ public class LoginActivity extends AppCompatActivity {
 	}
 
 	private void updateUI(FirebaseUser user) {
+		//TODO implement check to see if user id is in database
+		Intent newUser = new Intent(LoginActivity.this, NewUserActivity.class);
+		startActivity(newUser);
 		/**if user is a Riders**/
 		Intent homeScreen = new Intent(this, MapsDriverActivity.class);
 		startActivity(homeScreen);

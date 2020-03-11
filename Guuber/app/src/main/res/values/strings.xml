@@ -8,6 +8,7 @@
     <string name="action_sign_in_short">Sign in</string>
     <string name="welcome">"Welcome !"</string>
     <string name="invalid_username">Not a valid username</string>
+    <string name="title_activity_signin">Complete Your Profile!</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
     <string name="location_services_disabled_message">Please Enable Location Services to use Guuber!</string>
