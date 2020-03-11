@@ -1,6 +1,8 @@
 package com.example.guuber;
 
-public class User {
+import androidx.fragment.app.DialogFragment;
+
+public class User extends DialogFragment{
     private Wallet wallet;
     private String phoneNumber;
     private String email;
@@ -63,4 +65,5 @@ public class User {
 
     public void rateUser(){}
     public void viewProfile(){}
+
 }
