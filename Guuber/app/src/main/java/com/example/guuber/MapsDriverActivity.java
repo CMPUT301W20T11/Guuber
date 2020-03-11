@@ -92,7 +92,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     driverSpinner.setSelection(MENU);
                 } else if (position == VIEWTRIPS) {
                     /**start the my profile activity*/
-                    viewDriverProfile();
+                    //viewDriverProfile();
                     driverSpinner.setSelection(MENU);
                 } else if (position == WALLET) {
                     /**start the walleett activity**/
@@ -272,10 +272,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         startActivity(driverTripsIntent);
     }
 
+    /************
     public void viewDriverProfile() {
         final Intent driverProfileIntent = new Intent(MapsDriverActivity.this, DriverProfileActivity.class);
         startActivity(driverProfileIntent);
     }
+     *****/
 
     /******************************
     /**return the route origin and destination points

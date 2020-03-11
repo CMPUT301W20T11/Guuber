@@ -74,7 +74,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     riderSpinner.setSelection(MENU);
                 }else if (position == MYPROFILE) {
                     /**start the my profile activity*/
-                    viewRiderProfile();
+                    //viewRiderProfile();
                     riderSpinner.setSelection(MENU);
                 }else if (position == WALLET){
                     /**start the walleett activity**/
@@ -174,9 +174,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         startActivity(riderTripsIntent);
     }
 
+    /***************
     public void viewRiderProfile() {
         final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, RiderProfileActivity.class);
         startActivity(riderProfileIntent);
     }
+     ***************/
 
 }
