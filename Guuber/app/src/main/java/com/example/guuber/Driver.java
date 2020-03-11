@@ -1,5 +1,7 @@
 package com.example.guuber;
 
+import android.content.Intent;
+
 public class Driver extends User {
 	private Vehicle vehicle;
 
@@ -25,6 +27,8 @@ public class Driver extends User {
 	public void displayProfExternal(){}
 
 	public void displayProfile(){
+		Intent intent = new Intent(getActivity(), DriverProfileActivity.class);
+		startActivity(intent);
 
 	}
 }
