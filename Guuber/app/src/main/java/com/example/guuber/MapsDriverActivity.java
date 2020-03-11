@@ -12,7 +12,7 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.http.AndroidHttpClient;
+//import android.net.http.AndroidHttpClient;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,8 +31,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
+//import org.apache.http.HttpResponse;
+//import org.apache.http.client.methods.HttpGet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -291,7 +291,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
 
     public void viewDriverProfile() {
-        final Intent driverProfileIntent = new Intent(MapsDriverActivity.this, DriverProfileActivity.class);
+        final Intent driverProfileIntent = new Intent(MapsDriverActivity.this, DriverProfilActivity.class);
         startActivity(driverProfileIntent);
     }
 
