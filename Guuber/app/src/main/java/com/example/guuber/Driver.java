@@ -51,12 +51,4 @@ public class Driver extends User {
 		startActivity(intent);
 
 	}
-
-	public Vehicle getVehicle() {
-		return vehicle;
-	}
-
-	public void setVehicle(Vehicle vehicle) {
-		this.vehicle = vehicle;
-	}
 }
