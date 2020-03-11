@@ -37,6 +37,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int MYPROFILE = 1;
     private static final int VIEWTRIPS = 2;
     private static final int  WALLET = 3;
+    private Button makeRqButton;
 
     private GoogleMap guuberRiderMap;
     Spinner riderSpinner;
@@ -63,6 +64,17 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         RiderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         riderSpinner.setAdapter(RiderSpinnerAdapter);
 
+        /**
+         * onClickListener for the make a request button
+         */
+        makeRqButton = findViewById(R.id.make_request_button);
+        makeRqButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, makeRequestScreen1.class);
+                startActivity(riderProfileIntent);
+            }
+        });
 
         /**calling methods based on the item in the spinner drop down menu that is clicked**/
         riderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
