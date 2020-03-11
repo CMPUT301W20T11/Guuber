@@ -39,7 +39,7 @@
 
         <activity
             android:name=".MapsRiderActivity"
-            android:label="@string/title_activity_maps">
+            android:label="MAP">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
@@ -50,7 +50,7 @@
         </activity>
         <activity
             android:name=".MapsDriverActivity"
-            android:label="@string/title_activity_maps">
+            android:label="MAP">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
