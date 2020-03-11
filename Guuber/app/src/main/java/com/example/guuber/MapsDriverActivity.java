@@ -68,22 +68,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         setContentView(R.layout.activity_driver_maps);
         driverSpinner = findViewById(R.id.driver_spinner); //set the driver spinner
 
-        /**
-         * for Tinashe testing view profile activities
-         * delete late upto clear marked commet
-         */
-
-        //start here
-        Button butn = findViewById(R.id.make_request_button);
-        butn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
-                //final Intent viewTripsIntent = new Intent(MapsDriverActivity.this, ViewTripsActivity.class);
-                startActivity(intent);
-            }
-        });
-        //DELETE UPTO HERE TINASHE TEST
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
