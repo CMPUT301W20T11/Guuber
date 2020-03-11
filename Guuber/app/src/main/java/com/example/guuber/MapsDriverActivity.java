@@ -87,16 +87,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+    /**Manipulates the map once available.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-
+     * installed Google Play services and returned to the app.**/
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -104,43 +98,43 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         guuberDriverMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         guuberDriverMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
 
-        guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
-        {
+        /**log the coords in console upon map click**/
+        guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener(){
             @Override
-            public void onMapClick(LatLng arg0)
-            {
+            public void onMapClick(LatLng arg0){
                 android.util.Log.i("onMapClick", arg0.toString());
             }
         });
 
 
         if (checkUserPermission()) {
+            /**if user permission have been checked
+             * and location permission has been granted...**/
             guuberDriverMap.setMyLocationEnabled(true);
             guuberDriverMap.setOnMyLocationButtonClickListener(this);
             guuberDriverMap.setOnMyLocationClickListener(this);
 
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
-
             Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
 
             if (location != null) {
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
-                        .zoom(10)
+                        .zoom(12)
                         .build();
-
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         } else {
+            /**display a fragment that tells user their
+             * location permission is required*/
             guuberDriverMap.setMyLocationEnabled(false);
             new EnableLocationServices().show(getSupportFragmentManager(), "ENABLE_LOCATION");
-
         }
 
     }
 
-    /**once app is further developed, this request should be made upon ride request, not on app open**/
+    /**check user permissions**/
     public boolean checkUserPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED ){
@@ -158,22 +152,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
-    /**gives you the results what the users decision was for location preferences**/
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_FINE_LOCATION_PERMISSION) {
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                /**Fine location permission granted**/
-                Toast.makeText(this,"location services enabled. Welcome to Guuber!",Toast.LENGTH_LONG).show();
-            } else {
-                /**fine location permission denied**/
-                Toast.makeText(this,"To use Guuber, enable location services",Toast.LENGTH_LONG).show();
-            }
-
-        }
-    }
 
     /**indicates current location button has been clicked... do we need?**/
     @Override
@@ -188,6 +166,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         Toast.makeText(this, "Current location:\n" + mylocation, Toast.LENGTH_LONG).show();
     }
 
+    /**launches the view trips history activity**/
     public void viewTrips(){
         final Intent viewTripsIntent = new Intent(MapsDriverActivity.this, ViewTripsActivity.class);
         startActivity(viewTripsIntent);

@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -41,7 +42,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     Spinner riderSpinner;
 
     Button makeRequestButton, goButton;
-    EditText riderDestination;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,38 +50,14 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         setContentView(R.layout.activity_rider_maps);
         riderSpinner =  findViewById(R.id.rider_spinner); //set the driver spinner
+        makeRequestButton.findViewById(R.id.make_request_button);
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.rider_map);
         mapFragment.getMapAsync(this);
 
 
-        makeRequestButton.findViewById(R.id.make_request_button);
-        /**makeRequestButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(MapsActivity.this, "Click where you want to go on the map and press Go!", Toast.LENGTH_SHORT).show();
-
-                /**after make request button is clicked
-                 * set on map click listener and retrieve the coords
-                 * from where the user clicks on the map
-                 * set this information in the edit text
-                 * when user presses go button the information is sent to the data base
-
-
-            }
-        });
-
-
-        riderDestination = findViewById(R.id.destination_location_EditText);
-        goButton.findViewById(R.id.go_button);
-        goButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                riderDestination.setText("working on it");
-            }
-        });
 
         /**initialize a spinner and set its adapter, strings are in 'values'**/
         /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
@@ -96,7 +73,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == VIEWTRIPS){
                     /**start the view trips activity**/
-                    //spinner.setSelection(MENU);
+                    viewTrips();
+                    riderSpinner.setSelection(MENU);
                 }else if (position == MYPROFILE) {
                     /**start the my profile activity*/
                     //spinner.setSelection(MENU);
@@ -111,20 +89,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
 
-
     }
 
 
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
+     /** Manipulates the map once available.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
-
+     * installed Google Play services and returned to the app.**/
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -132,24 +103,24 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         guuberRiderMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         guuberRiderMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
 
-        guuberRiderMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
-        {
+        /**log the coords in console upon map click**/
+        guuberRiderMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
-            public void onMapClick(LatLng arg0)
-            {
+            public void onMapClick(LatLng arg0){
                 android.util.Log.i("onMapClick", arg0.toString());
             }
         });
 
 
         if (checkUserPermission()) {
+            /**if user permission have been checked
+             * and location permission has been granted...**/
             guuberRiderMap.setMyLocationEnabled(true);
             guuberRiderMap.setOnMyLocationButtonClickListener(this);
             guuberRiderMap.setOnMyLocationClickListener(this);
 
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
-
             Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
 
             if (location != null) {
@@ -161,49 +132,32 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 guuberRiderMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         } else {
+            /**display a fragment that tells user their
+             * location permission is required*/
             guuberRiderMap.setMyLocationEnabled(false);
             new EnableLocationServices().show(getSupportFragmentManager(), "ENABLE_LOCATION");
-
         }
 
     }
 
-    /**once app is further developed, this request should be made upon ride request, not on app open**/
+    /**check user permissions**/
     public boolean checkUserPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED ){
-
             /**this dialog box appears only if the user has previously denied the request and has NOT selected don't ask again**/
             if  (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 /**start activity disabling app usage until user has granted location permissions**/
-
             }else{
                 ActivityCompat.requestPermissions(this, new String[]
                         {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION_PERMISSION);
             }
             return false;
         } else {
-            //user has already set location permission preferences
+            /**user has already set location permission preferences**/
             return true;
         }
     }
 
-    /**gives you the results what the users decision was for location preferences**/
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        if (requestCode == REQUEST_FINE_LOCATION_PERMISSION) {
-            // If request is cancelled, the result arrays are empty.
-            if (grantResults.length > 0
-                    && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                /**Fine location permission granted**/
-                Toast.makeText(this,"location services enabled. Welcome to Guuber!",Toast.LENGTH_LONG).show();
-            } else {
-                /**fine location permission denied**/
-                Toast.makeText(this,"To use Guuber, enable location services",Toast.LENGTH_LONG).show();
-            }
-
-        }
-    }
 
     /**indicates current location button has been clicked... do we need?**/
     @Override
@@ -212,11 +166,16 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         return false;
     }
 
-
     /**displays the details of your location upon click**/
     @Override
     public void onMyLocationClick(@NonNull Location mylocation) {
         Toast.makeText(this, "Current location:\n" + mylocation, Toast.LENGTH_LONG).show();
+    }
+
+    /**launches the view trips history activity**/
+    public void viewTrips(){
+        final Intent viewTripsIntent = new Intent(MapsRiderActivity.this, ViewTripsActivity.class);
+        startActivity(viewTripsIntent);
     }
 
 }

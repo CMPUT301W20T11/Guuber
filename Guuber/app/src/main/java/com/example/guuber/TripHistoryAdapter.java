@@ -18,10 +18,15 @@ import java.util.List;
  * list view with more flexibility.
  * class TripAdapter handles the User objects
  * in a  list*/
+
+
+/******
+ * currently this class has no data provided to it. adapter is empty
+ *****
+ */
 public class TripHistoryAdapter extends ArrayAdapter<Driver> {
 
     private Context context;
-
 
     /**provide adapter with data it will be using**/
     public TripHistoryAdapter(@NonNull Context context){
@@ -38,9 +43,6 @@ public class TripHistoryAdapter extends ArrayAdapter<Driver> {
             listItem = LayoutInflater.from(context).inflate(R.layout.trip_history_list_layout,parent,false);
         }
 
-
-        /**CITATION: StackOverflow post by Nanne https://stackoverflow.com/users/415865/vikas,
-         *Answer https://stackoverflow.com/questions/4602902/how-to-set-the-text-color-of-textview-in-code**/
 
         TextView dateTextView = (TextView) listItem.findViewById(R.id.date_text_view);
         dateTextView.setText("Date:" + "example date");
