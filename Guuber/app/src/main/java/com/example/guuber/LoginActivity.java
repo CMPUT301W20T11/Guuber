@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.RadioGroup;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -19,12 +20,14 @@ public class LoginActivity extends AppCompatActivity {
 	private static final int RC_SIGN_IN = 1;
 	private static final String TAG = "LoginActivity";
 	private GoogleSignInClient mGoogleSignInClient;
+	private RadioGroup radioGroup;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		SignInButton signInButton = findViewById(R.id.sign_in_button);
+		radioGroup = findViewById(R.id.radio_group);
 
 		// Configure sign-in to request the user's ID, email address, and basic
 		// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -80,6 +83,18 @@ public class LoginActivity extends AppCompatActivity {
 
 	private void updateUI(GoogleSignInAccount user) {
 
-	    
+		int radioButtonID = radioGroup.getCheckedRadioButtonId();
+		View radioButton = radioGroup.findViewById(radioButtonID);
+		int signInType = radioGroup.indexOfChild(radioButton);
+
+		Intent homeScreen;
+		if(signInType == 0) {
+			/**if user is a Riders**/
+			homeScreen = new Intent(this, MapsRiderActivity.class);
+		}else{
+			/**else user is a driver **/
+			homeScreen = new Intent(this, MapsDriverActivity.class);
+			}
+		startActivity(homeScreen);
 	}
 }
