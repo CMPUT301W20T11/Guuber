@@ -4,12 +4,32 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity"
-    android:gravity="center">
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".LoginActivity">
 
     <com.google.android.gms.common.SignInButton
         android:id="@+id/sign_in_button"
         android:layout_width="200dp"
         android:layout_height="80dp" />
+
+    <RadioGroup
+        android:id="@+id/radio_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checkedButton="@id/rider_selection">
+
+        <RadioButton
+            android:id="@+id/rider_selection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="As Rider" />
+
+        <RadioButton
+            android:id="@+id/driver_selection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="As Driver" />
+    </RadioGroup>
 
 </LinearLayout>
