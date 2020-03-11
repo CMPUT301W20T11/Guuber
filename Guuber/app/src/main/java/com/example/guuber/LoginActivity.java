@@ -79,7 +79,9 @@ public class LoginActivity extends AppCompatActivity {
 	}
 
 	private void updateUI(GoogleSignInAccount user) {
-		Intent homeScreen = new Intent(this, MapsActivity.class);
+		/**if user is a Riders**/
+		Intent homeScreen = new Intent(this, MapsDriverActivity.class);
 		startActivity(homeScreen);
+		/**else user is a driver **/
 	}
 }

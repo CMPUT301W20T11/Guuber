@@ -4,12 +4,18 @@ public class Vehicle {
 	private String make;
 	private String model;
 	private String color;
+	private String reg;
 
-	public Vehicle(String make, String model, String color) {
+	public Vehicle(String make, String model, String color, String reg) {
 		this.make = make;
 		this.model = model;
 		this.color = color;
+		this.reg = reg;
 	}
+
+	public String getReg() { return reg; }
+
+	public void setReg(String reg) { this.reg = reg; }
 
 	public String getMake() {
 		return make;

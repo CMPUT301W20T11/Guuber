@@ -1,11 +1,15 @@
 package com.example.guuber;
 
-public class User {
+import androidx.fragment.app.DialogFragment;
+
+public class User extends DialogFragment{
     private Wallet wallet;
     private String phoneNumber;
     private String email;
     private String firstName;
     private String lastName;
+    public String image;
+
 
 
     public User(String phoneNumber, String email, String firstName, String lastName) {
@@ -15,6 +19,8 @@ public class User {
         this.lastName = lastName;
         wallet = new Wallet();
     }
+
+
 
     public Wallet getWallet() {
         return wallet;
@@ -55,4 +61,12 @@ public class User {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
+
+    public void setImage(String image){this.image = image;}
+
+    public String getImage(){return this.image;}
+
+    public void rateUser(){}
+    public void viewProfile(){}
+
 }
