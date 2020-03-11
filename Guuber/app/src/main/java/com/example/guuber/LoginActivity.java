@@ -82,6 +82,7 @@ public class LoginActivity extends AppCompatActivity {
 	}
 
 	private void updateUI(GoogleSignInAccount user) {
+
 		int radioButtonID = radioGroup.getCheckedRadioButtonId();
 		View radioButton = radioGroup.findViewById(radioButtonID);
 		int signInType = radioGroup.indexOfChild(radioButton);

@@ -3,6 +3,7 @@ package com.example.guuber;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,6 +29,9 @@ public class DriverProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.driver_profile_disp);
 
+        /**display the back button**/
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
 
         myself = new Driver("+15879388900", "osiemusariri@gmail.com", "Oswell",
@@ -42,7 +46,7 @@ public class DriverProfileActivity extends AppCompatActivity {
         phoneNumber = myself.getPhoneNumber();
         username = myself.getFirstName();
         email = myself.getEmail();
-        carReg = myself.getVehicle().getReg();
+        //carReg = myself.getVehicle().getReg();
 
         vehicleRegField.setText("Found");
         phoneNumberField.setText("Found");
@@ -58,5 +62,17 @@ public class DriverProfileActivity extends AppCompatActivity {
             }
         });
 
+    }
+    /**implement logic here for what you want to
+     * happen upon back button press**/
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 }

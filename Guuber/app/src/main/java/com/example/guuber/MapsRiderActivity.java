@@ -34,8 +34,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
     private static final int MENU = 0;
-    private static final int VIEWTRIPS = 1;
-    private static final int MYPROFILE = 2;
+    private static final int MYPROFILE = 1;
+    private static final int VIEWTRIPS = 2;
     private static final int  WALLET = 3;
 
     private GoogleMap guuberRiderMap;
@@ -68,13 +68,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         riderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == VIEWTRIPS){
+                if (position == MYPROFILE){
                     /**start the view trips activity**/
-                    viewRiderTrips();
+                    viewRiderProfile();
                     riderSpinner.setSelection(MENU);
-                }else if (position == MYPROFILE) {
+                }else if (position == VIEWTRIPS) {
                     /**start the my profile activity*/
-                    //viewRiderProfile();
+                    viewRiderTrips();
                     riderSpinner.setSelection(MENU);
                 }else if (position == WALLET){
                     /**start the walleett activity**/
@@ -174,11 +174,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         startActivity(riderTripsIntent);
     }
 
-    /***************
+
     public void viewRiderProfile() {
         final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, RiderProfileActivity.class);
         startActivity(riderProfileIntent);
     }
-     ***************/
+
 
 }
