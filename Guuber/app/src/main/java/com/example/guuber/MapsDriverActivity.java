@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -49,7 +50,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.driver_map);
         mapFragment.getMapAsync(this);
 
 
@@ -65,10 +66,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         driverSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == VIEWTRIPS){
+                if (position == MYPROFILE){
                     /**start the view trips activity**/
-                    //spinner.setSelection(MENU);
-                }else if (position == MYPROFILE) {
+                    viewTrips();
+                    driverSpinner.setSelection(MENU);
+                }else if (position == VIEWTRIPS) {
                     /**start the my profile activity*/
                     //spinner.setSelection(MENU);
                 }else if (position == WALLET){
@@ -184,6 +186,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onMyLocationClick(@NonNull Location mylocation) {
         Toast.makeText(this, "Current location:\n" + mylocation, Toast.LENGTH_LONG).show();
+    }
+
+    public void viewTrips(){
+        final Intent viewTripsIntent = new Intent(MapsDriverActivity.this, ViewTripsActivity.class);
+        startActivity(viewTripsIntent);
     }
 
 }

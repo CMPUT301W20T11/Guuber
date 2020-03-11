@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:id="@+id/date_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#FDFAFB"
+        android:textSize="18sp" />
+
+
+    <TextView
+        android:id="@+id/user_label_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#F1F3F3"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/pickup_location_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#F2F7F8"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/dropoff_location_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#F5F8F8"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/payment_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#F5F8F8"
+        android:textSize="18sp" />
+
+</LinearLayout>

@@ -8,6 +8,9 @@ public class Driver extends User {
 		this.vehicle = vehicle;
 	}
 
+	public String getLabel(){
+		return "Driver";
+	}
 
 	public void acceptOffer(){
 
