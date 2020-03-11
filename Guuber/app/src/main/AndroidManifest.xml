@@ -15,9 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ViewTripsActivity"></activity>
         <activity android:name=".DriverProfilActivity"></activity>
         <activity android:name=".RiderProfileActivity"></activity>
-        <activity android:name=".ViewTripsActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login">
@@ -41,7 +41,7 @@
 
         <activity
             android:name=".MapsRiderActivity"
-            android:label="@string/title_activity_maps">
+            android:label="MAP">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->
@@ -52,7 +52,7 @@
         </activity>
         <activity
             android:name=".MapsDriverActivity"
-            android:label="@string/title_activity_maps">
+            android:label="MAP">
 
             <!-- <intent-filter> -->
             <!-- <action android:name="android.intent.action.MAIN" /> -->

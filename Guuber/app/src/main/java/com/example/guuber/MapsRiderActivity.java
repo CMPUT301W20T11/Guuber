@@ -34,14 +34,12 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
     private static final int MENU = 0;
-    private static final int VIEWTRIPS = 1;
-    private static final int MYPROFILE = 2;
+    private static final int MYPROFILE = 1;
+    private static final int VIEWTRIPS = 2;
     private static final int  WALLET = 3;
 
     private GoogleMap guuberRiderMap;
     Spinner riderSpinner;
-
-    Button makeRequestButton, goButton;
 
 
     @Override
@@ -49,8 +47,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_rider_maps);
-        riderSpinner =  findViewById(R.id.rider_spinner); //set the driver spinner
-        makeRequestButton.findViewById(R.id.make_request_button);
+        riderSpinner =  findViewById(R.id.rider_spinner); //set the rider spinner
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -62,22 +59,23 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         /**initialize a spinner and set its adapter, strings are in 'values'**/
         /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
          * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
-        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(MapsRiderActivity.this, android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.menu));
-        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        riderSpinner.setAdapter(spinnerAdapter);
+        ArrayAdapter<String> RiderSpinnerAdapter = new ArrayAdapter<String>(MapsRiderActivity.this, android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.menu));
+        RiderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        riderSpinner.setAdapter(RiderSpinnerAdapter);
 
 
         /**calling methods based on the item in the spinner drop down menu that is clicked**/
         riderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (position == VIEWTRIPS){
+                if (position == MYPROFILE){
                     /**start the view trips activity**/
-                    viewTrips();
+                    viewRiderProfile();
                     riderSpinner.setSelection(MENU);
-                }else if (position == MYPROFILE) {
+                }else if (position == VIEWTRIPS) {
                     /**start the my profile activity*/
-                    //spinner.setSelection(MENU);
+                    viewRiderTrips();
+                    riderSpinner.setSelection(MENU);
                 }else if (position == WALLET){
                     /**start the walleett activity**/
                     //spinner.setSelection(OPTIONS);
@@ -125,10 +123,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
             if (location != null) {
                 CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
+                        .target(new LatLng(location.getLatitude(), location.getLongitude()))
                         .zoom(10)
                         .build();
-
                 guuberRiderMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         } else {
@@ -172,10 +169,16 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         Toast.makeText(this, "Current location:\n" + mylocation, Toast.LENGTH_LONG).show();
     }
 
-    /**launches the view trips history activity**/
-    public void viewTrips(){
-        final Intent viewTripsIntent = new Intent(MapsRiderActivity.this, ViewTripsActivity.class);
-        startActivity(viewTripsIntent);
+    public void viewRiderTrips() {
+        final Intent riderTripsIntent = new Intent(MapsRiderActivity.this, ViewTripsActivity.class);
+        startActivity(riderTripsIntent);
     }
+
+
+    public void viewRiderProfile() {
+        final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, RiderProfileActivity.class);
+        startActivity(riderProfileIntent);
+    }
+
 
 }
