@@ -7,6 +7,10 @@ public class Rider extends User {
 		super(phoneNumber, email, firstName, lastName);
 	}
 
+	public String getLabel(){
+		return "Rider";
+	}
+
 	public void generatePayment(Integer amnt){
 
 	}

@@ -40,7 +40,6 @@
         android:layout_width="203dp"
         android:layout_height="41dp"
         android:text="DELETE ACCOUNT"
-        android:textColor="#FF0000"
         tools:layout_editor_absoluteX="189dp"
         tools:layout_editor_absoluteY="672dp" />
 
