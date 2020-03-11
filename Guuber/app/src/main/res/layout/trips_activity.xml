@@ -31,5 +31,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/trips_history_textView" ></ListView>
 
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
 
