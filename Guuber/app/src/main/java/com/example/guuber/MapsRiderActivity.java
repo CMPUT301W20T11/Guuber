@@ -52,11 +52,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
+                .findFragmentById(R.id.rider_map);
         mapFragment.getMapAsync(this);
 
 
-        /*makeRequestButton.findViewById(R.id.make_request_button);
+        makeRequestButton.findViewById(R.id.make_request_button);
         /**makeRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -80,7 +80,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             public void onClick(View v) {
                 riderDestination.setText("working on it");
             }
-        });*/
+        });
 
         /**initialize a spinner and set its adapter, strings are in 'values'**/
         /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,

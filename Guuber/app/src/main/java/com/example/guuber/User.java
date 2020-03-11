@@ -9,6 +9,7 @@ public class User {
     public String image;
 
 
+
     public User(String phoneNumber, String email, String firstName, String lastName) {
         this.phoneNumber = phoneNumber;
         this.email = email;
@@ -16,6 +17,8 @@ public class User {
         this.lastName = lastName;
         wallet = new Wallet();
     }
+
+
 
     public Wallet getWallet() {
         return wallet;
