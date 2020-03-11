@@ -12,9 +12,14 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -22,26 +27,60 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 
-
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
+public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
+    private static final int MENU = 0;
+    private static final int VIEWTRIPS = 1;
+    private static final int MYPROFILE = 2;
+    private static final int  WALLET = 3;
 
-    private GoogleMap guuberMap;
-
+    private GoogleMap guuberDriverMap;
+    Spinner driverSpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        setContentView(R.layout.activity_driver_maps);
+        driverSpinner =  findViewById(R.id.driver_spinner); //set the driver spinner
+
+        /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+
+        /**initialize a spinner and set its adapter, strings are in 'values'**/
+        /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
+         * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
+        ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(MapsDriverActivity.this, android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.menu));
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        driverSpinner.setAdapter(spinnerAdapter);
+
+
+        /**calling methods based on the item in the spinner drop down menu that is clicked**/
+        driverSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (position == VIEWTRIPS){
+                    /**start the view trips activity**/
+                    //spinner.setSelection(MENU);
+                }else if (position == MYPROFILE) {
+                    /**start the my profile activity*/
+                    //spinner.setSelection(MENU);
+                }else if (position == WALLET){
+                    /**start the walleett activity**/
+                    //spinner.setSelection(OPTIONS);
+                }
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                driverSpinner.setSelection(MENU);
+            }
+        });
 
     }
 
@@ -59,15 +98,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        guuberMap = googleMap;
-        guuberMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        guuberMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
+        guuberDriverMap = googleMap;
+        guuberDriverMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        guuberDriverMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
+
+        guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener()
+        {
+            @Override
+            public void onMapClick(LatLng arg0)
+            {
+                android.util.Log.i("onMapClick", arg0.toString());
+            }
+        });
 
 
         if (checkUserPermission()) {
-            guuberMap.setMyLocationEnabled(true);
-            guuberMap.setOnMyLocationButtonClickListener(this);
-            guuberMap.setOnMyLocationClickListener(this);
+            guuberDriverMap.setMyLocationEnabled(true);
+            guuberDriverMap.setOnMyLocationButtonClickListener(this);
+            guuberDriverMap.setOnMyLocationClickListener(this);
 
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
@@ -75,24 +123,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
 
             if (location != null) {
-
                 CameraPosition cameraPosition = new CameraPosition.Builder()
                         .target(new LatLng(location.getLatitude(), location.getLongitude()))      // Sets the center of the map to location user
                         .zoom(10)
                         .build();
 
-                guuberMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
+                guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         } else {
-            guuberMap.setMyLocationEnabled(false);
+            guuberDriverMap.setMyLocationEnabled(false);
             new EnableLocationServices().show(getSupportFragmentManager(), "ENABLE_LOCATION");
-            /*LatLng Edmonton = new LatLng(53.5461, -113.4938);
-            guuberMap.addMarker(new MarkerOptions().position(Edmonton).title("Marker in Edmonton"));
-            guuberMap.moveCamera(CameraUpdateFactory.newLatLng(Edmonton));
-
-            /**make this a fragment that covers the app
-            Toast.makeText(this, "To use Guuber, enable location services", Toast.LENGTH_LONG).show();*/
 
         }
 
@@ -102,18 +142,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public boolean checkUserPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED ){
-
             /**this dialog box appears only if the user has previously denied the request and has NOT selected don't ask again**/
             if  (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 /**start activity disabling app usage until user has granted location permissions**/
-
             }else{
                 ActivityCompat.requestPermissions(this, new String[]
                         {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION_PERMISSION);
             }
             return false;
         } else {
-            //user has already set location permission preferences
+            /**user has already set location permission preferences**/
             return true;
         }
     }
@@ -135,14 +173,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
     /**indicates current location button has been clicked... do we need?**/
     @Override
     public boolean onMyLocationButtonClick() {
         Toast.makeText(this, "clicked on current location", Toast.LENGTH_SHORT).show();
         return false;
     }
-
 
     /**displays the details of your location upon click**/
     @Override

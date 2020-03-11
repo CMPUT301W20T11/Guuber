@@ -12,4 +12,10 @@
     <string name="login_failed">"Login failed"</string>
     <string name="location_services_disabled_message">Please Enable Location Services to use Guuber!</string>
     <string name="Location_services_disabled_instructions">"① Close the App\n② Press and hold the Guuber icon\n③ Click App info\n④ Click Permissions\n⑤ Turn Location Services on</string>
+    <string-array name = "menu">
+        <item>MENU</item>
+        <item>My Profile</item>
+        <item>View Trips</item>
+        <item>Wallet</item>
+    </string-array>
 </resources>
