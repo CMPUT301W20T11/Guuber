@@ -17,5 +17,6 @@
         <item>My Profile</item>
         <item>View Trips</item>
         <item>Wallet</item>
+        <item>Sign Out</item>
     </string-array>
 </resources>

@@ -28,6 +28,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.firebase.auth.FirebaseAuth;
 
 
 public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
@@ -38,6 +39,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private static final int MYPROFILE = 2;
     private static final int  WALLET = 3;
 
+    private static final int  SIGNOUT = 3;
     private GoogleMap guuberDriverMap;
     Spinner driverSpinner;
 
@@ -69,7 +71,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 if (position == MYPROFILE){
                     /**start the view trips activity**/
                     viewTrips();
-                    driverSpinner.setSelection(MENU);
+                    //driverSpinner.setSelection(MENU);
                 }else if (position == VIEWTRIPS) {
                     /**start the my profile activity*/
                     //spinner.setSelection(MENU);
@@ -77,6 +79,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     /**start the walleett activity**/
                     //spinner.setSelection(OPTIONS);
                 }
+                else if (position == SIGNOUT+1){
+                    /**start the walleett activity**/
+                    signOut();
+                    //spinner.setSelection(OPTIONS);
+                }
+
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -191,6 +199,15 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     public void viewTrips(){
         final Intent viewTripsIntent = new Intent(MapsDriverActivity.this, ViewTripsActivity.class);
         startActivity(viewTripsIntent);
+    }
+    /**sign out of app**/
+    public void signOut(){
+        FirebaseAuth.getInstance().signOut();
+
+        final Intent restart = new Intent(MapsDriverActivity.this, LoginActivity.class);
+        startActivity(restart);
+
+        finish();
     }
 
 }

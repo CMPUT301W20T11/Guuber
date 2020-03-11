@@ -12,6 +12,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -36,6 +37,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int VIEWTRIPS = 1;
     private static final int MYPROFILE = 2;
     private static final int  WALLET = 3;
+
+    private static final int SIGNOUT = 4;
 
     private GoogleMap guuberRiderMap;
     Spinner riderSpinner;
@@ -102,6 +105,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     //spinner.setSelection(MENU);
                 }else if (position == WALLET){
                     /**start the walleett activity**/
+                    //spinner.setSelection(OPTIONS);
+                }else if (position == SIGNOUT){
+                    /**sign out of activity**/
+                    Log.d("myTag", "This is my message");
                     //spinner.setSelection(OPTIONS);
                 }
             }

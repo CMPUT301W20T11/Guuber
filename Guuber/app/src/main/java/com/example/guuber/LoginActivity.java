@@ -22,6 +22,12 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+/**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
+ * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
+/**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
+ * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
+
+
 
 public class LoginActivity extends AppCompatActivity {
 	private static final int RC_SIGN_IN = 1;
