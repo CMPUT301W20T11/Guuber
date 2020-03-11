@@ -12,7 +12,7 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.net.http.AndroidHttpClient;
+//import android.net.http.AndroidHttpClient;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -31,8 +31,8 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
+//import org.apache.http.HttpResponse;
+//import org.apache.http.client.methods.HttpGet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -68,7 +68,22 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         setContentView(R.layout.activity_driver_maps);
         driverSpinner = findViewById(R.id.driver_spinner); //set the driver spinner
 
+        /**
+         * for Tinashe testing view profile activities
+         * delete late upto clear marked commet
+         */
 
+        //start here
+        Button butn = findViewById(R.id.make_request_button);
+        butn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
+                //final Intent viewTripsIntent = new Intent(MapsDriverActivity.this, ViewTripsActivity.class);
+                startActivity(intent);
+            }
+        });
+        //DELETE UPTO HERE TINASHE TEST
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -237,11 +252,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /*** check user permissions**/
     public boolean checkUserPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+                != PackageManager.PERMISSION_GRANTED ){
             /**this dialog box appears only if the user has previously denied the request and has NOT selected don't ask again**/
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if  (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 /**start activity disabling app usage until user has granted location permissions**/
-            } else {
+            }else{
                 ActivityCompat.requestPermissions(this, new String[]
                         {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION_PERMISSION);
             }
@@ -276,7 +291,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
 
     public void viewDriverProfile() {
-        final Intent driverProfileIntent = new Intent(MapsDriverActivity.this, DriverProfileActivity.class);
+        final Intent driverProfileIntent = new Intent(MapsDriverActivity.this, DriverProfilActivity.class);
         startActivity(driverProfileIntent);
     }
 

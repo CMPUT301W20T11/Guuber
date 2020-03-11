@@ -9,36 +9,48 @@
         android:id="@+id/blackImRq3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/guuber"
-        tools:layout_editor_absoluteX="124dp"
-        tools:layout_editor_absoluteY="176dp" />
+        android:layout_marginStart="125dp"
+        android:layout_marginTop="176dp"
+        android:layout_marginEnd="125dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/guuber" />
 
     <ImageView
         android:id="@+id/blackIm2Rq3"
-        android:layout_width="412dp"
+        android:layout_width="408dp"
         android:layout_height="145dp"
-        app:srcCompat="@drawable/guuber"
-        tools:layout_editor_absoluteX="-1dp"
-        tools:layout_editor_absoluteY="570dp"
-        />
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/guuber" />
 
     <TextView
         android:id="@+id/pickupAddTRq3"
         android:layout_width="96dp"
         android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="116dp"
         android:text="Enter pickup location"
         android:textSize="10sp"
-        tools:layout_editor_absoluteX="18dp"
-        tools:layout_editor_absoluteY="576dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/blackIm2Rq3"
+        app:layout_constraintStart_toStartOf="@+id/blackIm2Rq3" />
 
     <TextView
         android:id="@+id/dropoffAddTRq3"
         android:layout_width="103dp"
         android:layout_height="21dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="72dp"
         android:text="Enter dropoff location"
         android:textSize="10sp"
-        tools:layout_editor_absoluteX="18dp"
-        tools:layout_editor_absoluteY="623dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/blackIm2Rq3"
+        app:layout_constraintStart_toStartOf="@+id/blackIm2Rq3" />
 
     <EditText
         android:id="@+id/pickupAddRq3"
@@ -53,49 +65,60 @@
         android:id="@+id/dropoffAddRq3"
         android:layout_width="250dp"
         android:layout_height="22dp"
+        android:layout_marginStart="148dp"
+        android:layout_marginBottom="72dp"
         android:ems="10"
         android:inputType="textPostalAddress"
-        tools:layout_editor_absoluteX="152dp"
-        tools:layout_editor_absoluteY="622dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/blackIm2Rq3"
+        app:layout_constraintStart_toStartOf="@+id/blackIm2Rq3" />
 
     <Button
-        android:id="@+id/CancelRequestButtonRq3"
+        android:id="@+id/makeRequestButtonRq3"
         android:layout_width="253dp"
         android:layout_height="42dp"
-        android:text="Cancel request"
-        tools:layout_editor_absoluteX="71dp"
-        tools:layout_editor_absoluteY="664dp" />
+        android:layout_marginStart="68dp"
+        android:layout_marginBottom="12dp"
+        android:text="Make request"
+        app:layout_constraintBottom_toBottomOf="@+id/blackIm2Rq3"
+        app:layout_constraintStart_toStartOf="@+id/blackIm2Rq3" />
 
     <TextView
         android:id="@+id/fareamtRq3"
         android:layout_width="157dp"
         android:layout_height="27dp"
+        android:layout_marginStart="4dp"
         android:text="You have a ride offer"
-        tools:layout_editor_absoluteX="128dp"
-        tools:layout_editor_absoluteY="191dp" />
+        app:layout_constraintStart_toStartOf="@id/blackImRq3"
+        app:layout_constraintTop_toTopOf="@id/blackImRq3" />
 
     <Button
         android:id="@+id/emailDrRq3"
         android:layout_width="76dp"
         android:layout_height="43dp"
         android:text="Email driver"
-        tools:layout_editor_absoluteX="128dp"
-        tools:layout_editor_absoluteY="288dp" />
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/blackImRq3"
+        app:layout_constraintStart_toStartOf="@id/blackImRq3" />
 
     <Button
         android:id="@+id/callDrRq3"
         android:layout_width="70dp"
         android:layout_height="42dp"
         android:text="Call driver"
-        tools:layout_editor_absoluteX="215dp"
-        tools:layout_editor_absoluteY="288dp" />
+        android:layout_marginStart="88dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/blackImRq3"
+        app:layout_constraintStart_toStartOf="@id/blackImRq3" />
 
     <Button
         android:id="@+id/viewDrProfRq3"
         android:layout_width="123dp"
         android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
         android:text="View Profile"
-        tools:layout_editor_absoluteX="144dp"
-        tools:layout_editor_absoluteY="231dp" />
+        app:layout_constraintEnd_toEndOf="@id/blackImRq3"
+        app:layout_constraintTop_toBottomOf="@id/fareamtRq3" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

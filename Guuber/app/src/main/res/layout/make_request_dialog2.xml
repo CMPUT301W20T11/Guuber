@@ -9,37 +9,48 @@
         android:id="@+id/blackImRq2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="125dp"
+        android:layout_marginTop="176dp"
         android:layout_marginEnd="125dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/fareamtRq2"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/guuber" />
 
     <ImageView
         android:id="@+id/blackIm2Rq2"
-        android:layout_width="412dp"
+        android:layout_width="408dp"
         android:layout_height="145dp"
-        app:srcCompat="@drawable/guuber"
-        tools:layout_editor_absoluteX="-1dp"
-        tools:layout_editor_absoluteY="570dp"
-        />
+        android:layout_marginStart="2dp"
+        android:layout_marginEnd="1dp"
+        android:layout_marginBottom="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="@drawable/guuber" />
 
     <TextView
         android:id="@+id/pickupAddTRq2"
         android:layout_width="96dp"
         android:layout_height="24dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="116dp"
         android:text="Enter pickup location"
         android:textSize="10sp"
-        tools:layout_editor_absoluteX="18dp"
-        tools:layout_editor_absoluteY="576dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/blackIm2Rq2"
+        app:layout_constraintStart_toStartOf="@+id/blackIm2Rq2" />
 
     <TextView
         android:id="@+id/dropoffAddTRq2"
         android:layout_width="103dp"
         android:layout_height="21dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="72dp"
         android:text="Enter dropoff location"
         android:textSize="10sp"
-        tools:layout_editor_absoluteX="18dp"
-        tools:layout_editor_absoluteY="623dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/blackIm2Rq2"
+        app:layout_constraintStart_toStartOf="@+id/blackIm2Rq2" />
 
     <EditText
         android:id="@+id/pickupAddRq2"
@@ -54,56 +65,60 @@
         android:id="@+id/dropoffAddRq2"
         android:layout_width="250dp"
         android:layout_height="22dp"
+        android:layout_marginStart="148dp"
+        android:layout_marginBottom="72dp"
         android:ems="10"
         android:inputType="textPostalAddress"
-        tools:layout_editor_absoluteX="152dp"
-        tools:layout_editor_absoluteY="622dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/blackIm2Rq2"
+        app:layout_constraintStart_toStartOf="@+id/blackIm2Rq2" />
 
     <Button
         android:id="@+id/makeRequestButtonRq2"
         android:layout_width="253dp"
         android:layout_height="42dp"
+        android:layout_marginStart="68dp"
+        android:layout_marginBottom="12dp"
         android:text="Make request"
-        tools:layout_editor_absoluteX="71dp"
-        tools:layout_editor_absoluteY="664dp" />
+        app:layout_constraintBottom_toBottomOf="@+id/blackIm2Rq2"
+        app:layout_constraintStart_toStartOf="@+id/blackIm2Rq2" />
 
     <TextView
         android:id="@+id/fareamtRq2"
         android:layout_width="157dp"
         android:layout_height="27dp"
-        android:layout_marginTop="149dp"
-        android:layout_marginEnd="128dp"
+        android:layout_marginStart="4dp"
         android:text="You have a ride offer"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="@id/blackImRq2"
+        app:layout_constraintTop_toTopOf="@id/blackImRq2" />
 
     <Button
         android:id="@+id/AcceptButtonRq2"
         android:layout_width="76dp"
         android:layout_height="43dp"
-        android:layout_marginStart="124dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginBottom="8dp"
         android:text="Accept"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/blackImRq2" />
+        app:layout_constraintBottom_toBottomOf="@+id/blackImRq2"
+        app:layout_constraintStart_toStartOf="@id/blackImRq2" />
 
     <Button
         android:id="@+id/DeclineRq2"
         android:layout_width="70dp"
         android:layout_height="42dp"
-        android:layout_marginTop="2dp"
-        android:layout_marginEnd="126dp"
+        android:layout_marginStart="88dp"
+        android:layout_marginBottom="8dp"
         android:text="Decline"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/blackImRq2" />
+        app:layout_constraintBottom_toBottomOf="@+id/blackImRq2"
+        app:layout_constraintStart_toStartOf="@id/blackImRq2" />
 
     <Button
         android:id="@+id/viewDrProfRq2"
         android:layout_width="123dp"
         android:layout_height="48dp"
-        android:layout_marginTop="19dp"
-        android:layout_marginEnd="144dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="20dp"
         android:text="View Profile"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/blackImRq2" />
+        app:layout_constraintEnd_toEndOf="@id/blackImRq2"
+        app:layout_constraintTop_toBottomOf="@id/fareamtRq2" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

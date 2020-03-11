@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 public class RiderProfileActivity extends AppCompatActivity {
 
@@ -14,9 +15,9 @@ public class RiderProfileActivity extends AppCompatActivity {
     String username;
     String email;
     String phoneNumber;
-    EditText emailField;
-    EditText usernameField;
-    EditText phoneNumberField;
+    TextView emailField;
+    TextView usernameField;
+    TextView phoneNumberField;
     Button deleteButton;
 
     @Override
@@ -38,9 +39,9 @@ public class RiderProfileActivity extends AppCompatActivity {
         username = myself.getFirstName();
         email = myself.getEmail();
 
-        phoneNumberField.setText("Found");
-        usernameField.setText("Found");
-        emailField.setText("Found");
+        phoneNumberField.setText(phoneNumber);
+        usernameField.setText(username);
+        emailField.setText(email);
 
         deleteButton = findViewById(R.id.deleteAccButtonRdIn);
         deleteButton.setOnClickListener(new View.OnClickListener() {

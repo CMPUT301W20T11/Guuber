@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".ViewTripsActivity"></activity>
-        <activity android:name=".DriverProfileActivity"></activity>
+        <activity android:name=".DriverProfilActivity"></activity>
         <activity android:name=".RiderProfileActivity"></activity>
         <activity
             android:name=".LoginActivity"

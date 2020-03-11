@@ -7,20 +7,22 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
-public class DriverProfileActivity extends AppCompatActivity {
-
+public class DriverProfilActivity extends AppCompatActivity {
     Driver myself;
     String username;
     String email;
     String phoneNumber;
     String carReg;
     String status;
-    EditText emailField;
-    EditText usernameField;
-    EditText phoneNumberField;
-    EditText vehicleRegField;
-    EditText statusField;
+
+    TextView emailField;
+    TextView usernameField;
+    TextView phoneNumberField;
+    TextView vehicleRegField;
+    TextView statusField;
+
     Button deleteButton;
     Vehicle vehicle;
 
@@ -35,25 +37,33 @@ public class DriverProfileActivity extends AppCompatActivity {
         vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
 
         myself = new Driver("+15879388900", "osiemusariri@gmail.com", "Oswell",
-                "Musariri", vehicle);
+        "Musariri", vehicle);
 
         vehicleRegField = findViewById(R.id.carRegTextDrIn);
-        phoneNumberField = findViewById(R.id.phoneTextRdIn);
-        usernameField = findViewById(R.id.usernameTextRdIn);
-        emailField = findViewById(R.id.emailTextRdIn);
+        phoneNumberField = findViewById(R.id.phoneTextDrIn);
+        usernameField = findViewById(R.id.usernameTextDrIn);
+        emailField = findViewById(R.id.emailTextDrIn);
         statusField = findViewById(R.id.availabilityTextDrIn);
 
         phoneNumber = myself.getPhoneNumber();
         username = myself.getFirstName();
         email = myself.getEmail();
-        //carReg = myself.getVehicle().getReg();
+        carReg = myself.getVehicle().getReg();
+        status = myself.getStatus();
 
-        vehicleRegField.setText("Found");
-        phoneNumberField.setText("Found");
-        usernameField.setText("Found");
-        emailField.setText("Found");
-        statusField.setText("Found");
+        vehicleRegField.setText(carReg);
+        phoneNumberField.setText(phoneNumber);
+        usernameField.setText(username);
+        emailField.setText(email);
+        statusField.setText(status);
 
+        //deleteButton = findViewById(R.id.deleteAccButtonRdIn);
+        //deleteButton.setOnClickListener(new View.OnClickListener() {
+        //  @Override
+        //  public void onClick(View v) {
+         //   System.out.println("first statement.");
+        //}
+        //});
         deleteButton = findViewById(R.id.deleteAccButtonRdIn);
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
