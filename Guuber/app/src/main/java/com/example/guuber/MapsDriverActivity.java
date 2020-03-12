@@ -192,9 +192,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         .build();
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-                /**set a marker on Drivers current location**/
-                setMarker(currentLocation);
-
             }
         } else {
             /**if user permission has been checked and
@@ -210,6 +207,34 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     .build();
             guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
+
+        /**draw the open requests on the map**/
+        drawOpenRequests();
+
+    }
+
+    public void drawOpenRequests(){
+        /**near San Fran google Plex ( where emulator location is**/
+        LatLng mockLatLng = new LatLng(37.5200, -122.08856);
+        Rider mockRider = new Rider("780-123-4565","mockEmail","leah","copeland");
+
+        guuberDriverMap.addMarker(new MarkerOptions().position(mockLatLng)
+                .title( "OPEN REQUEST\n" +
+                        "name: " +  mockRider.getFirstName() + " " +
+                        mockRider.getLastName() + "\n " +
+                        "Phone Number: " + mockRider.getPhoneNumber() + " " +
+                        "Email: " + mockRider.getEmail()));
+
+        /**near U of A (where default location is set if location permission is not granted**/
+        LatLng mockLatLng2 = new LatLng(53.5213, -113.5213);
+        Rider mockRider2 = new Rider("780-123-4565","mockEmail","otherLeah","copeland");
+
+        guuberDriverMap.addMarker(new MarkerOptions().position(mockLatLng2)
+                .title( "OPEN REQUEST\n" +
+                        mockRider2.getFirstName() + " " +
+                        mockRider2.getLastName() + "\n " +
+                        mockRider2.getPhoneNumber() + " " +
+                        mockRider2.getEmail()));
 
     }
 
