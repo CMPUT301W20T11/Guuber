@@ -4,6 +4,8 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.Manifest;
 import android.content.Context;
@@ -17,7 +19,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -37,6 +38,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int MYPROFILE = 1;
     private static final int VIEWTRIPS = 2;
     private static final int  WALLET = 3;
+    private static final int  QR = 4;
     private Button makeRqButton;
 
     private GoogleMap guuberRiderMap;
@@ -91,7 +93,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 }else if (position == WALLET){
                     /**start the walleett activity**/
                     //spinner.setSelection(OPTIONS);
-                }
+                }else if (position == QR){
+                /**start the walleett activity**/
+                makeQR();
+                riderSpinner.setSelection(MENU);
+            }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -192,5 +198,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         startActivity(riderProfileIntent);
     }
 
+    public void makeQR(){
+        final Intent qrProfileIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
+        startActivity(qrProfileIntent);
+    }
 
 }

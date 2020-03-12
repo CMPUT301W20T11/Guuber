@@ -17,5 +17,9 @@
         <item>My Profile</item>
         <item>View Trips</item>
         <item>Wallet</item>
+        <item>Generate QR</item>
     </string-array>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
