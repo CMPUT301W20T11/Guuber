@@ -34,6 +34,7 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 
+
 public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
@@ -82,7 +83,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
          * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
         riderSpinner =  findViewById(R.id.rider_spinner); //set the rider spinner
-        ArrayAdapter<String> RiderSpinnerAdapter = new ArrayAdapter<String>(MapsRiderActivity.this, android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.menu));
+        ArrayAdapter<String> RiderSpinnerAdapter = new ArrayAdapter<String>(MapsRiderActivity.this, android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.menuRider));
         RiderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         riderSpinner.setAdapter(RiderSpinnerAdapter);
 

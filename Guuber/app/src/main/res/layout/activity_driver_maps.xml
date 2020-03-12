@@ -10,8 +10,8 @@
         android:id="@+id/driver_map"
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
-        android:layout_height="557dp"
-        android:layout_marginTop="36dp"
+        android:layout_height="590dp"
+        android:layout_marginTop="50dp"
         map:layout_constraintEnd_toEndOf="parent"
         map:layout_constraintHorizontal_bias="0.506"
         map:layout_constraintStart_toStartOf="parent"
@@ -21,13 +21,13 @@
 
     <Button
         android:id="@+id/browse_request_button"
-        android:layout_width="335dp"
-        android:layout_height="68dp"
-        android:layout_marginBottom="16dp"
+        android:layout_width="370dp"
+        android:layout_height="55dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/button_states"
         android:backgroundTint="#212640"
         android:fontFamily="monospace"
-        android:text="Browse Request"
+        android:text="Offer Request"
         android:textColor="#985742"
         android:textSize="18sp"
         map:layout_constraintBottom_toBottomOf="parent"
@@ -37,12 +37,38 @@
 
     <Spinner
         android:id="@+id/driver_spinner"
-        android:layout_width="124dp"
-        android:layout_height="21dp"
+        android:layout_width="90dp"
+        android:layout_height="30dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
         android:background="#FF985742"
         map:layout_constraintStart_toStartOf="parent"
+        map:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/geo_location_EditText"
+        android:layout_width="200dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:background="#FFFFFFFF"
+        android:inputType="numberDecimal"
+        android:hint = "click on map"
+        map:layout_constraintStart_toEndOf="@+id/driver_spinner"
+        map:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/driver_search_button"
+        android:layout_width="80dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/button_states"
+        android:backgroundTint="#FF87702E"
+        android:fontFamily="monospace"
+        android:text="Search"
+        android:textColor="#FFFFFF"
+        map:layout_constraintStart_toEndOf="@+id/geo_location_EditText"
         map:layout_constraintTop_toTopOf="parent" />
 
 

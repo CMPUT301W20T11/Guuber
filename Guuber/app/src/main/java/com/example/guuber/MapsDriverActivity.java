@@ -15,6 +15,7 @@ import android.location.LocationManager;
 //import android.net.http.AndroidHttpClient;
 import android.net.http.AndroidHttpClient;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -31,6 +32,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 //import org.apache.http.HttpResponse;
 //import org.apache.http.client.methods.HttpGet;
@@ -58,18 +60,29 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
 
     private GoogleMap guuberDriverMap;
-    Spinner driverSpinner;
+    private Spinner driverSpinner;
+    private Button driverSearchButton;
+    private EditText geoLocationSearch;
+    private LatLng search;
 
-    LatLng destination;
-    LatLng origin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         setContentView(R.layout.activity_driver_maps);
-        driverSpinner = findViewById(R.id.driver_spinner); //set the driver spinner
+        driverSpinner = findViewById(R.id.driver_spinner);
+        geoLocationSearch = findViewById(R.id.geo_location_EditText);
+
+        /**instructions for User to provide their destination
+         * delayed to give time for map rendering**/
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                String toastStr = "Click on the Map and press Search to Browse Open Requests in That Area!";
+                Toast.makeText(MapsDriverActivity.this,toastStr,Toast.LENGTH_LONG).show();
+            }
+        },3000);
 
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
@@ -81,10 +94,31 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         /**initialize a spinner and set its adapter, strings are in 'values'**/
         /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
          * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
-        ArrayAdapter<String> driverSpinnerAdapter = new ArrayAdapter<String>(MapsDriverActivity.this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menu));
+        ArrayAdapter<String> driverSpinnerAdapter = new ArrayAdapter<String>(MapsDriverActivity.this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menuDriver));
         driverSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         driverSpinner.setAdapter(driverSpinnerAdapter);
 
+
+        /**when driver clicks search button,
+         * zoom in on area to view open requests*/
+        driverSearchButton = findViewById(R.id.driver_search_button);
+        driverSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getSearch() != null) {
+                    LatLng parse = getSearch();
+
+                    /**move the camera to searching location**/
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(parse)
+                            .zoom(15)
+                            .build();
+                    guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }else{
+                    invalidSearchToast();
+                }
+            }
+        });
 
         /**calling methods based on the item in the spinner drop down menu that is clicked**/
         driverSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -124,6 +158,17 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         guuberDriverMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         guuberDriverMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
 
+        /**log the coords in console upon map click
+         * this is giving the user a chance to set their destination**/
+        guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng arg0){
+                android.util.Log.i("onMapClick", arg0.toString());
+                geoLocationSearch.setText(arg0.toString());
+                setSearch(arg0);
+            }
+        });
+
 
         if (checkUserPermission()) {
             /**if user permission have been checked
@@ -134,66 +179,57 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
-            Location currentLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
 
+            if (location != null) {
+                /**create a new LatLng location object for the user current location**/
+                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
-            if (currentLocation != null) {
+                /**move the camera to current location**/
                 CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
-                        .zoom(12)
+                        .target(currentLocation)
+                        .zoom(10)
                         .build();
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-                /**currlocation is non-null: initiliaze origin as current location**/
-                LatLng currLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                setOrigin(currLocation);
+                /**set a marker on Drivers current location**/
+                setMarker(currentLocation);
+
             }
         } else {
-            /**display a fragment that tells user their
-             * location permission is required*/
+            /**if user permission has been checked and
+             * location services have been denied
+             * set map to display Edmonton (for testing)*/
             guuberDriverMap.setMyLocationEnabled(false);
-            new EnableLocationServices().show(getSupportFragmentManager(), "ENABLE_LOCATION");
+            LatLng UniversityOfAlberta = new LatLng( 53.5213 , -113.5213);
+
+            /**move the camera to current location**/
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(UniversityOfAlberta)
+                    .zoom(12)
+                    .build();
+            guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
 
-
-        guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng arg0) {
-                try {
-                    android.util.Log.i("onMapClick", arg0.toString());
-                    setDestination(arg0);
-
-                    drawRoute(getOrigin(),arg0);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-
     }
 
-
-    /**set user origin as their currentlocation**/
-    public void setOrigin(LatLng origin){
-        this.origin = origin;
+    /**set a marker given LATLNG information**/
+    public void setMarker(LatLng locationToMark){
+        guuberDriverMap.addMarker(new MarkerOptions().position(locationToMark));
     }
 
-    /**get user origin**/
-    public LatLng getOrigin(){
-        return origin;
+    public LatLng getSearch(){
+        return search;
     }
 
-    /**set user destination upon map click**/
-    public void setDestination(LatLng destination){
-        this.destination = destination;
+    public void setSearch(LatLng search){
+        this.search = search;
     }
 
-    /**get currently set user destination**/
-    public LatLng getDestination(){
-        return destination;
+    public void invalidSearchToast(){
+        String toastStr = "Invalid Search! Click on the Map and press Search to Browse Open Requests in That Area";
+        Toast.makeText(MapsDriverActivity.this,toastStr,Toast.LENGTH_LONG).show();
     }
-
 
     public void drawRoute(LatLng origin, LatLng destination) throws IOException {
         final String url = getURL(origin,destination);
@@ -215,7 +251,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         String url =
                 "https://maps.googleapis.com/maps/api/directions/json?origin="
                         + origin.latitude + "," + origin.longitude + "&destination="
-                        + destination.latitude + "," + destination.longitude + "&key=googleMapApiKey";
+                        + destination.latitude + "," + destination.longitude + "&key=AIzaSyBrMB718EfayxLwWRqw3MMRYq_bWooDkm8";
         android.util.Log.i("URL FOR PARSING = ", url);
         return url;
     }
@@ -235,7 +271,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }
         return stringBuilder.toString();
     }
-
 
 
     /*** check user permissions**/
