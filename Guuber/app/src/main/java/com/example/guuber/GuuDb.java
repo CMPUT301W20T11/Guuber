@@ -9,21 +9,16 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentChange;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static androidx.constraintlayout.widget.Constraints.TAG;
 
 
 ///TODO:
@@ -140,46 +135,92 @@ public class GuuDb {
     }
 
 //    public void  updatename ---------------do later not as important
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /**
-     * Adds the ratings field if it doesn't exist or updates it in the database
-     * The newest rating received by the user (newRating) should be used to update the AggRating which will then update the ratings counter (RatingCounter) and the new average rating (AvgRating)
-     * @param NewRating - the new rating for the user; amount to add to AggRating
-     * @param AggRating - Aggregation of all the ratings of the user
-     * @param RatingCounter - The amount of ratings for each user
-     * @param AvgRating - The average rating for each user; AggRating/RatingCounter
+     * Adds the ratings field if it doesn't exist
+     *
+     * @param NewRatingPositive - new POSITIVE rating for the user; add amount to add to AggPositive
+     * @param NewRatingNegative - new NEGATIVE rating for the user; add amount to add to AggPositive
+     * @param AggPositive - Aggregation of all POSITIVE ratings (NewRatingPositive)
+     * @param AggNegative - Aggregation of all NEGATIVE ratings (NewRatingNegative)
+     *
+     * // Don't need the following (can be calculated at request with data above)
+     * // Can handle in the database if you want, but for now will be left to the application
+     * @param AggTotal - Aggregation of all the ratings of the user (AggPositive + AggNegative)
+     * @param PositiveAvg - The percentage of POSITIVE ratings for each user; AggPositive/AggTotal
+     * @param NegativeAvg - The percentage of NEGATIVE ratings for each user; AggNegative/AggTotal
+     *
      * */
-    public void Rating(int NewRating, int AggRating, final int RatingCounter, final double AvgRating)
+    public void RegRating(int NewRatingPositive, int NewNegativeRating, int AggPositive, int AggNegative)
     {
-        doc.update("AggRating", AggRating).addOnSuccessListener(new OnSuccessListener<Void>()
-        {
+        Map<String, Integer> rating = new HashMap<>();
+        rating.put("NewRatingPositive", NewRatingPostive);
+        rating.put("NewRatingNegative", NewRatingNegative);
+        rating.put("AggPositive", AggPositive);
+        rating.put("AggNegative", AggNegative);
+
+        doc.collection("rating").document("userRating").set(rating).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid)
             {
-                Log.d("AggRating","DocumentSnapshot successfully updated");
-
-
-                // depends on if we want to handle the ratingCounter/AvgRating updating in the database
-                // probably preffered since the former is a varaible just used here and for the avgRating system
-                // then the user class can pull the avgrating from the database if the user wants to view their current avg
-                
-                //user RatingCounter++ update 
-
-                //update AvgRating 
-                //doc.update("AvgRating", AvgRating).addOnSuccessListener(new OnSuccessListener<Void>() {
-                //    @Override
-                //    public void onSuccess(Void aVoid) {
-                //        Log.d("AvgRating","Documentsnapshot updated");
-                //    }
-                //});
-
+                Log.d("ratingDoc","successfully created");
             }
-        }).addOnFailureListener(new OnFailureListener() {
+        }).addOnFailureListener(new OnFailureListener()
+        {
             @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.w("AggRating","DocumentSnapshot successfully updated",e);
+            public void onFailure(@NonNull Exception e)
+            {
+                Log.w("ratingDoc","Error writing document");
             }
         });
     }
+
+    /**
+     * updates the rating field in the database
+     *
+     * @param NewRatingPositive - new POSITIVE rating for the user; add amount to add to AggPositive
+     * @param NewRatingNegative - new NEGATIVE rating for the user; add amount to add to AggPositive
+     * @param AggPositive - Aggregation of all POSITIVE ratings (NewRatingPositive)
+     * @param AggNegative - Aggregation of all NEGATIVE ratings (NewRatingNegative)
+     *
+     * */
+    public void UpdateRating(int NewRatingPositive, int NewNegativeRating, int AggPositive, int AggNegative)
+    {
+        Map<String, Integer> rating = new HashMap<>();
+        rating.put("NewRatingPositive", NewRatingPostive);
+        rating.put("NewRatingNegative", NewRatingNegative);
+        rating.put("AggPositive", AggPositive);
+        rating.put("AggNegative", AggNegative);
+
+        doc.collection("rating").document("userRating").update(rating).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d("updateRating","Rating updated");
+            }
+        }).addOnFailureListener(new OnFailureListener()
+        {
+            @Override
+            public void onFailure(@NonNull Exception e)
+            {
+                Log.w("updateRating","Update failed");
+            }
+        });
+    }
+
+
 
 
 
