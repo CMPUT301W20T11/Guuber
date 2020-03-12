@@ -1,6 +1,9 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
+/**looks for a key in local environment file***/
+def googleMapApiKey = System.getenv("googleMapApiKey");
+
 android {
     useLibrary 'org.apache.http.legacy'
     compileSdkVersion 29

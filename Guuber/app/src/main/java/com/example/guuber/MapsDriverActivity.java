@@ -215,7 +215,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         String url =
                 "https://maps.googleapis.com/maps/api/directions/json?origin="
                         + origin.latitude + "," + origin.longitude + "&destination="
-                        + destination.latitude + "," + destination.longitude + "&key=AIzaSyDCkKe7ofnXsqhqijwPNDNr4VhoyJ0uYOI";
+                        + destination.latitude + "," + destination.longitude + "&key=googleMapApiKey";
         android.util.Log.i("URL FOR PARSING = ", url);
         return url;
     }

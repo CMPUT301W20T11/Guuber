@@ -41,7 +41,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDCkKe7ofnXsqhqijwPNDNr4VhoyJ0uYOI" />
+            android:value= "googleMapApiKey" />
 
         <activity
             android:name=".MapsRiderActivity"
