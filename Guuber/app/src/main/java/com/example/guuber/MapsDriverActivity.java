@@ -13,7 +13,9 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 //import android.net.http.AndroidHttpClient;
+import android.net.http.AndroidHttpClient;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -30,9 +32,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 //import org.apache.http.HttpResponse;
 //import org.apache.http.client.methods.HttpGet;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -54,36 +60,30 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
 
     private GoogleMap guuberDriverMap;
-    Spinner driverSpinner;
+    private Spinner driverSpinner;
+    private Button driverSearchButton;
+    private EditText geoLocationSearch;
+    private LatLng search;
 
-
-    LatLng destination;
-    LatLng origin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         setContentView(R.layout.activity_driver_maps);
-        driverSpinner = findViewById(R.id.driver_spinner); //set the driver spinner
+        driverSpinner = findViewById(R.id.driver_spinner);
+        geoLocationSearch = findViewById(R.id.geo_location_EditText);
 
-        /**
-         * for Tinashe testing view profile activities
-         * delete late upto clear marked commet
-         */
-
-        //start here
-        Button butn = findViewById(R.id.make_request_button);
-        butn.setOnClickListener(new View.OnClickListener() {
+        /**instructions for User to provide their destination
+         * delayed to give time for map rendering**/
+        new Handler().postDelayed(new Runnable() {
             @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
-                //final Intent viewTripsIntent = new Intent(MapsDriverActivity.this, ViewTripsActivity.class);
-                startActivity(intent);
+            public void run() {
+                String toastStr = "Click on the Map and press Search to Browse Open Requests in That Area!";
+                Toast.makeText(MapsDriverActivity.this,toastStr,Toast.LENGTH_LONG).show();
             }
-        });
-        //DELETE UPTO HERE TINASHE TEST
+        },3000);
+
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -94,10 +94,31 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         /**initialize a spinner and set its adapter, strings are in 'values'**/
         /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
          * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
-        ArrayAdapter<String> driverSpinnerAdapter = new ArrayAdapter<String>(MapsDriverActivity.this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menu));
+        ArrayAdapter<String> driverSpinnerAdapter = new ArrayAdapter<String>(MapsDriverActivity.this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menuDriver));
         driverSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         driverSpinner.setAdapter(driverSpinnerAdapter);
 
+
+        /**when driver clicks search button,
+         * zoom in on area to view open requests*/
+        driverSearchButton = findViewById(R.id.driver_search_button);
+        driverSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (getSearch() != null) {
+                    LatLng parse = getSearch();
+
+                    /**move the camera to searching location**/
+                    CameraPosition cameraPosition = new CameraPosition.Builder()
+                            .target(parse)
+                            .zoom(15)
+                            .build();
+                    guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                }else{
+                    invalidSearchToast();
+                }
+            }
+        });
 
         /**calling methods based on the item in the spinner drop down menu that is clicked**/
         driverSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -137,6 +158,17 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         guuberDriverMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         guuberDriverMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
 
+        /**log the coords in console upon map click
+         * this is giving the user a chance to set their destination**/
+        guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng arg0){
+                android.util.Log.i("onMapClick", arg0.toString());
+                geoLocationSearch.setText(arg0.toString());
+                setSearch(arg0);
+            }
+        });
+
 
         if (checkUserPermission()) {
             /**if user permission have been checked
@@ -147,93 +179,111 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
-            Location currentLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
 
+            if (location != null) {
+                /**create a new LatLng location object for the user current location**/
+                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
 
-            if (currentLocation != null) {
+                /**move the camera to current location**/
                 CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()))
-                        .zoom(12)
+                        .target(currentLocation)
+                        .zoom(10)
                         .build();
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-                /**currlocation is non-null: initiliaze origin as current location**/
-                LatLng currLocation = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-                setOrigin(currLocation);
             }
         } else {
-            /**display a fragment that tells user their
-             * location permission is required*/
+            /**if user permission has been checked and
+             * location services have been denied
+             * set map to display Edmonton (for testing)*/
             guuberDriverMap.setMyLocationEnabled(false);
-            new EnableLocationServices().show(getSupportFragmentManager(), "ENABLE_LOCATION");
+            LatLng UniversityOfAlberta = new LatLng( 53.5213 , -113.5213);
+
+            /**move the camera to current location**/
+            CameraPosition cameraPosition = new CameraPosition.Builder()
+                    .target(UniversityOfAlberta)
+                    .zoom(12)
+                    .build();
+            guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
 
+        /**draw the open requests on the map**/
+        drawOpenRequests();
 
-        guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng arg0) {
-                android.util.Log.i("onMapClick", arg0.toString());
-                setDestination(arg0); //all good
-            }
-        });
-
-        /************************
-        /**if the user has clicked a destination, log the rout in the console
-         * and draw the route
-        visualizeRoute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDestination() == null) {
-                    android.util.Log.i("NULL DESTINATION", "USER HAS NOT CHOSEN DEST");
-                } else {
-                    android.util.Log.i("CALLING DRAW ROUTE", "..");
-                }
-            }
-        });
-        *************************/
     }
 
+    public void drawOpenRequests(){
+        /**near San Fran google Plex ( where emulator location is**/
+        LatLng mockLatLng = new LatLng(37.5200, -122.08856);
+        Rider mockRider = new Rider("780-123-4565","mockEmail","leah","copeland");
 
-    /**set user origin as their currentlocation**/
-    public void setOrigin(LatLng origin){
-        this.origin = origin;
+        guuberDriverMap.addMarker(new MarkerOptions().position(mockLatLng)
+                .title( "OPEN REQUEST\n" +
+                        "name: " +  mockRider.getFirstName() + " " +
+                        mockRider.getLastName() + "\n " +
+                        "Phone Number: " + mockRider.getPhoneNumber() + " " +
+                        "Email: " + mockRider.getEmail()));
+
+        /**near U of A (where default location is set if location permission is not granted**/
+        LatLng mockLatLng2 = new LatLng(53.5213, -113.5213);
+        Rider mockRider2 = new Rider("780-123-4565","mockEmail","otherLeah","copeland");
+
+        guuberDriverMap.addMarker(new MarkerOptions().position(mockLatLng2)
+                .title( "OPEN REQUEST\n" +
+                        mockRider2.getFirstName() + " " +
+                        mockRider2.getLastName() + "\n " +
+                        mockRider2.getPhoneNumber() + " " +
+                        mockRider2.getEmail()));
+
     }
 
-    /**get user origin**/
-    public LatLng getOrigin(){
-        return origin;
+    /**set a marker given LATLNG information**/
+    public void setMarker(LatLng locationToMark){
+        guuberDriverMap.addMarker(new MarkerOptions().position(locationToMark));
     }
 
-    /**set user destination upon map click**/
-    public void setDestination(LatLng destination){
-        this.destination = destination;
+    public LatLng getSearch(){
+        return search;
     }
 
-    /**get currently set user destination**/
-    public LatLng getDestination(){
-        return destination;
+    public void setSearch(LatLng search){
+        this.search = search;
     }
 
-    /*********************************************
+    public void invalidSearchToast(){
+        String toastStr = "Invalid Search! Click on the Map and press Search to Browse Open Requests in That Area";
+        Toast.makeText(MapsDriverActivity.this,toastStr,Toast.LENGTH_LONG).show();
+    }
+
     public void drawRoute(LatLng origin, LatLng destination) throws IOException {
         final String url = getURL(origin,destination);
 
-        HttpResponse response;
-        HttpGet request;
         AndroidHttpClient client = AndroidHttpClient.newInstance("somename");
 
-        request = new HttpGet(url);
-        response = client.execute(request);
+        //HttpGet request = new HttpGet(url);
+        //HttpResponse response = client.execute(request);
 
-        InputStream source = response.getEntity().getContent();
+        /*InputStream source = response.getEntity().getContent();
         String returnValue = IOUtilsIsAnNPC(source, Charset.defaultCharset());
 
-        return returnValue;
+        return returnValue;*/
     }
-    **************************************/
 
-    /****************************
-    /**returns a string from the input stream
+    /**return the route origin and destination points**/
+    public String getURL(LatLng origin, LatLng destination) {
+        //String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=Vancouver+BC|Seattle&destinations=San+Francisco|Victoria+BC&mode=bicycling&language=fr-FR&key=YOUR_API_KEY
+        String url =
+                "https://maps.googleapis.com/maps/api/directions/json?origin="
+                        + origin.latitude + "," + origin.longitude + "&destination="
+                        + destination.latitude + "," + destination.longitude + "&key=AIzaSyBrMB718EfayxLwWRqw3MMRYq_bWooDkm8";
+        android.util.Log.i("URL FOR PARSING = ", url);
+        return url;
+    }
+
+
+
+    /**returns a string from the input stream**/
     public String IOUtilsIsAnNPC(InputStream inputStream, Charset charset) throws IOException {
         android.util.Log.i("IN IO UTIL NPC", "......");
         StringBuilder stringBuilder = new StringBuilder();
@@ -246,7 +296,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }
         return stringBuilder.toString();
     }
-    *****************************88/
 
 
     /*** check user permissions**/
@@ -296,17 +345,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
-    /******************************
-    /**return the route origin and destination points
-    public String getURL(LatLng origin, LatLng destination) {
-        String url =
-            "http://maps.googleapis.com/maps/api/directions/json?origin="
-                    + origin.latitude + "," + origin.longitude + "&destination="
-                    + destination.latitude + "," + destination.longitude + "&sensor=false";
-        android.util.Log.i("URL FOR PARSING = ", url);
-        return url;
-    }
-    *****************************/
+
+
 
 
 }

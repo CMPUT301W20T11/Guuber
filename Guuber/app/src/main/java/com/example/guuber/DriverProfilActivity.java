@@ -64,13 +64,14 @@ public class DriverProfilActivity extends AppCompatActivity {
          //   System.out.println("first statement.");
         //}
         //});
-        deleteButton = findViewById(R.id.deleteAccButtonRdIn);
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                System.out.println("first statement.");
-            }
-        });
+
+        //deleteButton = findViewById(R.id.deleteAccButtonDrIn);
+//        deleteButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                System.out.println("first statement.");
+//            }
+//        });
 
     }
     /**implement logic here for what you want to

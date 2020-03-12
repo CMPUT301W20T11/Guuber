@@ -14,10 +14,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".ViewTripsActivity"></activity>
-        <activity android:name=".DriverProfilActivity"></activity>
-        <activity android:name=".RiderProfileActivity"></activity>
+        android:theme="@style/Theme.AppCompat.Light">
+        <activity android:name=".QrActivity"></activity>
+        <activity android:name=".makeRequestScreen1" />
+        <activity android:name=".makeRequestScreen2" />
+        <activity android:name=".makeRequestScreen3" />
+        <activity android:name=".ViewTripsActivity" />
+        <activity android:name=".DriverProfilActivity" />
+        <activity android:name=".RiderProfileActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login">
@@ -37,7 +41,7 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyC1zI7NS4XQOead-ZNT_cPf8_FJDl3ykhY" />
+            android:value= "AIzaSyBrMB718EfayxLwWRqw3MMRYq_bWooDkm8" />
 
         <activity
             android:name=".MapsRiderActivity"
