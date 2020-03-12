@@ -24,7 +24,6 @@ import java.util.Map;
 ///TODO:
 //    -creating a collection of request history and being adding to it
 //    -other update methods most likely
-//    -creating a collection of ratings and able to add to that (maybe)
 
 
 
