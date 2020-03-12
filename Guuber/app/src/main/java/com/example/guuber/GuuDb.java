@@ -153,9 +153,9 @@ public class GuuDb {
      * Adds the ratings field if it doesn't exist
      *
      * @param NewRatingPositive - new POSITIVE rating for the user; add amount to add to AggPositive
-     * @param NewRatingNegative - new NEGATIVE rating for the user; add amount to add to AggPositive
-     * @param AggPositive - Aggregation of all POSITIVE ratings (NewRatingPositive)
-     * @param AggNegative - Aggregation of all NEGATIVE ratings (NewRatingNegative)
+     * @param NewRatingNegative - new NEGATIVE rating for the user; add amount to add to AggNegative
+     * @param AggPositive - Aggregation of all POSITIVE ratings (all NewRatingPositive ever made)
+     * @param AggNegative - Aggregation of all NEGATIVE ratings (all NewRatingNegative ever made)
      *
      * // Don't need the following (can be calculated at request with data above)
      * // Can handle in the database if you want, but for now will be left to the application
