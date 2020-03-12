@@ -74,8 +74,8 @@ public class GuuDb {
                 if(documentSnapshot.exists()){
                     user[0] = documentSnapshot.toObject(User.class);
                 }
-                else{
-
+                else {
+                    ;
                 }
             }
         });
@@ -91,7 +91,8 @@ public class GuuDb {
      * @param phone - the contact number of the user
      * @param type - the type of account being created either rider of driver
      * */
-    public void setUpUser(String email, String first,String last,String username,String phone,String type){
+    public void setUpUser(String email, String first,String last,String username,String phone,String type)
+    {
         Map<String,Object> user = new HashMap<>();
         user.put("first",first);
         user.put("last",last);
