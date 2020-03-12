@@ -138,17 +138,6 @@ public class GuuDb {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
     /**
      * Adds the ratings field if it doesn't exist
      *
@@ -219,12 +208,6 @@ public class GuuDb {
             }
         });
     }
-
-
-
-
-
-
 
 
 
