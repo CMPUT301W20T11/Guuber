@@ -164,10 +164,10 @@ public class GuuDb {
      * @param NegativeAvg - The percentage of NEGATIVE ratings for each user; AggNegative/AggTotal
      *
      * */
-    public void RegRating(int NewRatingPositive, int NewNegativeRating, int AggPositive, int AggNegative)
+    public void RegRating(int NewRatingPositive, int NewRatingNegative, int AggPositive, int AggNegative)
     {
-        Map<String, Integer> rating = new HashMap<>();
-        rating.put("NewRatingPositive", NewRatingPostive);
+        Map<String,Object> rating = new HashMap<>();
+        rating.put("NewRatingPositive", NewRatingPositive);
         rating.put("NewRatingNegative", NewRatingNegative);
         rating.put("AggPositive", AggPositive);
         rating.put("AggNegative", AggNegative);
@@ -197,10 +197,10 @@ public class GuuDb {
      * @param AggNegative - Aggregation of all NEGATIVE ratings (NewRatingNegative)
      *
      * */
-    public void UpdateRating(int NewRatingPositive, int NewNegativeRating, int AggPositive, int AggNegative)
+    public void UpdateRating(int NewRatingPositive, int NewRatingNegative, int AggPositive, int AggNegative)
     {
-        Map<String, Integer> rating = new HashMap<>();
-        rating.put("NewRatingPositive", NewRatingPostive);
+        Map<String,Object> rating = new HashMap<>();
+        rating.put("NewRatingPositive", NewRatingPositive);
         rating.put("NewRatingNegative", NewRatingNegative);
         rating.put("AggPositive", AggPositive);
         rating.put("AggNegative", AggNegative);
