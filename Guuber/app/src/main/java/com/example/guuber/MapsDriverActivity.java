@@ -13,6 +13,7 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 //import android.net.http.AndroidHttpClient;
+import android.net.http.AndroidHttpClient;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -33,6 +34,9 @@ import com.google.android.gms.maps.model.MapStyleOptions;
 
 //import org.apache.http.HttpResponse;
 //import org.apache.http.client.methods.HttpGet;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -55,7 +59,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     private GoogleMap guuberDriverMap;
     Spinner driverSpinner;
-
 
     LatLng destination;
     LatLng origin;
@@ -156,25 +159,18 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng arg0) {
-                android.util.Log.i("onMapClick", arg0.toString());
-                setDestination(arg0); //all good
-            }
-        });
+                try {
+                    android.util.Log.i("onMapClick", arg0.toString());
+                    setDestination(arg0);
 
-        /************************
-        /**if the user has clicked a destination, log the rout in the console
-         * and draw the route
-        visualizeRoute.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (getDestination() == null) {
-                    android.util.Log.i("NULL DESTINATION", "USER HAS NOT CHOSEN DEST");
-                } else {
-                    android.util.Log.i("CALLING DRAW ROUTE", "..");
+                    drawRoute(getOrigin(),arg0);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
-        *************************/
+
+
     }
 
 
@@ -198,26 +194,35 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         return destination;
     }
 
-    /*********************************************
+
     public void drawRoute(LatLng origin, LatLng destination) throws IOException {
         final String url = getURL(origin,destination);
 
-        HttpResponse response;
-        HttpGet request;
         AndroidHttpClient client = AndroidHttpClient.newInstance("somename");
 
-        request = new HttpGet(url);
-        response = client.execute(request);
+        //HttpGet request = new HttpGet(url);
+        //HttpResponse response = client.execute(request);
 
-        InputStream source = response.getEntity().getContent();
+        /*InputStream source = response.getEntity().getContent();
         String returnValue = IOUtilsIsAnNPC(source, Charset.defaultCharset());
 
-        return returnValue;
+        return returnValue;*/
     }
-    **************************************/
 
-    /****************************
-    /**returns a string from the input stream
+    /**return the route origin and destination points**/
+    public String getURL(LatLng origin, LatLng destination) {
+        //String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=Vancouver+BC|Seattle&destinations=San+Francisco|Victoria+BC&mode=bicycling&language=fr-FR&key=YOUR_API_KEY
+        String url =
+                "https://maps.googleapis.com/maps/api/directions/json?origin="
+                        + origin.latitude + "," + origin.longitude + "&destination="
+                        + destination.latitude + "," + destination.longitude + "&key=AIzaSyDCkKe7ofnXsqhqijwPNDNr4VhoyJ0uYOI";
+        android.util.Log.i("URL FOR PARSING = ", url);
+        return url;
+    }
+
+
+
+    /**returns a string from the input stream**/
     public String IOUtilsIsAnNPC(InputStream inputStream, Charset charset) throws IOException {
         android.util.Log.i("IN IO UTIL NPC", "......");
         StringBuilder stringBuilder = new StringBuilder();
@@ -230,7 +235,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }
         return stringBuilder.toString();
     }
-    *****************************88/
+
 
 
     /*** check user permissions**/
@@ -280,17 +285,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
-    /******************************
-    /**return the route origin and destination points
-    public String getURL(LatLng origin, LatLng destination) {
-        String url =
-            "http://maps.googleapis.com/maps/api/directions/json?origin="
-                    + origin.latitude + "," + origin.longitude + "&destination="
-                    + destination.latitude + "," + destination.longitude + "&sensor=false";
-        android.util.Log.i("URL FOR PARSING = ", url);
-        return url;
-    }
-    *****************************/
+
+
 
 
 }
