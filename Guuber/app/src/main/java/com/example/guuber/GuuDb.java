@@ -291,7 +291,7 @@ public class GuuDb {
      * Cancel the current request
      * */
     public void cancelRequest(){
-        doc.collection("curReqeust").document("curRequest").delete();
+        doc.collection("curRequest").document("curRequest").delete();
 
     }
     /**
