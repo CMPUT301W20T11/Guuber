@@ -9,7 +9,7 @@
     <fragment
         android:id="@+id/driver_map"
         class="com.google.android.gms.maps.SupportMapFragment"
-        android:layout_width="336dp"
+        android:layout_width="match_parent"
         android:layout_height="557dp"
         android:layout_marginTop="36dp"
         map:layout_constraintEnd_toEndOf="parent"
