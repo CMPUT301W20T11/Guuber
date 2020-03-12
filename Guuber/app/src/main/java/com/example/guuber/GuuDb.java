@@ -25,8 +25,7 @@ import java.util.Map;
 //    -creating a collection of request history and being adding to it
 //    -other update methods most likely
 //    -creating a collection of ratings and able to add to that (maybe)
-//    -an average rating of the user (maybe)
-//          - will add once ratings has been established in user?
+
 
 
 
