@@ -15,9 +15,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ViewTripsActivity"></activity>
-        <activity android:name=".DriverProfilActivity"></activity>
-        <activity android:name=".RiderProfileActivity"></activity>
+        <activity android:name=".QrActivity"></activity>
+        <activity android:name=".makeRequestScreen1" />
+        <activity android:name=".makeRequestScreen2" />
+        <activity android:name=".makeRequestScreen3" />
+        <activity android:name=".ViewTripsActivity" />
+        <activity android:name=".DriverProfilActivity" />
+        <activity android:name=".RiderProfileActivity" />
         <activity
             android:name=".LoginActivity"
             android:label="@string/title_activity_login">
