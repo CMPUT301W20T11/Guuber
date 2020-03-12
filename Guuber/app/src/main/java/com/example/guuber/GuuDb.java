@@ -135,8 +135,6 @@ public class GuuDb {
 
 //    public void  updatename ---------------do later not as important
 
-
-
     /**
      * Adds the ratings field if it doesn't exist
      *
@@ -144,13 +142,6 @@ public class GuuDb {
      * @param NewRatingNegative - new NEGATIVE rating for the user; add amount to add to AggNegative
      * @param AggPositive - Aggregation of all POSITIVE ratings (all NewRatingPositive ever made)
      * @param AggNegative - Aggregation of all NEGATIVE ratings (all NewRatingNegative ever made)
-     *
-     * // Don't need the following (can be calculated at request with data above)
-     * // Can handle in the database if you want, but for now will be left to the application
-     * @param AggTotal - Aggregation of all the ratings of the user (AggPositive + AggNegative)
-     * @param PositiveAvg - The percentage of POSITIVE ratings for each user; AggPositive/AggTotal
-     * @param NegativeAvg - The percentage of NEGATIVE ratings for each user; AggNegative/AggTotal
-     *
      * */
     public void RegRating(int NewRatingPositive, int NewRatingNegative, int AggPositive, int AggNegative)
     {
@@ -285,9 +276,29 @@ public class GuuDb {
     }
 
     /**
+     * set up a current request for the user and adds it to the db
+     * @param user - the userclass of the person
+     * @param price - the set price with tip
+     * @param location - the destination they user wants to go
+     */
+    public void setCurRequest(User user,int price, String location){
+        Map<String,Object> requestDetail = new HashMap<>();
+        requestDetail.put("username",user.getFirstName()+" " + user.getLastName());
+        requestDetail.put("cost",price);
+        requestDetail.put("location",location);
+        doc.collection("curRequest").document("curRequest").set(requestDetail);
+    }
+    /**
+     * Cancel the current request
+     * */
+    public void cancelRequest(){
+        doc.collection("curReqeust").document("curRequest").delete();
+
+    }
+    /**
      * Put the completed request in the user history
      * if the collection of request history does not exist it will create it
-     * @param cost - the cost of the request
+     * @param cost - the cost of the request in total
      * @param driver - There driver that completed their request
      * */
     public void addToRequestHist(int cost, String driver){
@@ -304,7 +315,7 @@ public class GuuDb {
     /**
      * Gets the request history of the user
      * @return
-     *      Returns a list of documentssnapshots
+     *      Returns a list of documentSnapshots
      * */
     public List<DocumentSnapshot> getRequestHist(){
         return doc.collection("reqHistory").get().getResult().getDocuments();
