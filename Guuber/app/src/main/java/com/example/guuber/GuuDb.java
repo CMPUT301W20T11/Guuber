@@ -44,19 +44,22 @@ public class GuuDb {
 
     /**
      * find the doc of user and uses it as a reference
-     * @param username - the username to find in the database
+     * @param email - the email to find in the database
+     *
+     *
+     * Change to username when possible
      */
 
-    public void findUser(final String username){
-        doc = root.document(username);
+    public void findUser(final String email){
+        doc = root.document(email);
         doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    Log.d(username,"Document exist");
+                    Log.d(email,"Document exist");
                 }
                 else{
-                    Log.d(username, "Document does not exist");
+                    Log.d(email, "Document does not exist");
                 }
             }
         });
