@@ -9,10 +9,6 @@ public class WalletTest {
 		return new Wallet();
 	}
 
-	private Transaction mockTransaction(){
-		return new Transaction(10, "1");
-	}
-
 	@Test
 	public void creationTest() {
 		Wallet wallet = mockWallet();
