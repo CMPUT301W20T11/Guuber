@@ -24,7 +24,7 @@ public class TransactionController {
      */
     private static boolean processTrans(User user1, User user2, Double amount){
         // Generate transaction
-        Transaction transaction = new Transaction(amount, createID(), user1, user2);
+        Transaction transaction = new Transaction(amount, createID());
 
         // Get wallet objects
         Wallet wallet1 = user1.getWallet();
@@ -52,7 +52,7 @@ public class TransactionController {
      */
     private static boolean processDeposit(User user1, Double amount){
         // Generate transaction
-        Transaction transaction = new Transaction(amount, createID(), user1);
+        Transaction transaction = new Transaction(amount, createID());
 
         // Get wallet object
         Wallet wallet1 = user1.getWallet();

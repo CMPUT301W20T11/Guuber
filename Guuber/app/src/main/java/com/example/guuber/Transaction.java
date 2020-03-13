@@ -16,41 +16,21 @@ public class Transaction {
     private String date;
     private double amount;
     private String id;
-    private User user1;
-    private User user2;
 
     /**
      * Transaction between wallets
      * @param amount - Transaction amount
-     * @param user1 - User receiving money
-     * @param user2 - User giving money
+     * @param id - Transaction id
      */
-    public Transaction(double amount, String id, User user1, User user2) {
+    public Transaction(double amount, String id) {
         Date datetime = new Date();
         this.time = tFormat.format(datetime);
         this.date = dFormat.format(datetime);
 
         this.amount = amount;
         this.id = id;
-        this.user1 = user1;
-        this.user2 = user2;
     }
 
-    /**
-     * Deposit transaction
-     * @param amount - Transaction amount
-     * @param user1 - User receiving money
-     */
-    public Transaction(double amount, String id, User user1) {
-        Date datetime = new Date();
-        this.time = tFormat.format(datetime);
-        this.date = dFormat.format(datetime);
-
-        this.amount = amount;
-        this.id = id;
-        this.user1 = user1;
-        this.user2 = null;
-    }
 
     /**
      * Get the time of transaction
@@ -114,37 +94,5 @@ public class Transaction {
      */
     public void setId(String id) {
         this.id = id;
-    }
-
-    /**
-     * Get the user receiving funds
-     * @return - User receiving funds
-     */
-    public User getUser1() {
-        return user1;
-    }
-
-    /**
-     * Set the user receiving funds
-     * @param user1 - User receiving funds
-     */
-    public void setUser1(User user1) {
-        this.user1 = user1;
-    }
-
-    /**
-     * Get the user withdrawing funds
-     * @return - User withdrawing funds
-     */
-    public User getUser2() {
-        return user2;
-    }
-
-    /**
-     * Set the user withdrawing funds
-     * @param user2 - User withdrawing funds
-     */
-    public void setUser2(User user2) {
-        this.user2 = user2;
     }
 }
