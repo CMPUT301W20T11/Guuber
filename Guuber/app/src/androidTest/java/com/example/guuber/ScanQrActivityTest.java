@@ -12,8 +12,8 @@ import org.junit.Test;
 
 
 /**
- * Intent testing for the scanQrActivity
- * tests are based on current app functionality
+ * Intent testing for the scanQrActivity.
+ *  Tests are based on current app functionality
  */
 public class ScanQrActivityTest {
 

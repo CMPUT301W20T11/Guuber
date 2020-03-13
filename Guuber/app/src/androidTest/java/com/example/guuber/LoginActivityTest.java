@@ -14,6 +14,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ *Intent testing for the LoginActivity Class.
+ * Tests are based on current app functionality
+ */
 public class LoginActivityTest {
 
     private Solo solo;
