@@ -1,7 +1,4 @@
-package com.example.guuber;
-
-import android.app.Activity;
-import android.content.Intent;
+package com.example.guuber.model;
 
 /**
  * Driver subclass of user, additional driver functionality added to user base

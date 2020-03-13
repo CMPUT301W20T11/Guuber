@@ -1,20 +1,17 @@
 package com.example.guuber;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
+
+import com.example.guuber.model.Driver;
+import com.example.guuber.model.Vehicle;
 
 public class makeRequestScreen3 extends AppCompatActivity{
     private EditText pickup;

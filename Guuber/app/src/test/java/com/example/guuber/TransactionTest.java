@@ -1,5 +1,7 @@
 package com.example.guuber;
 
+import com.example.guuber.model.Transaction;
+
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

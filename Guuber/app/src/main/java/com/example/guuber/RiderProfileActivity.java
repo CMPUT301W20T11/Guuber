@@ -6,8 +6,9 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
+
+import com.example.guuber.model.Rider;
 
 public class RiderProfileActivity extends AppCompatActivity {
 
