@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class DriverProfilActivity extends AppCompatActivity {
@@ -22,6 +23,9 @@ public class DriverProfilActivity extends AppCompatActivity {
     TextView phoneNumberField;
     TextView vehicleRegField;
     TextView statusField;
+    ImageView likeButton;
+    ImageView dislikeButton;
+    ImageView profileImg;
 
     Button deleteButton;
     Vehicle vehicle;
@@ -44,6 +48,9 @@ public class DriverProfilActivity extends AppCompatActivity {
         usernameField = findViewById(R.id.usernameTextDrIn);
         emailField = findViewById(R.id.emailTextDrIn);
         statusField = findViewById(R.id.availabilityTextDrIn);
+        likeButton = findViewById(R.id.likeButtonDrIn);
+        dislikeButton = findViewById(R.id.dislikeButtonDrIn);
+        profileImg = findViewById(R.id.imageViewDrIn);
 
         phoneNumber = myself.getPhoneNumber();
         username = myself.getFirstName();
@@ -56,22 +63,18 @@ public class DriverProfilActivity extends AppCompatActivity {
         usernameField.setText(username);
         emailField.setText(email);
         statusField.setText(status);
+        likeButton.setImageResource(R.drawable.smile);
+        dislikeButton.setImageResource(R.drawable.frowny);
+        profileImg.setImageResource(R.drawable.profilepic);
 
-        //deleteButton = findViewById(R.id.deleteAccButtonRdIn);
-        //deleteButton.setOnClickListener(new View.OnClickListener() {
-        //  @Override
-        //  public void onClick(View v) {
-         //   System.out.println("first statement.");
-        //}
-        //});
+        deleteButton = findViewById(R.id.deleteAccButtonDrIn);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            System.out.println("first statement.");
+        }
+        });
 
-        //deleteButton = findViewById(R.id.deleteAccButtonDrIn);
-//        deleteButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                System.out.println("first statement.");
-//            }
-//        });
 
     }
     /**implement logic here for what you want to

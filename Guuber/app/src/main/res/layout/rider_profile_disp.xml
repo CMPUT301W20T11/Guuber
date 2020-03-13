@@ -5,27 +5,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#010C0C"
     tools:context=".RiderProfileActivity">
-
-    <Button
-        android:id="@+id/buttonRdIn"
-        android:layout_width="55dp"
-        android:layout_height="49dp"
-        android:layout_marginStart="2dp"
-        android:layout_marginTop="2dp"
-        android:text="Button"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageViewRdIn"
         android:layout_width="134dp"
         android:layout_height="132dp"
-        android:layout_marginStart="67dp"
-        android:layout_marginTop="49dp"
-        android:layout_marginEnd="153dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginEnd="136dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/buttonRdIn"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/guuber" />
 
@@ -45,8 +34,8 @@
         android:id="@+id/dislikeButtonRdIn"
         android:layout_width="90dp"
         android:layout_height="100dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="88dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="68dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewRdIn"
         app:srcCompat="@drawable/guuber" />
@@ -69,6 +58,7 @@
         android:layout_marginTop="83dp"
         android:layout_marginEnd="14dp"
         android:text="Username"
+        android:textColor="#FF5722"
         app:layout_constraintEnd_toStartOf="@+id/usernameTextRdIn"
         app:layout_constraintTop_toBottomOf="@+id/likeButtonRdIn" />
 
@@ -79,6 +69,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
         android:text="Password"
+        android:textColor="#FF5722"
         app:layout_constraintEnd_toStartOf="@+id/passwordTextRdIn"
         app:layout_constraintTop_toBottomOf="@+id/usernameLabelRdIn" />
 
@@ -89,6 +80,7 @@
         android:layout_marginTop="11dp"
         android:layout_marginEnd="38dp"
         android:text="Phone"
+        android:textColor="#FF5722"
         app:layout_constraintEnd_toStartOf="@+id/phoneTextRdIn"
         app:layout_constraintTop_toBottomOf="@+id/passwordLabelRdIn" />
 
@@ -99,6 +91,7 @@
         android:layout_marginTop="11dp"
         android:layout_marginEnd="43dp"
         android:text="Email"
+        android:textColor="#FF5722"
         app:layout_constraintEnd_toStartOf="@+id/emailTextRdIn"
         app:layout_constraintTop_toBottomOf="@+id/phoneLabelRdIn" />
 
@@ -110,6 +103,7 @@
         android:layout_marginEnd="56dp"
         android:ems="10"
         android:text="Name"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/likeButtonRdIn" />
 
@@ -130,6 +124,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="56dp"
         android:ems="10"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordTextRdIn" />
 
@@ -140,6 +135,7 @@
         android:layout_marginTop="10dp"
         android:layout_marginEnd="56dp"
         android:ems="10"
+        android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/phoneTextRdIn" />
 

@@ -89,6 +89,7 @@
         android:layout_height="29dp"
         android:layout_marginBottom="132dp"
         android:text="Estimate fare amount: $170"
+        android:background="#464849"
         app:layout_constraintBottom_toBottomOf="@+id/blackImRq1"
         app:layout_constraintStart_toStartOf="@id/blackImRq1" />
 

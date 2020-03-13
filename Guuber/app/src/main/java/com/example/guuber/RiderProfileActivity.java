@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class RiderProfileActivity extends AppCompatActivity {
@@ -19,6 +20,9 @@ public class RiderProfileActivity extends AppCompatActivity {
     TextView usernameField;
     TextView phoneNumberField;
     Button deleteButton;
+    ImageView likeButton;
+    ImageView dislikeButton;
+    ImageView profileImg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +38,9 @@ public class RiderProfileActivity extends AppCompatActivity {
         phoneNumberField = findViewById(R.id.phoneTextRdIn);
         usernameField = findViewById(R.id.usernameTextRdIn);
         emailField = findViewById(R.id.emailTextRdIn);
+        likeButton = findViewById(R.id.likeButtonRdIn);
+        dislikeButton = findViewById(R.id.dislikeButtonRdIn);
+        profileImg = findViewById(R.id.imageViewRdIn);
 
         phoneNumber = myself.getPhoneNumber();
         username = myself.getFirstName();
@@ -42,6 +49,9 @@ public class RiderProfileActivity extends AppCompatActivity {
         phoneNumberField.setText(phoneNumber);
         usernameField.setText(username);
         emailField.setText(email);
+        likeButton.setImageResource(R.drawable.smile);
+        dislikeButton.setImageResource(R.drawable.frowny);
+        profileImg.setImageResource(R.drawable.profilepic);
 
         deleteButton = findViewById(R.id.deleteAccButtonRdIn);
         deleteButton.setOnClickListener(new View.OnClickListener() {
