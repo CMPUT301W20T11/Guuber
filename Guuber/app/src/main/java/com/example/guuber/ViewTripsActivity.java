@@ -13,6 +13,12 @@ import android.widget.ListView;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class contains the activity the rider and/or driver
+ * will be directed to upon selecting "View Trips"
+ * in their menu
+ * it enables their ability to view their trip history
+ */
 public class ViewTripsActivity extends AppCompatActivity {
 
     ListView TripsHistoryList;

@@ -18,6 +18,13 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+/**
+ * This class contains the activity the rider
+ * will be directed to upon selecting "generate QR"
+ * in their menu
+ * it enables their ability to generate a QR
+ */
+
 public class QrActivity extends AppCompatActivity {
 	private ImageView qrImage;
 	private Button qrButton;

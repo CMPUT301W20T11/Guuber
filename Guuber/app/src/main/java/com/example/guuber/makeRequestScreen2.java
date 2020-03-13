@@ -13,6 +13,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.guuber.model.Driver;
 import com.example.guuber.model.Vehicle;
 
+
+/**
+ * code for one of the options in
+ * makeRequestScreen1 immediately after a rider
+ * makes a request
+ */
 public class makeRequestScreen2 extends AppCompatActivity{
     private EditText pickup;
     private EditText dropoff;

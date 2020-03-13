@@ -12,6 +12,11 @@ import android.widget.TextView;
 
 import com.example.guuber.model.Rider;
 
+
+/**
+ * Code to display riders information on their profile
+ */
+
 public class RiderProfileActivity extends AppCompatActivity {
 
     Rider myself;

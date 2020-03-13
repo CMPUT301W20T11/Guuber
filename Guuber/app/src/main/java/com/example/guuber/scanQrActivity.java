@@ -16,6 +16,12 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.journeyapps.barcodescanner.BarcodeEncoder;
 
+/**
+ * This class contains the activity the driver
+ * will be directed to upon selecting "scan QR"
+ * in their menu
+ * it enables their ability to scan a QR
+ */
 public class scanQrActivity extends AppCompatActivity {
     private ImageView scanQrImage;
     private Button scanQrButton;

@@ -5,6 +5,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+/**
+ * This class contains the activity the rider and/or driver
+ * will be directed to upon selecting "Wallet"
+ * in their menu
+ * it enables their ability to view their wallet and balance details
+ */
 public class WalletActivity extends AppCompatActivity {
 
     @Override

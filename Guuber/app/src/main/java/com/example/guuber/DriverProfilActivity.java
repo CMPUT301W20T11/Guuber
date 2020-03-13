@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -11,6 +12,10 @@ import android.widget.TextView;
 
 import com.example.guuber.model.Driver;
 import com.example.guuber.model.Vehicle;
+
+/**
+ * Code to display drivers information on their profile
+ */
 
 public class DriverProfilActivity extends AppCompatActivity {
     Driver myself;

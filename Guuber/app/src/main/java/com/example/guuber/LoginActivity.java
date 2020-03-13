@@ -16,6 +16,11 @@ import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 
+/**
+ * classs to implement the Login Activity
+ * includes google sign in and ability
+ * to log in as rider or driver
+ */
 public class LoginActivity extends AppCompatActivity {
 	private static final int RC_SIGN_IN = 1;
 	private static final String TAG = "LoginActivity";

@@ -17,6 +17,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
+/**
+ * code to display the layout immediately after a rider
+ * makes a request
+ */
+
 public class makeRequestScreen1 extends AppCompatActivity{
     private EditText pickup;
     private EditText dropoff;
