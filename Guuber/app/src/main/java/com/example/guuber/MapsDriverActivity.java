@@ -208,7 +208,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
 
-        /**draw the open requests on the map**/
+        /**draw the open requests on the map
+         * currently they are just mock requests**/
         drawOpenRequests();
 
     }
