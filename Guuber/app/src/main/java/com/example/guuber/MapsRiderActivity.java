@@ -43,7 +43,6 @@ import java.util.HashMap;
 public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
-    String TAG = "Sample";
 
     /**spinner codes**/
     private static final int MENU = 0;
@@ -53,16 +52,12 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int  QR = 4;
 
     private GoogleMap guuberRiderMap;
-
     private Button makeRqButton, changeOriginButton, changeDestinationButton;
     private Spinner riderSpinner;
-
     private LatLng origin;
     private LatLng destination;
-
     private String coordsToChange;
 
-    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,19 +79,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 Toast.makeText(MapsRiderActivity.this,toastStr,Toast.LENGTH_LONG).show();
             }
         },3000);
-
-        /*******testing database
-        db = FirebaseFirestore.getInstance();
-        final User mockUserFromLeah = new User("69696969","email","Leah","Copeland");
-        //final CollectionReference collectionReference = db.collection("Cities");
-        makeRqButton.setOnLongClickListener(new View.OnLongClickListener() {
-                                                @Override
-                                                public boolean onLongClick(View v) {
-                                                    db.collection("Users")
-                                                            .add(mockUserFromLeah);
-                                                    return false;
-                                                }
-                                            });**************/
 
 
         /**initialize a spinner and set its adapter, strings are in 'values'**/
@@ -167,7 +149,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     viewRiderTrips();
                     riderSpinner.setSelection(MENU);
                 }else if (position == WALLET){
-                    /**start the walleett activity**/
+                    /**start the wallet activity**/
                     openRiderWallet();
                     riderSpinner.setSelection(MENU);
                 }else if (position == QR){
@@ -257,7 +239,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 setChangingCoordinate("destination");
             }
         } else {
-            /**if user permission have been checked
+            /**
+             * if user permission have been checked
              * and location permission has not been granted...
              **/
             guuberRiderMap.setMyLocationEnabled(false);

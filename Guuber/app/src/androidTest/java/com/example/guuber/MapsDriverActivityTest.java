@@ -41,8 +41,6 @@ public class MapsDriverActivityTest {
         solo.waitForActivity(LoginActivity.class, 1000);
         solo.clickOnText("As Driver");
         solo.clickOnText("Sign in");
-        solo.clickOnButton("Leah Copeland");
-        //solo.clickOnView(solo.getView(android.R.id.gso));
     }
 
     /**
@@ -52,6 +50,7 @@ public class MapsDriverActivityTest {
     public void driverSearchButton(){
         solo.waitForActivity(MapsDriverActivity.class, 1000);
         solo.clickOnText("Search");
+        solo.assertCurrentActivity("Activity should stay the same", MapsDriverActivity.class);
     }
 
     /**

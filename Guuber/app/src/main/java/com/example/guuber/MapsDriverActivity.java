@@ -53,6 +53,8 @@ import javax.net.ssl.HttpsURLConnection;
 public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
+
+    /**spinner codes**/
     private static final int MENU = 0;
     private static final int VIEWTRIPS = 1;
     private static final int MYPROFILE = 2;
@@ -134,11 +136,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     viewDriverProfile();
                     driverSpinner.setSelection(MENU);
                 } else if (position == WALLET) {
-                    /**start the walleett activity**/
+                    /**start the wallet activity**/
                     openDriverWallet();
                     driverSpinner.setSelection(MENU);
                 }else if (position == SCANQR){
-                    /**start the walleett activity**/
+                    /**start the scanQR activity**/
                     scanQR();
                     driverSpinner.setSelection(MENU);
                 }
@@ -164,8 +166,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         guuberDriverMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         guuberDriverMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
 
-        /**log the coords in console upon map click
-         * this is giving the user a chance to set their destination**/
+        /**
+         * logs the coordinates in console upon map click
+         * this is giving the driver a chance to browse
+         * a specified area for open requests
+         * @params latitude on longitude retrieved from map click
+         **/
         guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng arg0){
@@ -177,8 +183,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
 
         if (checkUserPermission()) {
-            /**if user permission have been checked
-             * and location permission has been granted...**/
+            /**
+             * if user permission have been checked
+             * and location permission has been granted...
+             **/
             guuberDriverMap.setMyLocationEnabled(true);
             guuberDriverMap.setOnMyLocationButtonClickListener(this);
             guuberDriverMap.setOnMyLocationClickListener(this);
@@ -197,12 +205,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         .zoom(10)
                         .build();
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
             }
         } else {
-            /**if user permission has been checked and
-             * location services have been denied
-             * set map to display Edmonton (for testing)*/
+            /**
+             * if user permission have been checked
+             * and location permission has not been granted...
+             **/
             guuberDriverMap.setMyLocationEnabled(false);
             LatLng UniversityOfAlberta = new LatLng( 53.5213 , -113.5213);
 
@@ -214,28 +222,33 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         }
 
-        /**draw the open requests on the map
-         * currently they are just mock requests**/
+        /**
+         * draw the open requests on the map
+         * currently they are just mock requests
+         **/
         drawOpenRequests();
 
     }
 
+    /**
+     * render markers on the map based on open requests
+     * currently  there are just mock open requests
+     */
     public void drawOpenRequests(){
-        /**near San Fran google Plex ( where emulator location is**/
+        /**near San Fran google Plex (where emulator location is)**/
         LatLng mockLatLng = new LatLng(37.5200, -122.08856);
         Rider mockRider = new Rider("780-123-4565","mockEmail","leah","copeland");
 
         guuberDriverMap.addMarker(new MarkerOptions()
                 .position(mockLatLng)
                 .flat(false)
-                //.visible(false)
                 .title( "OPEN REQUEST\n" +
                         "name: " +  mockRider.getFirstName() + " " +
                         mockRider.getLastName() + "\n " +
                         "Phone Number: " + mockRider.getPhoneNumber() + " " +
                         "Email: " + mockRider.getEmail()));
 
-        /**near U of A (where default location is set if location permission is not granted**/
+        /**near U of A (where default location is set if location permission is not granted)**/
         LatLng mockLatLng2 = new LatLng(53.5213, -113.5213);
         Rider mockRider2 = new Rider("780-123-4565","mockEmail","otherLeah","copeland");
 
@@ -248,26 +261,46 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     }
 
-    /**set a marker given LATLNG information**/
+    /**
+     * set a marker given LATLNG information
+     * @param locationToMark is location to set marker on
+     **/
     public void setMarker(LatLng locationToMark){
         guuberDriverMap.addMarker(new MarkerOptions().position(locationToMark));
     }
 
+    /**
+     * get the LatLng object from
+     * where the driver has set their search to
+     * @return LatLng object to navigate to
+     */
     public LatLng getSearch(){
         return search;
     }
 
+    /**
+     * ser the LatLng object from
+     * where the driver has set their search to
+     * @param search object to navigate to
+     */
     public void setSearch(LatLng search){
         this.search = search;
     }
 
+    /**
+     * inform the driver they have searched an invalid location
+     **/
     public void invalidSearchToast(){
         String toastStr = "Invalid Search! Click on the Map and press Search to Browse Open Requests in That Area";
         Toast.makeText(MapsDriverActivity.this,toastStr,Toast.LENGTH_LONG).show();
     }
 
 
-    /*** check user permissions**/
+    /**
+     * check user permissions
+     * @return true if user has reponded to permission request
+     * @return false if user has not responded to permission request
+     **/
     public boolean checkUserPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED ){
@@ -280,50 +313,62 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             }
             return false;
         } else {
-            /**user has already set location permission preferences**/
             return true;
         }
     }
 
 
-    /*** indicates current location button has been clicked... do we need?**/
+    /**
+     * indicates current location button has been clicked...
+     * @return false all other times besides onMyLocationButtonClick event
+     **/
     @Override
     public boolean onMyLocationButtonClick() {
         Toast.makeText(this, "clicked on current location", Toast.LENGTH_SHORT).show();
         return false;
     }
 
-    /*** displays the details of your location upon click**/
+    /**
+     * displays the details of your location upon click
+     * @param mylocation is a Location object representing your devices
+     *  real time location
+     **/
     @Override
     public void onMyLocationClick(@NonNull Location mylocation) {
         Toast.makeText(this, "Current location:\n" + mylocation, Toast.LENGTH_LONG).show();
     }
 
-    /*** launches the view trips history activity**/
+    /**
+     * Starts activity containing trip history for driver
+     **/
     public void viewDriverTrips() {
         final Intent driverTripsIntent = new Intent(MapsDriverActivity.this, ViewTripsActivity.class);
         startActivity(driverTripsIntent);
     }
 
-    /** launches an activity to view the driver profile**/
+    /**
+     * Starts activity to display drivers profile
+     **/
     public void viewDriverProfile() {
         final Intent driverProfileIntent = new Intent(MapsDriverActivity.this, DriverProfilActivity.class);
         startActivity(driverProfileIntent);
     }
 
-    /**view the drivers wallet**/
+    /**
+     * Starts activity to display riders wallet information
+     **/
     public void openDriverWallet(){
         final Intent driverWalletIntent = new Intent(MapsDriverActivity.this, WalletActivity.class);
         startActivity(driverWalletIntent);
     }
 
-    /**calls an activity to scan a QR code**/
+    /**
+     * Starts activity to allow rider to generate QR
+     **/
     public void scanQR(){
         final Intent scanQrProfileIntent = new Intent(MapsDriverActivity.this, scanQrActivity.class);
         startActivity(scanQrProfileIntent);
     }
-
-
 
 
 }
