@@ -29,7 +29,7 @@ public class LoginActivityTest {
     @Before
     public void setUp() throws Exception{
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
-        solo.waitForActivity(LoginActivity.class, 1000);
+        solo.waitForActivity(LoginActivity.class, 2000);
     }
 
     /**

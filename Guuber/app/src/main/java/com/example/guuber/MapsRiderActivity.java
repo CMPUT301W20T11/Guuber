@@ -153,9 +153,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     openRiderWallet();
                     riderSpinner.setSelection(MENU);
                 }else if (position == QR){
-                /**generate a QR code**/
-                makeQR();
-                riderSpinner.setSelection(MENU);
+                    /**generate a QR code**/
+                    makeQR();
+                    riderSpinner.setSelection(MENU);
                 }
             }
             @Override
@@ -243,6 +243,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
              * if user permission have been checked
              * and location permission has not been granted...
              **/
+            android.util.Log.i("onMapClick", "GOING TO EDMONTON");
             guuberRiderMap.setMyLocationEnabled(false);
             LatLng UniversityOfAlberta = new LatLng( 53.5213 , -113.5213);
 

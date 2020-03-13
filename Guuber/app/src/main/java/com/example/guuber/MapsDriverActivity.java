@@ -114,7 +114,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     /**move the camera to searching location**/
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(parse)
-                            .zoom(10)
+                            .zoom(11)
                             .build();
                     guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 }else{
