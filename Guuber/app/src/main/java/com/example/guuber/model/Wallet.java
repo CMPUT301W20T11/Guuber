@@ -1,4 +1,4 @@
-package com.example.guuber;
+package com.example.guuber.model;
 
 import java.util.ArrayList;
 

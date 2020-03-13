@@ -1,6 +1,4 @@
-package com.example.guuber;
-
-import android.content.Intent;
+package com.example.guuber.model;
 
 /**
  * Rider extension of base user class

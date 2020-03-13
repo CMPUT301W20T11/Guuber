@@ -1,17 +1,15 @@
 package com.example.guuber;
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
+
+import com.example.guuber.model.Driver;
 
 /** TripHistoryAdapter class is a custom
  * adapter class that enables us to populate a

@@ -1,4 +1,4 @@
-package com.example.guuber;
+package com.example.guuber.model;
 
 public class Vehicle {
 	private String make;
