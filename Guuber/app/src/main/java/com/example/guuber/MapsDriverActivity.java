@@ -13,7 +13,6 @@ import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 //import android.net.http.AndroidHttpClient;
-import android.net.http.AndroidHttpClient;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
@@ -24,7 +23,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.google.android.gms.common.util.IOUtils;
+import com.example.guuber.model.Rider;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -37,19 +36,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 //import org.apache.http.HttpResponse;
 //import org.apache.http.client.methods.HttpGet;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
-import javax.net.ssl.HttpsURLConnection;
-
-
+/**
+ * This class contains the home screen for a Driver.
+ *  The home screen includes a menu enabling navigation
+ *  between activities related to the account
+ *  as well as the google map fragment
+ *  and other related functionality for browsing ride requests.
+ *  Class is representative of current application functionality
+ */
 public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
@@ -114,7 +108,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     /**move the camera to searching location**/
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(parse)
-                            .zoom(10)
+                            .zoom(11)
                             .build();
                     guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 }else{

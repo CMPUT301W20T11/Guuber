@@ -14,6 +14,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ *Intent testing for the LoginActivity Class.
+ * Tests are based on current app functionality
+ */
 public class LoginActivityTest {
 
     private Solo solo;
@@ -29,7 +33,7 @@ public class LoginActivityTest {
     @Before
     public void setUp() throws Exception{
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
-        solo.waitForActivity(LoginActivity.class, 1000);
+        solo.waitForActivity(LoginActivity.class, 2000);
     }
 
     /**
@@ -72,7 +76,7 @@ public class LoginActivityTest {
         solo.clickOnText("As Driver");
         solo.clickOnText("Sign in");
         solo.waitForActivity(MapsRiderActivity.class, 1000);
-        solo.assertCurrentActivity("Wrong Activity (supposed to launch Driver activity",MapsDriverActivity.class);
+        solo.assertCurrentActivity("Wrong Activity (supposed to launch Driver activity)",MapsDriverActivity.class);
 
     }
 

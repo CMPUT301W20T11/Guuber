@@ -40,6 +40,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 
+
+/**
+ * This class contains the home screen for a Rider.
+ *  The home screen includes a menu enabling navigation
+ *  between activities related to the account
+ *  as well as the google map fragment
+ *  and other functionality for making a ride request.
+ *  Class is representative of current application functionality
+ */
+
 public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
@@ -153,9 +163,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     openRiderWallet();
                     riderSpinner.setSelection(MENU);
                 }else if (position == QR){
-                /**generate a QR code**/
-                makeQR();
-                riderSpinner.setSelection(MENU);
+                    /**generate a QR code**/
+                    makeQR();
+                    riderSpinner.setSelection(MENU);
                 }
             }
             @Override
@@ -243,6 +253,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
              * if user permission have been checked
              * and location permission has not been granted...
              **/
+            android.util.Log.i("onMapClick", "GOING TO EDMONTON");
             guuberRiderMap.setMyLocationEnabled(false);
             LatLng UniversityOfAlberta = new LatLng( 53.5213 , -113.5213);
 

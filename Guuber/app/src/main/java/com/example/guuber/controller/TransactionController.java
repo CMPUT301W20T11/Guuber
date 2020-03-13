@@ -1,4 +1,8 @@
-package com.example.guuber;
+package com.example.guuber.controller;
+
+import com.example.guuber.model.Transaction;
+import com.example.guuber.model.User;
+import com.example.guuber.model.Wallet;
 
 /**
  * Static controller to handle transaction generation and execution

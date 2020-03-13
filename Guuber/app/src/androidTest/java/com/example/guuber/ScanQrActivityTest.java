@@ -10,6 +10,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+
+/**
+ * Intent testing for the scanQrActivity.
+ *  Tests are based on current app functionality
+ */
 public class ScanQrActivityTest {
 
     private Solo solo;
@@ -25,7 +30,7 @@ public class ScanQrActivityTest {
     @Before
     public void setUp() throws Exception{
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
-        solo.waitForActivity(scanQrActivity.class, 1000);
+        solo.waitForActivity(scanQrActivity.class, 2000);
     }
 
     /**

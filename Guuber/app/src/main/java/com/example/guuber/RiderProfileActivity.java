@@ -10,6 +10,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.guuber.model.Rider;
+
 public class RiderProfileActivity extends AppCompatActivity {
 
     Rider myself;

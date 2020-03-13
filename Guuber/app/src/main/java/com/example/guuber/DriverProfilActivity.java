@@ -4,11 +4,13 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.example.guuber.model.Driver;
+import com.example.guuber.model.Vehicle;
 
 public class DriverProfilActivity extends AppCompatActivity {
     Driver myself;
@@ -48,9 +50,6 @@ public class DriverProfilActivity extends AppCompatActivity {
         usernameField = findViewById(R.id.usernameTextDrIn);
         emailField = findViewById(R.id.emailTextDrIn);
         statusField = findViewById(R.id.availabilityTextDrIn);
-        likeButton = findViewById(R.id.likeButtonDrIn);
-        dislikeButton = findViewById(R.id.dislikeButtonDrIn);
-        profileImg = findViewById(R.id.imageViewDrIn);
 
         phoneNumber = myself.getPhoneNumber();
         username = myself.getFirstName();
@@ -75,6 +74,13 @@ public class DriverProfilActivity extends AppCompatActivity {
         }
         });
 
+        //deleteButton = findViewById(R.id.deleteAccButtonDrIn);
+//        deleteButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                System.out.println("first statement.");
+//            }
+//        });
 
     }
     /**implement logic here for what you want to
