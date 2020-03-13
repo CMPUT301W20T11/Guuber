@@ -111,6 +111,8 @@ public class User extends DialogFragment{
 
     /**
      * Rate a user TODO
+     * Uses AggPositive + AggNegative from db to make AggTotal (then from there you can easily make a percentage of Negative to Positive reviews for each user)
+     * When a user gets a new rating add it to either the AggPositive or AggNegative
      */
     public void rateUser(){}
 
