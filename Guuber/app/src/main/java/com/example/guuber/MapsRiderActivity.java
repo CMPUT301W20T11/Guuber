@@ -16,6 +16,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,12 +33,17 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
-
+import java.util.HashMap;
 
 public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
+    String TAG = "Sample";
 
     /**spinner codes**/
     private static final int MENU = 0;
@@ -56,6 +62,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     private String coordsToChange;
 
+    FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,11 +85,24 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             }
         },3000);
 
+        /*******testing database
+        db = FirebaseFirestore.getInstance();
+        final User mockUserFromLeah = new User("69696969","email","Leah","Copeland");
+        //final CollectionReference collectionReference = db.collection("Cities");
+        makeRqButton.setOnLongClickListener(new View.OnLongClickListener() {
+                                                @Override
+                                                public boolean onLongClick(View v) {
+                                                    db.collection("Users")
+                                                            .add(mockUserFromLeah);
+                                                    return false;
+                                                }
+                                            });**************/
+
 
         /**initialize a spinner and set its adapter, strings are in 'values'**/
         /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
          * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
-        riderSpinner =  findViewById(R.id.rider_spinner); //set the rider spinner
+        riderSpinner = findViewById(R.id.rider_spinner); //set the rider spinner
         ArrayAdapter<String> RiderSpinnerAdapter = new ArrayAdapter<String>(MapsRiderActivity.this, android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.menuRider));
         RiderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         riderSpinner.setAdapter(RiderSpinnerAdapter);
@@ -148,7 +168,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     riderSpinner.setSelection(MENU);
                 }else if (position == WALLET){
                     /**start the walleett activity**/
-                    //spinner.setSelection(OPTIONS);
+                    openRiderWallet();
+                    riderSpinner.setSelection(MENU);
                 }else if (position == QR){
                 /**generate a QR code**/
                 makeQR();
@@ -346,6 +367,12 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     public void makeQR(){
         final Intent qrProfileIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
         startActivity(qrProfileIntent);
+    }
+
+    /**view the riders wallet**/
+    public void openRiderWallet(){
+        final Intent riderWalletIntent = new Intent(MapsRiderActivity.this, WalletActivity.class);
+        startActivity(riderWalletIntent);
     }
 
 }

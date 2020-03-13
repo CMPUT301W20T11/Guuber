@@ -57,6 +57,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private static final int VIEWTRIPS = 1;
     private static final int MYPROFILE = 2;
     private static final int WALLET = 3;
+    private static final int SCANQR = 4;
 
 
     private GoogleMap guuberDriverMap;
@@ -134,7 +135,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     driverSpinner.setSelection(MENU);
                 } else if (position == WALLET) {
                     /**start the walleett activity**/
-                    //spinner.setSelection(OPTIONS);
+                    openDriverWallet();
+                    driverSpinner.setSelection(MENU);
+                }else if (position == SCANQR){
+                    /**start the walleett activity**/
+                    scanQR();
+                    driverSpinner.setSelection(MENU);
                 }
             }
             @Override
@@ -293,18 +299,28 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         Toast.makeText(this, "Current location:\n" + mylocation, Toast.LENGTH_LONG).show();
     }
 
-    /**
-     * launches the view trips history activity
-     **/
+    /*** launches the view trips history activity**/
     public void viewDriverTrips() {
         final Intent driverTripsIntent = new Intent(MapsDriverActivity.this, ViewTripsActivity.class);
         startActivity(driverTripsIntent);
     }
 
-
+    /** launches an activity to view the driver profile**/
     public void viewDriverProfile() {
         final Intent driverProfileIntent = new Intent(MapsDriverActivity.this, DriverProfilActivity.class);
         startActivity(driverProfileIntent);
+    }
+
+    /**view the drivers wallet**/
+    public void openDriverWallet(){
+        final Intent driverWalletIntent = new Intent(MapsDriverActivity.this, WalletActivity.class);
+        startActivity(driverWalletIntent);
+    }
+
+    /**calls an activity to scan a QR code**/
+    public void scanQR(){
+        final Intent scanQrProfileIntent = new Intent(MapsDriverActivity.this, scanQrActivity.class);
+        startActivity(scanQrProfileIntent);
     }
 
 
