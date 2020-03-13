@@ -2,31 +2,33 @@ package com.example.guuber;
 
 import android.content.Intent;
 
+/**
+ * Rider extension of base user class
+ */
 public class Rider extends User {
+	/**
+	 * On create
+	 * @param phoneNumber - User phone number
+	 * @param email - User email
+	 * @param firstName - User first name
+	 * @param lastName - User last name
+	 */
 	public Rider(String phoneNumber, String email, String firstName, String lastName) {
 		super(phoneNumber, email, firstName, lastName);
 	}
 
+	/**
+	 * Get user type label
+	 * @return - User label
+	 */
 	public String getLabel(){
 		return "Rider";
 	}
 
-	public void generatePayment(Integer amnt){
-
-	}
-
-	public void makeOffer(Integer amt){
-
-	}
-
-	public void requestRide(){}
-	public void cancelReq(){}
-	//public void displayProfExternal(){}
-
-	public void displayProfile(){
-		Intent intent = new Intent(getActivity(), RiderProfileActivity.class);
-		startActivity(intent);
-
-	}
+//	public void displayProfile(){
+//		Intent intent = new Intent(getActivity(), RiderProfileActivity.class);
+//		startActivity(intent);
+//
+//	}
 
 }
