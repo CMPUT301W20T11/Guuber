@@ -21,7 +21,12 @@ import org.junit.Test;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-
+/**
+ * Intent testing for the MapsDriverActivity
+ * tests are based on current app functionality
+ * USER MUST HAVE SIGNED IN  ONCE BEFORE RUNNING THESE TESTS
+ * Robotium does not want to click the google dialog yet
+ */
 public class MapsDriverActivityTest {
 
     private Solo solo;

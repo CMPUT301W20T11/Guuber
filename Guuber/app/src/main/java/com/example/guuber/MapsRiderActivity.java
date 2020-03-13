@@ -40,6 +40,16 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 
+
+/**
+ * this class contains the home screen for a Rider
+ * the home screen includes a menu enabling navigation
+ * between activities related to the account
+ * as well as the google map fragment
+ * and other functionality for making a ride request
+ * class is representative of current application functionality
+ */
+
 public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;

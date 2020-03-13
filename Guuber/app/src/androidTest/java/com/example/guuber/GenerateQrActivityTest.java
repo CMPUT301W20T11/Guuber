@@ -10,6 +10,10 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ *Intent testing for the QrActivity Class
+ * tests are based on current app functionality
+ */
 public class GenerateQrActivityTest {
 
     private Solo solo;

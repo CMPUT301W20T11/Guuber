@@ -36,7 +36,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 //import org.apache.http.HttpResponse;
 //import org.apache.http.client.methods.HttpGet;
 
-
+/**
+ * this class contains the homescreen for a Driver
+ * the homescreen includes a menu enabling navigation
+ * between activities related to the account
+ * as well as the google map fragment
+ * and other related functionality for browsing ride requests
+ * class is representative of current application functionality
+ */
 public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
     private static int REQUEST_FINE_LOCATION_PERMISSION = 11;

@@ -14,6 +14,13 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+/**
+ * Intent testing for the MapsRiderActivity
+ * tests are based on current app functionality
+ * USER MUST HAVE SIGNED IN  ONCE BEFORE RUNNING THESE TESTS
+ * Robotium does not want to click the google dialog yet
+ */
+
 public class MapsRiderActivityTest {
 
     private Solo solo;

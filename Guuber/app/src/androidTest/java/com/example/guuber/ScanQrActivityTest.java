@@ -10,6 +10,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
+
+/**
+ * Intent testing for the scanQrActivity
+ * tests are based on current app functionality
+ */
 public class ScanQrActivityTest {
 
     private Solo solo;

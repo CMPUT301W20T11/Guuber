@@ -72,7 +72,7 @@ public class LoginActivityTest {
         solo.clickOnText("As Driver");
         solo.clickOnText("Sign in");
         solo.waitForActivity(MapsRiderActivity.class, 1000);
-        solo.assertCurrentActivity("Wrong Activity (supposed to launch Driver activity",MapsDriverActivity.class);
+        solo.assertCurrentActivity("Wrong Activity (supposed to launch Driver activity)",MapsDriverActivity.class);
 
     }
 
