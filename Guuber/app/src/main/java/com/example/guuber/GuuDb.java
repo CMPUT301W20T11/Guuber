@@ -12,6 +12,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreSettings;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -38,6 +39,10 @@ public class GuuDb{
     public GuuDb(){
 
         db = FirebaseFirestore.getInstance();
+        FirebaseFirestoreSettings settings = new FirebaseFirestoreSettings.Builder()
+                .setPersistenceEnabled(true)
+                .build();
+        db.setFirestoreSettings(settings);
         root = db.collection("Users");
     }
 
@@ -73,10 +78,9 @@ public class GuuDb{
         doc.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists()){
+                if(documentSnapshot.exists()) {
                     user[0] = documentSnapshot.toObject(User.class);
-                }
-                else {
+                } else {
                     ;
                 }
             }
