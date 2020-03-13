@@ -6,6 +6,13 @@ public class Vehicle {
 	private String color;
 	private String reg;
 
+	/**
+	 * On create
+	 * @param make - The maker of the vehicle
+	 * @param model - the model of the vehicle
+	 * @param color - the color of the  vehicle
+	 * @param reg - who the car is registered to
+	 */
 	public Vehicle(String make, String model, String color, String reg) {
 		this.make = make;
 		this.model = model;
@@ -13,6 +20,10 @@ public class Vehicle {
 		this.reg = reg;
 	}
 
+	/**
+	 * Get the person the car is registered to
+	 * @return - Driver
+	 */
 	public String getReg() { return reg; }
 
 	public void setReg(String reg) { this.reg = reg; }
