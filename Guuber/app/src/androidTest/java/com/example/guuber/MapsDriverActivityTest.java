@@ -1,6 +1,7 @@
 package com.example.guuber;
 
 import android.app.Activity;
+import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ListView;
@@ -26,8 +27,8 @@ public class MapsDriverActivityTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule<MapsDriverActivity> rule =
-            new ActivityTestRule<>(MapsDriverActivity.class,true,true);
+    public ActivityTestRule<LoginActivity> rule =
+            new ActivityTestRule<>(LoginActivity.class,true,true);
 
     /**
      * * runs before all tests and creates solo instance.
@@ -36,16 +37,10 @@ public class MapsDriverActivityTest {
     @Before
     public void setUp() throws Exception{
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
+        solo.waitForActivity(LoginActivity.class, 1000);
+        solo.clickOnText("Sign in");
     }
 
-    /**
-     * Gets the Activity
-     * @throws Exception
-     */
-    @Test
-    public void start() throws Exception{
-        Activity activity = rule.getActivity();
-    }
 
     /**
      * Add a city to the listview and check the city name using assertTrue
@@ -54,7 +49,7 @@ public class MapsDriverActivityTest {
     @Test
     public void checkSearch(){
         //Asserts that the current activity is the MapsActivity. otherwise "Wrong activity"
-        solo.assertCurrentActivity("Wrong Activity", MapsDriverActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MapsRiderActivity.class);
         solo.clickOnButton("Search"); // click on search button
 
     }
@@ -62,7 +57,7 @@ public class MapsDriverActivityTest {
     /*** Check item taken from the listview*/
     @Test
     public void CheckSpinnerListItem() {
-        solo.assertCurrentActivity("Wrong Activity", MapsDriverActivity.class);
+        solo.assertCurrentActivity("Wrong Activity", MapsRiderActivity.class);
         View spinnerIndex1 = solo.getView(Spinner.class, 0); // 0 is the first index
         solo.clickOnView(spinnerIndex1);
         solo.scrollToTop(); //scrolls spinner back to default val (position "MENU")
