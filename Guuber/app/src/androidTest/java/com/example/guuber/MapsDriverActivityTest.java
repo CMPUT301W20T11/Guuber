@@ -32,6 +32,7 @@ public class MapsDriverActivityTest {
 
     /**
      * * runs before all tests and creates solo instance.
+     * YOU MUST HAVE SIGNED IN ONCE TO RUN THIS TEST
      * @throws Exception
      **/
     @Before
@@ -40,6 +41,8 @@ public class MapsDriverActivityTest {
         solo.waitForActivity(LoginActivity.class, 1000);
         solo.clickOnText("As Driver");
         solo.clickOnText("Sign in");
+        solo.clickOnButton("Leah Copeland");
+        //solo.clickOnView(solo.getView(android.R.id.gso));
     }
 
     /**
@@ -58,5 +61,15 @@ public class MapsDriverActivityTest {
     public void driverOfferRequestButton(){
         solo.waitForActivity(MapsDriverActivity.class, 1000);
         solo.clickOnText("Offer Request");
+        solo.assertCurrentActivity("Should remain on Driver Activity",MapsDriverActivity.class);
+    }
+
+    /**
+     * closes the activity after each test
+     * @throws Exception
+     * */
+    @After
+    public void tearDown() throws Exception {
+        solo.finishOpenedActivities();
     }
 }
