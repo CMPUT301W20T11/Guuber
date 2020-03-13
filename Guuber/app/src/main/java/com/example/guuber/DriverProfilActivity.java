@@ -55,6 +55,9 @@ public class DriverProfilActivity extends AppCompatActivity {
         usernameField = findViewById(R.id.usernameTextDrIn);
         emailField = findViewById(R.id.emailTextDrIn);
         statusField = findViewById(R.id.availabilityTextDrIn);
+        likeButton = findViewById(R.id.likeButtonDrIn);
+        dislikeButton = findViewById(R.id.dislikeButtonDrIn);
+        profileImg = findViewById(R.id.imageViewDrIn);
 
         phoneNumber = myself.getPhoneNumber();
         username = myself.getFirstName();
