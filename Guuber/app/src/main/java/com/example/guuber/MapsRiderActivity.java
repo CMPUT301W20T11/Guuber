@@ -110,16 +110,26 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
 
-        /**
-         * onClickListener for the make a request button
-         */
+        /*** onClickListener for the make a request button*/
         makeRqButton = findViewById(R.id.make_request_button);
         makeRqButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, makeRequestScreen1.class);
-                /**send getDestination and get getOrigin through the intent**/
-                startActivity(riderProfileIntent);
+                /**error handling for null origin or destination*/
+                if (getOrigin() == null || getDestination() == null){
+                    if(getOrigin() == null && getDestination() == null){
+                        Toast.makeText(MapsRiderActivity.this,"Please Set Pickup and DropOffLocation!",Toast.LENGTH_LONG).show();
+                    }else if (getOrigin() == null){
+                        Toast.makeText(MapsRiderActivity.this,"Please Set Pickup Location!",Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(MapsRiderActivity.this,"Please Set DropOff Location!",Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    /**else start makeRequest intent**/
+                    final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, makeRequestScreen1.class);
+                    /**send getDestination and get getOrigin through the intent**/
+                    startActivity(riderProfileIntent);
+                }
             }
         });
 

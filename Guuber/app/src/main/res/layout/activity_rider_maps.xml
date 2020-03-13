@@ -54,7 +54,7 @@
         android:background="@drawable/button_states"
         android:backgroundTint="#87702E"
         android:fontFamily="monospace"
-        android:text="Change Origin"
+        android:text="Set Origin"
         android:textColor="#EFDFDF"
         map:layout_constraintStart_toEndOf="@id/rider_spinner"
         map:layout_constraintTop_toTopOf="parent" />
@@ -68,7 +68,7 @@
         android:background="@drawable/button_states"
         android:backgroundTint="#87702E"
         android:fontFamily="monospace"
-        android:text="Change Destination"
+        android:text="Set Destination"
         android:textColor="#EFDFDF"
         map:layout_constraintStart_toEndOf="@id/change_origin_button"
         map:layout_constraintTop_toTopOf="parent" />

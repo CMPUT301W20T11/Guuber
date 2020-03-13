@@ -111,7 +111,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     /**move the camera to searching location**/
                     CameraPosition cameraPosition = new CameraPosition.Builder()
                             .target(parse)
-                            .zoom(15)
+                            .zoom(10)
                             .build();
                     guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
                 }else{
@@ -218,7 +218,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         LatLng mockLatLng = new LatLng(37.5200, -122.08856);
         Rider mockRider = new Rider("780-123-4565","mockEmail","leah","copeland");
 
-        guuberDriverMap.addMarker(new MarkerOptions().position(mockLatLng)
+        guuberDriverMap.addMarker(new MarkerOptions()
+                .position(mockLatLng)
+                .flat(false)
+                //.visible(false)
                 .title( "OPEN REQUEST\n" +
                         "name: " +  mockRider.getFirstName() + " " +
                         mockRider.getLastName() + "\n " +
@@ -254,47 +257,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     public void invalidSearchToast(){
         String toastStr = "Invalid Search! Click on the Map and press Search to Browse Open Requests in That Area";
         Toast.makeText(MapsDriverActivity.this,toastStr,Toast.LENGTH_LONG).show();
-    }
-
-    public void drawRoute(LatLng origin, LatLng destination) throws IOException {
-        final String url = getURL(origin,destination);
-
-        AndroidHttpClient client = AndroidHttpClient.newInstance("somename");
-
-        //HttpGet request = new HttpGet(url);
-        //HttpResponse response = client.execute(request);
-
-        /*InputStream source = response.getEntity().getContent();
-        String returnValue = IOUtilsIsAnNPC(source, Charset.defaultCharset());
-
-        return returnValue;*/
-    }
-
-    /**return the route origin and destination points**/
-    public String getURL(LatLng origin, LatLng destination) {
-        //String url = "https://maps.googleapis.com/maps/api/distancematrix/json?origins=Vancouver+BC|Seattle&destinations=San+Francisco|Victoria+BC&mode=bicycling&language=fr-FR&key=YOUR_API_KEY
-        String url =
-                "https://maps.googleapis.com/maps/api/directions/json?origin="
-                        + origin.latitude + "," + origin.longitude + "&destination="
-                        + destination.latitude + "," + destination.longitude + "&key=AIzaSyBrMB718EfayxLwWRqw3MMRYq_bWooDkm8";
-        android.util.Log.i("URL FOR PARSING = ", url);
-        return url;
-    }
-
-
-
-    /**returns a string from the input stream**/
-    public String IOUtilsIsAnNPC(InputStream inputStream, Charset charset) throws IOException {
-        android.util.Log.i("IN IO UTIL NPC", "......");
-        StringBuilder stringBuilder = new StringBuilder();
-        String line = null; //reference
-
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, charset))) {
-            while ((line = bufferedReader.readLine()) != null) {
-                stringBuilder.append(line);
-            }
-        }
-        return stringBuilder.toString();
     }
 
 
@@ -343,8 +305,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         final Intent driverProfileIntent = new Intent(MapsDriverActivity.this, DriverProfilActivity.class);
         startActivity(driverProfileIntent);
     }
-
-
 
 
 
