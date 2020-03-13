@@ -1,6 +1,5 @@
 package com.example.guuber;
 
-import android.app.Application;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -9,12 +8,10 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -31,6 +28,7 @@ import java.util.Map;
 
 
 public class GuuDb{
+
     public FirebaseFirestore db;
     //Root is the Users collection
     private CollectionReference root;
@@ -41,9 +39,6 @@ public class GuuDb{
 
         db = FirebaseFirestore.getInstance();
         root = db.collection("Users");
-
-
-
     }
 
     /**

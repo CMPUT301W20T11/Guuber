@@ -1,16 +1,10 @@
 package com.example.guuber;
 
-//import static org.junit.Assert.*;
-import android.content.Context;
-
-import com.google.firebase.FirebaseApp;
-
 import org.junit.Test;
 
-public class GuuDbTests {
-
+public class GuuDbAndTest {
     private GuuDb mockDb(){
-        FirebaseApp.initializeApp(this);
+//        FirebaseApp.initializeApp();
         return new GuuDb();
     }
 
@@ -21,5 +15,4 @@ public class GuuDbTests {
         gdb.findUser("123@123.ca");
 
     }
-
 }
