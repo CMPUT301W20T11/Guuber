@@ -5,16 +5,41 @@ import androidx.fragment.app.DialogFragment;
 /**
  * Base app user class
  */
-public class User extends DialogFragment{
+public class User{
     private Wallet wallet;
     private String phoneNumber;
     private String email;
     private String firstName;
     private String lastName;
+    private String uid;
+    private String username;
 
+    /**
+     * Empty constructor for firebase use
+     */
+    public User() {
+        // Intentionally left empty
+    }
 
     /**
      * On create
+     * @param phoneNumber - User phone number
+     * @param email - User email
+     * @param firstName - User first name
+     * @param lastName - User last name
+     */
+    public User(String phoneNumber, String email, String firstName, String lastName, String uid, String uname) {
+        this.phoneNumber = phoneNumber;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.uid = uid;
+        this.username = uname;
+        wallet = new Wallet();
+    }
+
+    /**
+     * Deprecated user constructor (Delete later)
      * @param phoneNumber - User phone number
      * @param email - User email
      * @param firstName - User first name
@@ -107,6 +132,22 @@ public class User extends DialogFragment{
      */
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**

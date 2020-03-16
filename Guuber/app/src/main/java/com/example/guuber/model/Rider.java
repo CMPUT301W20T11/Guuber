@@ -11,6 +11,17 @@ public class Rider extends User {
 	 * @param firstName - User first name
 	 * @param lastName - User last name
 	 */
+	public Rider(String phoneNumber, String email, String firstName, String lastName, String uid, String uname) {
+		super(phoneNumber, email, firstName, lastName, uid, uname);
+	}
+
+	/**
+	 * Deprecated constructor
+	 * @param phoneNumber - User phone number
+	 * @param email - User email
+	 * @param firstName - User first name
+	 * @param lastName - User last name
+	 */
 	public Rider(String phoneNumber, String email, String firstName, String lastName) {
 		super(phoneNumber, email, firstName, lastName);
 	}

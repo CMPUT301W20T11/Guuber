@@ -48,7 +48,7 @@ public class DriverProfilActivity extends AppCompatActivity {
         vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
 
         myself = new Driver("+15879388900", "osiemusariri@gmail.com", "Oswell",
-        "Musariri", vehicle);
+        "Musariri", "1", "TestUserName", vehicle);
 
         vehicleRegField = findViewById(R.id.carRegTextDrIn);
         phoneNumberField = findViewById(R.id.phoneTextDrIn);

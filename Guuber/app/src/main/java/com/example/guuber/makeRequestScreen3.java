@@ -38,7 +38,7 @@ public class makeRequestScreen3 extends AppCompatActivity{
 
         vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
         theDriver = new Driver("+15879388900", "osiemusariri@gmail.com", "Oswell",
-                "Musariri", vehicle);
+				"Musariri", "1", "TestUserName", vehicle);
 
         pickup = findViewById(R.id.pickupAddRq3);
         dropoff = findViewById(R.id.dropoffAddRq3);
