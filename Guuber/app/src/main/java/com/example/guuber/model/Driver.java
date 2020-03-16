@@ -15,6 +15,20 @@ public class Driver extends User {
 	 * @param lastName - User last name
 	 * @param vehicle - User vehicle
 	 */
+	public Driver(String phoneNumber, String email, String firstName, String lastName, String uid, String uname, Vehicle vehicle) {
+		super(phoneNumber, email, firstName, lastName, uid, uname);
+		this.vehicle = vehicle;
+		this.status = "AVAILABLE";
+	}
+
+	/**
+	 * Deprecated constructor (Delete later)
+	 * @param phoneNumber - User phone number
+	 * @param email - User email
+	 * @param firstName - User first name
+	 * @param lastName - User last name
+	 * @param vehicle - User vehicle
+	 */
 	public Driver(String phoneNumber, String email, String firstName, String lastName, Vehicle vehicle) {
 		super(phoneNumber, email, firstName, lastName);
 		this.vehicle = vehicle;
