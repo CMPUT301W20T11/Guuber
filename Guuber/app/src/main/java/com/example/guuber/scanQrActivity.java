@@ -22,8 +22,7 @@ import com.google.zxing.integration.android.IntentResult;
  * Source: https://www.youtube.com/watch?v=Fe7F4Jx7rwo
  */
 public class scanQrActivity extends AppCompatActivity {
-
-
+	
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
