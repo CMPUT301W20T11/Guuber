@@ -15,7 +15,7 @@
         android:label="Guuber"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat">
+        android:theme="@style/Theme.AppCompat.NoActionBar">
         <activity android:name=".WalletActivity"></activity>
         <activity android:name=".scanQrActivity" />
         <activity android:name=".QrActivity" />
