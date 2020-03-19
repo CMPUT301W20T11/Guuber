@@ -45,6 +45,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 	private FirebaseFirestore db = FirebaseFirestore.getInstance();
 	private DocumentReference uRef;
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -122,14 +123,33 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 							uRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
 								@Override
 								public void onSuccess(DocumentSnapshot documentSnapshot) {
+
+
 									if(!documentSnapshot.exists()){
 										Log.d(TAG, "User not found in DB: " + documentSnapshot.getData());
 										RegisterFragment registerFragment = RegisterFragment.newInstance(user.getUid(), user.getEmail());
 										registerFragment.show(getSupportFragmentManager(), "Register");
 									}else{
-										Log.d(TAG, "User info pulled from DB " + documentSnapshot.getData());
+										Log.d(TAG, "User info pulled from DB1 " + documentSnapshot.getData());
 										updateUI(user);
 									}
+									// make singleton with user data
+									String phoneNumber=documentSnapshot.getString("phoneNumber");
+									String email=documentSnapshot.getString("email");
+									String firstName=documentSnapshot.getString("firstName");
+									String lastName=documentSnapshot.getString("lastName");
+									String uid=documentSnapshot.getString("uid");
+									String username=documentSnapshot.getString("username");
+									UserData userData = UserData.getInstance();
+									Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" + documentSnapshot.getString("phoneNumber")+" "+userData.getPhoneNumber());
+									userData.setPhoneNumber(documentSnapshot.getString("phoneNumber"));
+									userData.setEmail(documentSnapshot.getString("email"));
+									userData.setFirstName(documentSnapshot.getString("firstName"));
+									userData.setLastName(documentSnapshot.getString("lastName"));
+									userData.setUid(documentSnapshot.getString("uid"));
+									userData.setUsername(documentSnapshot.getString("username"));
+									Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" + documentSnapshot.getString("phoneNumber")+" "+userData.getPhoneNumber());
+
 								}
 							});
 						} else {
@@ -190,6 +210,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		View radioButton = radioGroup.findViewById(radioButtonID);
 		int signInType = radioGroup.indexOfChild(radioButton);
 
+
 		if(user!=null) {
 			if (signInType == 0) {
 				//if user is a Rider
@@ -198,6 +219,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 				//else user is a driver
 				homeScreen = new Intent(this, MapsDriverActivity.class);
 			}
+
 			startActivity(homeScreen);
 		}
 
