@@ -3,6 +3,7 @@ package com.example.guuber;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -31,13 +32,18 @@ public class RiderProfileActivity extends AppCompatActivity {
     ImageView dislikeButton;
     ImageView profileImg;
 
+
+
+
+    private static final String TAG = "RiderProfileActivity";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rider_profile_disp);
+        UserData userData = UserData.getInstance();
 
         /**display the back button**/
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         myself = new Rider("+263784446345", "musariri@ualberta.ca", "Tinashe",
                 "Musariri");
@@ -49,11 +55,17 @@ public class RiderProfileActivity extends AppCompatActivity {
         dislikeButton = findViewById(R.id.dislikeButtonRdIn);
         profileImg = findViewById(R.id.imageViewRdIn);
 
-        phoneNumber = myself.getPhoneNumber();
-        username = myself.getFirstName();
-        email = myself.getEmail();
+//        phoneNumber = myself.getPhoneNumber();
+//        username = myself.getFirstName();
+//        email = myself.getEmail();
+        // changed to access singleton
+        phoneNumber = userData.getPhoneNumber();
+        username = userData.getUsername();
+        email = userData.getEmail();
 
         phoneNumberField.setText(phoneNumber);
+        // for testing please disregard
+        Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" +" "+userData.getPhoneNumber());
         usernameField.setText(username);
         emailField.setText(email);
         likeButton.setImageResource(R.drawable.smile);
