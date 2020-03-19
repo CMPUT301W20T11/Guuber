@@ -12,8 +12,11 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 
-/**View measurement class creates a dialog fragment in main activity. upon viewing
- * their entry, user may choose to delete, edit, or be done viewing**/
+/**
+ * View measurement class creates a dialog fragment in main activity. upon viewing
+ * their entry, user may choose to delete, edit, or be done viewing
+ *currently this dialog is not being used
+ * **/
 public class EnableLocationServices extends DialogFragment {
 
     private final String LOCATION_NOT_ENABLED_ERROR = "ENABLE LOCATION SERVICES";

@@ -1,4 +1,8 @@
-package com.example.guuber;
+package com.example.guuber.controller;
+
+import com.example.guuber.model.Transaction;
+import com.example.guuber.model.User;
+import com.example.guuber.model.Wallet;
 
 /**
  * Static controller to handle transaction generation and execution
@@ -22,9 +26,9 @@ public class TransactionController {
      * @param amount - Transaction amount
      * @return - True if transaction success
      */
-    private static boolean processTrans(User user1, User user2, Double amount){
+    public static boolean processTrans(User user1, User user2, Double amount){
         // Generate transaction
-        Transaction transaction = new Transaction(amount, createID(), user1, user2);
+        Transaction transaction = new Transaction(amount, createID());
 
         // Get wallet objects
         Wallet wallet1 = user1.getWallet();
@@ -50,9 +54,9 @@ public class TransactionController {
      * @param amount - Deposit amount
      * @return - True if transaction success
      */
-    private static boolean processDeposit(User user1, Double amount){
+    public static boolean processDeposit(User user1, Double amount){
         // Generate transaction
-        Transaction transaction = new Transaction(amount, createID(), user1);
+        Transaction transaction = new Transaction(amount, createID());
 
         // Get wallet object
         Wallet wallet1 = user1.getWallet();

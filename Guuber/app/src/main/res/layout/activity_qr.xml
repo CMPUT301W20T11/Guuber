@@ -9,6 +9,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#951C13"
         android:gravity="center_horizontal"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -16,8 +17,9 @@
 
         <ImageView
             android:id="@+id/qr_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="301dp"
+            android:layout_height="290dp"
+            android:paddingTop="50dp"
             app:srcCompat="@drawable/guuber" />
 
         <EditText
@@ -30,6 +32,6 @@
             android:id="@+id/qr_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Button" />
+            android:text="Generate" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

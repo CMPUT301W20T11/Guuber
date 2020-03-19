@@ -1,21 +1,24 @@
 package com.example.guuber;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.DialogFragment;
 
+import com.example.guuber.model.Driver;
+import com.example.guuber.model.Vehicle;
+
+/**
+ * code for one of the options in
+ * makeRequestScreen1 immediately after a rider
+ * makes a request
+ */
 public class makeRequestScreen3 extends AppCompatActivity{
     private EditText pickup;
     private EditText dropoff;
@@ -35,7 +38,7 @@ public class makeRequestScreen3 extends AppCompatActivity{
 
         vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
         theDriver = new Driver("+15879388900", "osiemusariri@gmail.com", "Oswell",
-                "Musariri", vehicle);
+				"Musariri", "1", "TestUserName", vehicle);
 
         pickup = findViewById(R.id.pickupAddRq3);
         dropoff = findViewById(R.id.dropoffAddRq3);

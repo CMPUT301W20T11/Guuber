@@ -16,6 +16,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -32,8 +33,22 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
 
 
+/**
+ * This class contains the home screen for a Rider.
+ *  The home screen includes a menu enabling navigation
+ *  between activities related to the account
+ *  as well as the google map fragment
+ *  and other functionality for making a ride request.
+ *  Class is representative of current application functionality
+ */
 
 public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
@@ -47,13 +62,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int  QR = 4;
 
     private GoogleMap guuberRiderMap;
-
     private Button makeRqButton, changeOriginButton, changeDestinationButton;
     private Spinner riderSpinner;
-
     private LatLng origin;
     private LatLng destination;
-
     private String coordsToChange;
 
 
@@ -82,7 +94,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         /**initialize a spinner and set its adapter, strings are in 'values'**/
         /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
          * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
-        riderSpinner =  findViewById(R.id.rider_spinner); //set the rider spinner
+        riderSpinner = findViewById(R.id.rider_spinner); //set the rider spinner
         ArrayAdapter<String> RiderSpinnerAdapter = new ArrayAdapter<String>(MapsRiderActivity.this, android.R.layout.simple_list_item_1,getResources().getStringArray(R.array.menuRider));
         RiderSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         riderSpinner.setAdapter(RiderSpinnerAdapter);
@@ -110,16 +122,26 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
 
-        /**
-         * onClickListener for the make a request button
-         */
+        /*** onClickListener for the make a request button*/
         makeRqButton = findViewById(R.id.make_request_button);
         makeRqButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, makeRequestScreen1.class);
-                /**send getDestination and get getOrigin through the intent**/
-                startActivity(riderProfileIntent);
+                /**error handling for null origin or destination*/
+                if (getOrigin() == null || getDestination() == null){
+                    if(getOrigin() == null && getDestination() == null){
+                        Toast.makeText(MapsRiderActivity.this,"Please Set Pickup and DropOffLocation!",Toast.LENGTH_LONG).show();
+                    }else if (getOrigin() == null){
+                        Toast.makeText(MapsRiderActivity.this,"Please Set Pickup Location!",Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(MapsRiderActivity.this,"Please Set DropOff Location!",Toast.LENGTH_LONG).show();
+                    }
+                }else{
+                    /**else start makeRequest intent**/
+                    final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, makeRequestScreen1.class);
+                    /**send getDestination and get getOrigin through the intent**/
+                    startActivity(riderProfileIntent);
+                }
             }
         });
 
@@ -137,12 +159,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     viewRiderTrips();
                     riderSpinner.setSelection(MENU);
                 }else if (position == WALLET){
-                    /**start the walleett activity**/
-                    //spinner.setSelection(OPTIONS);
+                    /**start the wallet activity**/
+                    openRiderWallet();
+                    riderSpinner.setSelection(MENU);
                 }else if (position == QR){
-                /**generate a QR code**/
-                makeQR();
-                riderSpinner.setSelection(MENU);
+                    /**generate a QR code**/
+                    makeQR();
+                    riderSpinner.setSelection(MENU);
                 }
             }
             @Override
@@ -154,10 +177,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     }
 
 
-     /** Manipulates the map once available.
+     /**
+     * Manipulates the map once available.
      * If Google Play services is not installed on the device, the user will be prompted to install
      * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.**/
+     * installed Google Play services and returned to the app.
+      * @param googleMap fragment to display
+      **/
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
@@ -165,8 +191,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         guuberRiderMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         guuberRiderMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
 
-        /**log the coords in console upon map click
-         * this is giving the user a chance to set their destination**/
+
+        /**
+         * logs the coordinates in console upon map click
+         * this is giving the user a chance to set their pickup
+         * location and drop-off location
+         * @params latitude on longitude retrieved from map click
+         **/
         guuberRiderMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng arg0){
@@ -185,8 +216,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
         if (checkUserPermission()) {
-            /**if user permission have been checked
-             * and location permission has been granted...**/
+            /**
+            * if user permission have been checked
+             * and location permission has been granted...
+             **/
             guuberRiderMap.setMyLocationEnabled(true);
             guuberRiderMap.setOnMyLocationButtonClickListener(this);
             guuberRiderMap.setOnMyLocationClickListener(this);
@@ -216,9 +249,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 setChangingCoordinate("destination");
             }
         } else {
-            /**if user permission has been checked and
-             * location services have been denied
-             * set map to display Edmonton (for testing)*/
+            /**
+             * if user permission have been checked
+             * and location permission has not been granted...
+             **/
+            android.util.Log.i("onMapClick", "GOING TO EDMONTON");
             guuberRiderMap.setMyLocationEnabled(false);
             LatLng UniversityOfAlberta = new LatLng( 53.5213 , -113.5213);
 
@@ -235,51 +270,78 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     }
 
-    /**set user origin as their currentlocation**/
+    /**
+     * set user origin as their currentlocation
+     * @param origin is LatLng object  used to set pickup location
+     **/
     public void setOrigin(LatLng origin){
         this.origin = origin;
     }
 
-    /**get user origin**/
+
+    /**
+     * returns user origin (pickup location)
+     **/
     public LatLng getOrigin(){
         return origin;
     }
 
-    /**let the user know they have chosen their origin**/
+
+    /**
+     * let the user know they have chosen their origin
+     **/
     public void originSetToast(){
         String message = "Origin has been changed!";
         Toast.makeText(MapsRiderActivity.this,message,Toast.LENGTH_LONG).show();
     }
 
-    /**set user destination upon map click**/
+    /**
+     * set user destination upon map click
+     * if origin has been set
+     * @param destination is LatLng object used to set drop-off location
+     **/
     public void setDestination(LatLng destination){
         this.destination = destination;
     }
 
-    /**get currently set user destination**/
+
+    /**
+     * returns user destination (drop-off location)
+     **/
     public LatLng getDestination(){
         return destination;
     }
 
-    /**let the user know they have chosen their destination**/
+    /**
+     * let the user know they have chosen their destination
+     * and prompt them to make a request
+     **/
     public void destinationSetToast(){
         String message = "Destination has been changed!\n Make Request?";
         Toast.makeText(MapsRiderActivity.this,message,Toast.LENGTH_LONG).show();
-
     }
 
-    /**set a marker given LATLNG information**/
+    /**
+     * set a marker given LATLNG information
+     * @param locationToMark is location to set marker on
+     **/
     public void setMarker(LatLng locationToMark){
         guuberRiderMap.addMarker(new MarkerOptions().position(locationToMark));
     }
 
-    /**determine whether or not the user is changing their origin or destination
-    ** coords to change will either be set to "origin" or "destination"**/
+
+    /**
+     * determine whether or not the user is changing their origin or destination
+     * @param coordsToChange will either be set to "origin" or "destination"
+     *  detemined by user click on "set destination" button
+     *  or "set origin" button
+     **/
     public void setChangingCoordinate(String coordsToChange){
         this.coordsToChange = coordsToChange;
     }
 
-    /**getter method to determine if onMapClick will be setting
+    /**
+     * getter method to determine if onMapClick will be setting
      * origin or destination
      * @return "origin" or "destination"
      */
@@ -288,7 +350,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     }
 
 
-    /**check user permissions**/
+    /**
+     * check user permissions
+     * @return true if user has reponded to permission request
+     * @return false if user has not responded to permission request
+     **/
     public boolean checkUserPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED ){
@@ -301,41 +367,62 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             }
             return false;
         } else {
-            /**user has already set location permission preferences**/
             return true;
         }
     }
 
 
-    /**indicates current location button has been clicked... **/
+    /**
+     * indicates current location button has been clicked...
+     * @return false all other times besides onMyLocationButtonClick event
+     **/
     @Override
     public boolean onMyLocationButtonClick() {
         Toast.makeText(this, "clicked on current location", Toast.LENGTH_SHORT).show();
         return false;
     }
 
-    /**displays the details of your location upon click**/
+    /**
+     * displays the details of your location upon click
+     * @param mylocation is a Location object representing your devices
+     *  real time location
+     **/
     @Override
     public void onMyLocationClick(@NonNull Location mylocation) {
         Toast.makeText(this, "Current location:\n" + mylocation, Toast.LENGTH_LONG).show();
     }
 
-    /**displays a screen containing trip history for rider**/
+    /**
+     * Starts activity containing trip history for rider
+     **/
     public void viewRiderTrips() {
         final Intent riderTripsIntent = new Intent(MapsRiderActivity.this, ViewTripsActivity.class);
         startActivity(riderTripsIntent);
     }
 
-    /**displays rider profile**/
+    /**
+     * Starts activity to display riders profile
+     **/
     public void viewRiderProfile() {
         final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, RiderProfileActivity.class);
         startActivity(riderProfileIntent);
     }
 
-    /**calls an activity to generate a QR code**/
+    /**
+     * Starts activity to display riders wallet information
+     **/
+    public void openRiderWallet(){
+        final Intent riderWalletIntent = new Intent(MapsRiderActivity.this, WalletActivity.class);
+        startActivity(riderWalletIntent);
+    }
+
+    /**
+     * Starts activity to allow rider to generate QR
+     **/
     public void makeQR(){
         final Intent qrProfileIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
         startActivity(qrProfileIntent);
     }
+
 
 }

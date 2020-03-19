@@ -1,4 +1,4 @@
-package com.example.guuber;
+package com.example.guuber.model;
 
 import java.util.ArrayList;
 
@@ -21,7 +21,10 @@ public class Wallet {
 	 * Deposit an amount to wallet
 	 * @param amount - Amount to deposit
 	 */
-	public void deposit(double amount){
+	public void deposit(double amount) throws IllegalArgumentException{
+		if(amount <= 0){
+			throw new IllegalArgumentException("Invalid deposit amount");
+		}
 		balance += amount;
 	}
 
