@@ -7,12 +7,16 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class GuuDbHelper {
     private static FirebaseFirestore db;
@@ -53,7 +57,30 @@ public class GuuDbHelper {
         findUser(email);
         return this.user;
     }
-    public void createUser(){
+
+    public void checkEmail(User newUser){
+        Map<String,Object> user = new HashMap<>();
+        user.put("first",newUser.getFirstName());
+        user.put("last",newUser.getLastName());
+        user.put("userName",newUser.getUsername());
+        user.put("phone",newUser.getPhoneNumber());
+        users.document(newUser.getEmail()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if( !documentSnapshot.exists()){
+                    Log.d("checking email in db","Email does not exist");
+                    createUser(user, newUser);
+                }
+                else{
+                    Log.d("checking email in db","Email exist");
+                }
+            }
+        });
+
 
     }
+    public void createUser(Map<String,Object> info,User newUser){
+        users.document(newUser.getEmail()).set(info);
+    }
 }
+
