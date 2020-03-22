@@ -36,7 +36,8 @@ public class GuuDbHelper {
                 if(documentSnapshot.exists()){
                     Log.d("user","found user");
                     setUser(documentSnapshot.get("phoneNumber").toString(),documentSnapshot.get("email").toString(),
-                            "P","P","111",documentSnapshot.get("username").toString());
+                            documentSnapshot.get("first").toString(),documentSnapshot.get("last").toString(),
+                            documentSnapshot.get("uid").toString(),documentSnapshot.get("username").toString());
                 }
                 else{
                     Log.d("user","user does not exist");
@@ -44,7 +45,7 @@ public class GuuDbHelper {
             }
         });
     }
-    public void setUser(String email,String phone,String first,String last,String uid,String uname){
+    public void setUser(String phone,String email,String first,String last,String uid,String uname){
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
         this.user.setFirstName(first);
@@ -62,8 +63,10 @@ public class GuuDbHelper {
         Map<String,Object> user = new HashMap<>();
         user.put("first",newUser.getFirstName());
         user.put("last",newUser.getLastName());
-        user.put("userName",newUser.getUsername());
-        user.put("phone",newUser.getPhoneNumber());
+        user.put("email",newUser.getEmail());
+        user.put("username",newUser.getUsername());
+        user.put("phoneNumber",newUser.getPhoneNumber());
+        user.put("uid",newUser.getUid());
         users.document(newUser.getEmail()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {

@@ -32,6 +32,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 public class GuuDbHelperTest {
     private static FirebaseFirestore db;
@@ -67,18 +68,18 @@ public class GuuDbHelperTest {
 
     }
 
+
     @Test
-    public void getUserTest() throws InterruptedException {
-        User testUser = new User("473 7373","73@gmail.com","Bob","Bob","1","TheOnlyBob");
+    public void addUserTest() throws InterruptedException{
+        dbHelper.checkEmail(mockUser());
+        Thread.sleep(2000);
         User obtain;
-        obtain = dbHelper.getUser("TheOnlyBob");
-        String name = obtain.getUsername();
-
-        assertSame(name,"TheOnlyBob");
+        obtain = dbHelper.getUser("m@gmail.com");
+        if(obtain.getEmail().equals("m@gmail.com")){
+            String name= "hello";
+        }
+        assertTrue(obtain.getEmail().equals("m@gmail.com"));
     }
-
-    @Test
-    
 
 
     @AfterClass
