@@ -107,7 +107,7 @@ public class GuuDbHelper {
 
     public void setCurReq(User user,int price, String location){
         Map<String,Object> requestDetail = new HashMap<>();
-        requestDetail.put("username",user.getFirstName()+" " + user.getLastName());
+        requestDetail.put("username",user.getUsername());
         requestDetail.put("cost",price);
         requestDetail.put("location",location);
         profile.collection("curRequest").document("curRequest").set(requestDetail);
@@ -116,7 +116,7 @@ public class GuuDbHelper {
         profile.collection("curRequest").document("curRequest").delete();
     }
     public Map<String,Object> getRequest(){
-       DocumentSnapshot details=  profile.collection("curRequest").document("curRequest").get().getResult();
+       DocumentSnapshot details= profile.collection("curRequest").document("curRequest").get().getResult();
        Request.put("username",details.get("username"));
        Request.put("cost",details.get("cost"));
        Request.put("location",details.get("location"));

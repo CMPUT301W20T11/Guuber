@@ -30,6 +30,8 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
@@ -120,7 +122,22 @@ public class GuuDbHelperTest {
         assertEquals("696969",user.getPhoneNumber());
         dbHelper.deleteUser("k@gmail.com");
     }
+    @Test
+    public void createRequest() throws InterruptedException{
+        dbHelper.checkEmail(mockUser);
+        Thread.sleep(5000);
+        User user = dbHelper.getUser("m@gmail.com");
+        Thread.sleep(1000);
+        dbHelper.setCurReq(user,60,"Kingdom of Corona");
+        Thread.sleep(1000);
+        Map<String,Object> reqDetail;
+        reqDetail = dbHelper.getRequest();
+        assertEquals(60,reqDetail.get("cost"));
+        assertEquals("Kingdom of Corona",reqDetail.get("location"));
+        assertEquals("MattUserName",reqDetail.get("username"));
+        dbHelper.cancelRequest();
 
+    }
 
     @AfterClass
     public static void tearDown() throws InterruptedException {
