@@ -24,6 +24,7 @@ public class GuuDbHelper {
     private static CollectionReference users;
     private static DocumentReference profile;
     public static User user;
+    public static Map<String,Object> Request;
 
     public GuuDbHelper(FirebaseFirestore db){
         this.db = db.getInstance();
@@ -55,12 +56,14 @@ public class GuuDbHelper {
         this.user.setUsername(uname);
 
     }
+
     public User getUser(String email ){
         findUser(email);
+        setProfile(email);
         return user;
     }
 
-
+    //NOTE: USED TO CREATE USERS
     public void checkEmail(User newUser){
         Map<String,Object> user = new HashMap<>();
         user.put("first",newUser.getFirstName());
@@ -88,9 +91,11 @@ public class GuuDbHelper {
     public void createUser(Map<String,Object> info,User newUser){
         users.document(newUser.getEmail()).set(info);
     }
-
-    public void deleteUser(String email){
+    public void setProfile(String email){
         this.profile = users.document(email);
+    }
+    public void deleteUser(String email){
+        setProfile(email);
         profile.delete();
     }
     public void updateUsername(String email,String name){
@@ -98,6 +103,24 @@ public class GuuDbHelper {
     }
     public void updatePhoneNumber(String email,String number){
         users.document(email).update("phoneNumber",number);
+    }
+
+    public void setCurReq(User user,int price, String location){
+        Map<String,Object> requestDetail = new HashMap<>();
+        requestDetail.put("username",user.getFirstName()+" " + user.getLastName());
+        requestDetail.put("cost",price);
+        requestDetail.put("location",location);
+        profile.collection("curRequest").document("curRequest").set(requestDetail);
+    }
+    public void cancelRequest(){
+        profile.collection("curRequest").document("curRequest").delete();
+    }
+    public Map<String,Object> getRequest(){
+       DocumentSnapshot details=  profile.collection("curRequest").document("curRequest").get().getResult();
+       Request.put("username",details.get("username"));
+       Request.put("cost",details.get("cost"));
+       Request.put("location",details.get("location"));
+       return Request;
     }
 }
 

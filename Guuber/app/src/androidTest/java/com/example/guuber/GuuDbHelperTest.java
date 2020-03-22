@@ -100,6 +100,7 @@ public class GuuDbHelperTest {
         Thread.sleep(5000);
         User user;
         user = dbHelper.getUser("k@gmail.com");
+        Thread.sleep(1000);
         assertNull(user.getEmail());
     }
 
