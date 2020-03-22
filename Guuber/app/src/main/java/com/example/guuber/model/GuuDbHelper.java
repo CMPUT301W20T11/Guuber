@@ -56,7 +56,7 @@ public class GuuDbHelper {
     }
     public User getUser(String email ){
         findUser(email);
-        return this.user;
+        return user;
     }
 
     public void checkEmail(User newUser){

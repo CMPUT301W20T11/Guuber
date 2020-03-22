@@ -75,10 +75,11 @@ public class GuuDbHelperTest {
         Thread.sleep(2000);
         User obtain;
         obtain = dbHelper.getUser("m@gmail.com");
+        Thread.sleep(1000);
         if(obtain.getEmail().equals("m@gmail.com")){
-            String name= "hello";
+            String name = "hello";
         }
-        assertTrue(obtain.getEmail().equals("m@gmail.com"));
+        assertEquals(obtain.getEmail(), mockUser.getEmail());
     }
 
 
