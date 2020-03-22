@@ -31,6 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -46,6 +47,10 @@ public class GuuDbHelperTest {
 
     private static User mockUser(){
         return new User("780", "m@gmail.com", "Matt", "Dziubina", "1", "MattUserName");
+    }
+
+    private static User mockUser2(){
+        return new User("404","k@gmail.com","k","kk","111","Kale");
     }
 
     @ClassRule
@@ -70,17 +75,33 @@ public class GuuDbHelperTest {
 
 
     @Test
-    public void addUserTest() throws InterruptedException{
+    public void UserTest() throws InterruptedException{
         dbHelper.checkEmail(mockUser());
-        Thread.sleep(2000);
+        Thread.sleep(5000);
         User obtain;
+        //add user and see if it can be read
         obtain = dbHelper.getUser("m@gmail.com");
         Thread.sleep(1000);
-        if(obtain.getEmail().equals("m@gmail.com")){
-            String name = "hello";
-        }
+
         assertEquals(obtain.getEmail(), mockUser.getEmail());
+        dbHelper.deleteUser("m@gmail.com");
+        Thread.sleep(5000);
+
+
+
+
     }
+    @Test
+    public void deleteTest() throws InterruptedException{
+        dbHelper.checkEmail(mockUser2());
+        Thread.sleep(5000);
+        dbHelper.deleteUser("k@gmail.com");
+        Thread.sleep(5000);
+        User user;
+        user = dbHelper.getUser("k@gmail.com");
+        assertNull(user.getEmail());
+    }
+
 
 
     @AfterClass

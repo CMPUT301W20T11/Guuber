@@ -14,6 +14,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Source;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +31,7 @@ public class GuuDbHelper {
         this.user = new User();
     }
     public void findUser(String email){
-        users.document(email).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        users.document(email).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.exists()){
@@ -67,7 +68,7 @@ public class GuuDbHelper {
         user.put("username",newUser.getUsername());
         user.put("phoneNumber",newUser.getPhoneNumber());
         user.put("uid",newUser.getUid());
-        users.document(newUser.getEmail()).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        users.document(newUser.getEmail()).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if( !documentSnapshot.exists()){
@@ -84,6 +85,11 @@ public class GuuDbHelper {
     }
     public void createUser(Map<String,Object> info,User newUser){
         users.document(newUser.getEmail()).set(info);
+    }
+
+    public void deleteUser(String email){
+        this.profile = users.document(email);
+        profile.delete();
     }
 }
 
