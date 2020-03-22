@@ -31,6 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
@@ -102,6 +103,22 @@ public class GuuDbHelperTest {
         assertNull(user.getEmail());
     }
 
+    @Test
+    public void updateUserTest() throws  InterruptedException{
+        dbHelper.checkEmail(mockUser2());
+        Thread.sleep(5000);
+        dbHelper.updatePhoneNumber("k@gmail.com","696969");
+        Thread.sleep(1000);
+        dbHelper.updateUsername("k@gmail.com","IWantDie");
+        Thread.sleep(1000);
+        User user;
+        user = dbHelper.getUser("k@gmail.com");
+        Thread.sleep(1000);
+
+        assertEquals("IWantDie",user.getUsername());
+        assertEquals("696969",user.getPhoneNumber());
+        dbHelper.deleteUser("k@gmail.com");
+    }
 
 
     @AfterClass

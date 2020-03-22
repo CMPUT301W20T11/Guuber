@@ -60,6 +60,7 @@ public class GuuDbHelper {
         return user;
     }
 
+
     public void checkEmail(User newUser){
         Map<String,Object> user = new HashMap<>();
         user.put("first",newUser.getFirstName());
@@ -83,6 +84,7 @@ public class GuuDbHelper {
 
 
     }
+
     public void createUser(Map<String,Object> info,User newUser){
         users.document(newUser.getEmail()).set(info);
     }
@@ -90,6 +92,12 @@ public class GuuDbHelper {
     public void deleteUser(String email){
         this.profile = users.document(email);
         profile.delete();
+    }
+    public void updateUsername(String email,String name){
+        users.document(email).update("username",name);
+    }
+    public void updatePhoneNumber(String email,String number){
+        users.document(email).update("phoneNumber",number);
     }
 }
 
