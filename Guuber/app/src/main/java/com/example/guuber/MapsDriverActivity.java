@@ -126,7 +126,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }
 
 
-      /***/
+        /**initialize a spinner and set its adapter, strings are in 'values'**/
+        /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
+         * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
+        ArrayAdapter<String> driverSpinnerAdapter = new ArrayAdapter<String>(MapsDriverActivity.this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menuDriver));
+        driverSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        driverSpinner.setAdapter(driverSpinnerAdapter);
 
 
         /**when driver clicks search button,
@@ -220,7 +225,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 android.util.Log.i("onMapClick", arg0.toString());
                 geoLocationSearch.setText(arg0.toString());
                 setSearch(arg0);
-
+                
             }
         });
 
