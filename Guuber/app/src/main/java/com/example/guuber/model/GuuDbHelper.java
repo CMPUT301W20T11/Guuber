@@ -31,6 +31,8 @@ public class GuuDbHelper {
         this.users = this.db.collection("Users");
         this.user = new User();
     }
+
+    //helper function
     public void findUser(String email){
         users.document(email).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -47,6 +49,8 @@ public class GuuDbHelper {
             }
         });
     }
+
+    //helper function
     public void setUser(String phone,String email,String first,String last,String uid,String uname){
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
@@ -56,7 +60,7 @@ public class GuuDbHelper {
         this.user.setUsername(uname);
 
     }
-
+    //get user information
     public User getUser(String email ){
         findUser(email);
         setProfile(email);

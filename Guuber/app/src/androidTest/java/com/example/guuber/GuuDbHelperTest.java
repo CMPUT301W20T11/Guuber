@@ -94,6 +94,9 @@ public class GuuDbHelperTest {
 
 
     }
+
+
+//    fails when run all test passes when ran individually
     @Test
     public void deleteTest() throws InterruptedException{
         dbHelper.checkEmail(mockUser2());
