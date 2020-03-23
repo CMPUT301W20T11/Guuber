@@ -83,6 +83,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private Button driverSearchButton;
     private EditText geoLocationSearch;
     private LatLng search;
+    private LatLng driverLocation;
 
     /*******NEW MAPS INTEGRATION**/
     private boolean isLocationPermissionGranted = false;
@@ -224,6 +225,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 android.util.Log.i("onMapClick", arg0.toString());
                 geoLocationSearch.setText(arg0.toString());
                 setSearch(arg0);
+
+                //polyline proof of concept
                 Polyline line = guuberDriverMap.addPolyline(new PolylineOptions()
                         .add(new LatLng(37.413255, -122.0801542), new LatLng(arg0.latitude, arg0.longitude))
                         .width(5)
@@ -247,9 +250,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             Criteria criteria = new Criteria();
             Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
 
+
             if (location != null) {
                 /**create a new LatLng location object for the user current location**/
                 LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                setDriverLocation(currentLocation);
 
                 /**move the camera to current location**/
                 CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -282,6 +287,15 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     }
 
+    public void setDriverLocation(LatLng location){
+        this.driverLocation = location;
+    }
+
+    public LatLng getDriverLocation(){
+        return driverLocation;
+    }
+
+
     /**
      * render markers on the map based on open requests
      * currently  there are just mock open requests
@@ -300,18 +314,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         "Phone Number: " + mockRider.getPhoneNumber() + " " +
                         "Email: " + mockRider.getEmail()));
 
-        /**near U of A (where default location is set if location permission is not granted)**/
-        LatLng mockLatLng2 = new LatLng(53.5213, -113.5213);
-        Rider mockRider2 = new Rider("780-123-4565", "mockEmail", "otherLeah", "copeland");
-
-        guuberDriverMap.addMarker(new MarkerOptions().position(mockLatLng2)
-                .title("OPEN REQUEST\n" +
-                        mockRider2.getFirstName() + " " +
-                        mockRider2.getLastName() + "\n " +
-                        mockRider2.getPhoneNumber() + " " +
-                        mockRider2.getEmail()));
-
     }
+
 
     /**
      * set a marker given LATLNG information
@@ -455,19 +459,15 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         alert.show();
     }
 
+
+
     /**
      * iF USER PERMISSION HAS ALREADY BEEN ACCEPTED IT WILL NOT PROMPT THE USER
      * AND SET BOOLEAN  TO TRUE
      * ELSE IT WILL RETURN FALSE
-     *
      * @return true if user has granted permission, false if user has not
      */
     private boolean checkUserPermission() {
-        /*
-         * Request location permission, so that we can get the location of the
-         * device. The result of the permission request is handled by a callback,
-         * onRequestPermissionsResult.
-         */
         if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -480,6 +480,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             return false;
         }
     }
+
+
 
     /**
      * SETTING A BOOLEAN TO TRUE IF
@@ -494,7 +496,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         isLocationPermissionGranted = false;
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     isLocationPermissionGranted = true;
@@ -531,7 +532,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
-        //builder.setView(R.layout.driver_profile_disp)
+        //builder.setView(R.layout.driver_profile_disp) setting the builder to the riders profile
         builder
                 .setMessage("Determine Route to Rider?")
                 .setCancelable(true)
@@ -548,23 +549,26 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 });
         final AlertDialog alert = builder.create();
         alert.show();
-
     }
+
 
     private void calculateDirections(Marker marker) {
         Log.d(TAG, "calculateDirections: calculating directions.");
 
+        /**to the clicked markers destination**/
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
                 marker.getPosition().latitude,
                 marker.getPosition().longitude
         );
         DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
 
+        /**from the drivers current position**/
+        LatLng currDriverLocation = getDriverLocation();
         directions.alternatives(true);
         directions.origin(
                 new com.google.maps.model.LatLng(
-                        marker.getPosition().latitude,
-                        marker.getPosition().longitude
+                        currDriverLocation.latitude,
+                        currDriverLocation.longitude
                 )
         );
         Log.d(TAG, "calculateDirections: destination: " + destination.toString());
@@ -596,6 +600,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
+
+
+
                 Log.d(TAG, "run: result routes: " + result.routes.length);
 
                 for(DirectionsRoute route: result.routes){
@@ -607,7 +614,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     // This loops through all the LatLng coordinates of ONE polyline.
                     for(com.google.maps.model.LatLng latLng: decodedPath){
 
-//                        Log.d(TAG, "run: latlng: " + latLng.toString());
+                        Log.d(TAG, "run: latlng: " + latLng.toString());
 
                         newDecodedPath.add(new LatLng(
                                 latLng.lat,
@@ -624,18 +631,18 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     }
                     guuberDriverMap.addPolyline(polylineOptions);**/
 
-                    for (LatLng coord : newDecodedPath) {
+                    /**for (LatLng coord : newDecodedPath) {
                         Log.d(TAG, "HERE IS THE LAT LNG TO DRAW" + coord.toString());
-                        Polyline line = guuberDriverMap.addPolyline(new PolylineOptions()
+                        Polyline polyline = guuberDriverMap.addPolyline(new PolylineOptions()
                                 .add(new LatLng(coord.latitude, coord.longitude), new LatLng(coord.latitude, coord.longitude))
                                 .width(5)
                                 .color(Color.RED));
-                    }
+                    }**/
 
 
-                    //Polyline polyline = guuberDriverMap.addPolyline(new PolylineOptions().width(5).color(Color.RED).addAll(newDecodedPath));
-                    //polyline.setColor(ContextCompat.getColor(getActivity(), R.color.darkGrey));
-                    //polyline.setClickable(true);
+                    Polyline polyline = guuberDriverMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
+                    polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.polyLinesColors));
+                    polyline.setClickable(true);
 
 
                 }
