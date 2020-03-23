@@ -226,12 +226,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 geoLocationSearch.setText(arg0.toString());
                 setSearch(arg0);
 
-                //polyline proof of concept
-                Polyline line = guuberDriverMap.addPolyline(new PolylineOptions()
-                        .add(new LatLng(37.413255, -122.0801542), new LatLng(arg0.latitude, arg0.longitude))
-                        .width(5)
-                        .color(Color.RED));
-
             }
         });
 
