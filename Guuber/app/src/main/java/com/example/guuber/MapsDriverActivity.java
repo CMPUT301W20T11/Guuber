@@ -126,12 +126,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }
 
 
-        /**initialize a spinner and set its adapter, strings are in 'values'**/
-        /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
-         * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
-        ArrayAdapter<String> driverSpinnerAdapter = new ArrayAdapter<String>(MapsDriverActivity.this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menuDriver));
-        driverSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        driverSpinner.setAdapter(driverSpinnerAdapter);
+      /***/
 
 
         /**when driver clicks search button,
@@ -225,12 +220,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 android.util.Log.i("onMapClick", arg0.toString());
                 geoLocationSearch.setText(arg0.toString());
                 setSearch(arg0);
-
-                //polyline proof of concept
-                Polyline line = guuberDriverMap.addPolyline(new PolylineOptions()
-                        .add(new LatLng(37.413255, -122.0801542), new LatLng(arg0.latitude, arg0.longitude))
-                        .width(5)
-                        .color(Color.RED));
 
             }
         });
