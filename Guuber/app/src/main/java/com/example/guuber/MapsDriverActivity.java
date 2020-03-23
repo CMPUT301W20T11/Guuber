@@ -232,11 +232,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
-        Polyline line = guuberDriverMap.addPolyline(new PolylineOptions()
-                .add(new LatLng(37.413255, -122.0801542), new LatLng(37.40817323, -122.070260234))
-                .width(5)
-                .color(Color.RED));
-
 
         if (checkUserPermission()) {
             /**
@@ -618,10 +613,30 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                                 latLng.lat,
                                 latLng.lng
                         ));
+
                     }
-                    Polyline polyline = guuberDriverMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
+
+
+                    /**PolylineOptions polylineOptions = new PolylineOptions().width(5).color(Color.RED);
+                    for (LatLng coord : newDecodedPath){
+                         android.util.Log.i("HERES A COORD", coord.toString());
+                        polylineOptions.add(coord);
+                    }
+                    guuberDriverMap.addPolyline(polylineOptions);**/
+
+                    for (LatLng coord : newDecodedPath) {
+                        Log.d(TAG, "HERE IS THE LAT LNG TO DRAW" + coord.toString());
+                        Polyline line = guuberDriverMap.addPolyline(new PolylineOptions()
+                                .add(new LatLng(coord.latitude, coord.longitude), new LatLng(coord.latitude, coord.longitude))
+                                .width(5)
+                                .color(Color.RED));
+                    }
+
+
+                    //Polyline polyline = guuberDriverMap.addPolyline(new PolylineOptions().width(5).color(Color.RED).addAll(newDecodedPath));
                     //polyline.setColor(ContextCompat.getColor(getActivity(), R.color.darkGrey));
-                    polyline.setClickable(true);
+                    //polyline.setClickable(true);
+
 
                 }
             }
