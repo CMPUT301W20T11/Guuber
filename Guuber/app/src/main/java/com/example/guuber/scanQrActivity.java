@@ -22,13 +22,16 @@ import com.google.zxing.integration.android.IntentResult;
  * Source: https://www.youtube.com/watch?v=Fe7F4Jx7rwo
  */
 public class scanQrActivity extends AppCompatActivity {
-	
+
 	@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_scan_qr);
 		Button scan_button = findViewById(R.id.scan_button);
         final Activity activity = this;
+
+		/**display the back button**/
+		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         scan_button.setOnClickListener(v -> {
 			IntentIntegrator integrator = new IntentIntegrator(activity);

@@ -43,7 +43,7 @@ public class DriverProfilActivity extends AppCompatActivity {
         setContentView(R.layout.driver_profile_disp);
         UserData userData = UserData.getInstance();
         /**display the back button**/
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
 

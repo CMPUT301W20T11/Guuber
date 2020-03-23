@@ -6,7 +6,10 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -15,6 +18,8 @@ import android.location.LocationManager;
 //import android.net.http.AndroidHttpClient;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,6 +29,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.guuber.model.Rider;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -31,7 +38,15 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.maps.DirectionsApiRequest;
+import com.google.maps.GeoApiContext;
+import com.google.maps.PendingResult;
+import com.google.maps.model.DirectionsResult;
+import com.google.maps.model.DirectionsRoute;
+
+import java.util.ArrayList;
 
 //import org.apache.http.HttpResponse;
 //import org.apache.http.client.methods.HttpGet;
@@ -44,11 +59,11 @@ import com.google.android.gms.maps.model.MarkerOptions;
  *  and other related functionality for browsing ride requests.
  *  Class is representative of current application functionality
  */
-public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
+public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
-    private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
-
-    /**spinner codes**/
+    /**
+     * spinner codes
+     **/
     private static final int MENU = 0;
     private static final int VIEWTRIPS = 1;
     private static final int MYPROFILE = 2;
@@ -61,6 +76,17 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private Button driverSearchButton;
     private EditText geoLocationSearch;
     private LatLng search;
+
+    /*******NEW MAPS INTEGRATION**/
+    private boolean isLocationPermissionGranted = false;
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
+    private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
+    public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 12;
+    public static final int ERROR_DIALOG_REQUEST = 13;
+    private static final String TAG = "MapsDriverActivity";
+    private GeoApiContext geoApiContext = null;
+
+    /*********************/
 
 
     @Override
@@ -77,15 +103,19 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             @Override
             public void run() {
                 String toastStr = "Click on the Map and press Search to Browse Open Requests in That Area!";
-                Toast.makeText(MapsDriverActivity.this,toastStr,Toast.LENGTH_LONG).show();
+                Toast.makeText(MapsDriverActivity.this, toastStr, Toast.LENGTH_LONG).show();
             }
-        },3000);
-
+        }, 3000);
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.driver_map);
         mapFragment.getMapAsync(this);
+        if (geoApiContext == null) {
+            geoApiContext = new GeoApiContext.Builder()
+                    .apiKey(getString(R.string.maps_key))
+                    .build();
+        }
 
 
         /**initialize a spinner and set its adapter, strings are in 'values'**/
@@ -111,7 +141,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                             .zoom(11)
                             .build();
                     guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                }else{
+                } else {
                     invalidSearchToast();
                 }
             }
@@ -133,18 +163,32 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     /**start the wallet activity**/
                     openDriverWallet();
                     driverSpinner.setSelection(MENU);
-                }else if (position == SCANQR){
+                } else if (position == SCANQR) {
                     /**start the scanQR activity**/
                     scanQR();
                     driverSpinner.setSelection(MENU);
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 driverSpinner.setSelection(MENU);
             }
         });
 
+    }
+
+    /**
+     * LITERALLY WONT LET THE USER AVOID GIVING PERMISSIONS
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (checkMapServices()) {
+            if (isLocationPermissionGranted == false) {
+                checkUserPermission();
+            }
+        }
     }
 
     /**
@@ -159,6 +203,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         guuberDriverMap = googleMap;
         guuberDriverMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         guuberDriverMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
+        guuberDriverMap.setOnInfoWindowClickListener(MapsDriverActivity.this);
 
         /**
          * logs the coordinates in console upon map click
@@ -168,10 +213,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
          **/
         guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
-            public void onMapClick(LatLng arg0){
+            public void onMapClick(LatLng arg0) {
                 android.util.Log.i("onMapClick", arg0.toString());
                 geoLocationSearch.setText(arg0.toString());
                 setSearch(arg0);
+
             }
         });
 
@@ -181,6 +227,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
              * if user permission have been checked
              * and location permission has been granted...
              **/
+
             guuberDriverMap.setMyLocationEnabled(true);
             guuberDriverMap.setOnMyLocationButtonClickListener(this);
             guuberDriverMap.setOnMyLocationClickListener(this);
@@ -206,7 +253,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
              * and location permission has not been granted...
              **/
             guuberDriverMap.setMyLocationEnabled(false);
-            LatLng UniversityOfAlberta = new LatLng( 53.5213 , -113.5213);
+            LatLng UniversityOfAlberta = new LatLng(53.5213, -113.5213);
 
             /**move the camera to current location**/
             CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -228,26 +275,26 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * render markers on the map based on open requests
      * currently  there are just mock open requests
      */
-    public void drawOpenRequests(){
+    public void drawOpenRequests() {
         /**near San Fran google Plex (where emulator location is)**/
         LatLng mockLatLng = new LatLng(37.5200, -122.08856);
-        Rider mockRider = new Rider("780-123-4565","mockEmail","leah","copeland");
+        Rider mockRider = new Rider("780-123-4565", "mockEmail", "leah", "copeland");
 
         guuberDriverMap.addMarker(new MarkerOptions()
                 .position(mockLatLng)
                 .flat(false)
-                .title( "OPEN REQUEST\n" +
-                        "name: " +  mockRider.getFirstName() + " " +
+                .title("OPEN REQUEST\n" +
+                        "name: " + mockRider.getFirstName() + " " +
                         mockRider.getLastName() + "\n " +
                         "Phone Number: " + mockRider.getPhoneNumber() + " " +
                         "Email: " + mockRider.getEmail()));
 
         /**near U of A (where default location is set if location permission is not granted)**/
         LatLng mockLatLng2 = new LatLng(53.5213, -113.5213);
-        Rider mockRider2 = new Rider("780-123-4565","mockEmail","otherLeah","copeland");
+        Rider mockRider2 = new Rider("780-123-4565", "mockEmail", "otherLeah", "copeland");
 
         guuberDriverMap.addMarker(new MarkerOptions().position(mockLatLng2)
-                .title( "OPEN REQUEST\n" +
+                .title("OPEN REQUEST\n" +
                         mockRider2.getFirstName() + " " +
                         mockRider2.getLastName() + "\n " +
                         mockRider2.getPhoneNumber() + " " +
@@ -257,63 +304,47 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     /**
      * set a marker given LATLNG information
+     *
      * @param locationToMark is location to set marker on
      **/
-    public void setMarker(LatLng locationToMark){
+    public void setMarker(LatLng locationToMark) {
         guuberDriverMap.addMarker(new MarkerOptions().position(locationToMark));
     }
 
     /**
      * get the LatLng object from
      * where the driver has set their search to
+     *
      * @return LatLng object to navigate to
      */
-    public LatLng getSearch(){
+    public LatLng getSearch() {
         return search;
     }
+
 
     /**
      * ser the LatLng object from
      * where the driver has set their search to
+     *
      * @param search object to navigate to
      */
-    public void setSearch(LatLng search){
+    public void setSearch(LatLng search) {
         this.search = search;
     }
+
 
     /**
      * inform the driver they have searched an invalid location
      **/
-    public void invalidSearchToast(){
+    public void invalidSearchToast() {
         String toastStr = "Invalid Search! Click on the Map and press Search to Browse Open Requests in That Area";
-        Toast.makeText(MapsDriverActivity.this,toastStr,Toast.LENGTH_LONG).show();
-    }
-
-
-    /**
-     * check user permissions
-     * @return true if user has reponded to permission request
-     * @return false if user has not responded to permission request
-     **/
-    public boolean checkUserPermission() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED ){
-            /**this dialog box appears only if the user has previously denied the request and has NOT selected don't ask again**/
-            if  (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                /**start activity disabling app usage until user has granted location permissions**/
-            }else{
-                ActivityCompat.requestPermissions(this, new String[]
-                        {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_FINE_LOCATION_PERMISSION);
-            }
-            return false;
-        } else {
-            return true;
-        }
+        Toast.makeText(MapsDriverActivity.this, toastStr, Toast.LENGTH_LONG).show();
     }
 
 
     /**
      * indicates current location button has been clicked...
+     *
      * @return false all other times besides onMyLocationButtonClick event
      **/
     @Override
@@ -324,8 +355,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     /**
      * displays the details of your location upon click
+     *
      * @param mylocation is a Location object representing your devices
-     *  real time location
+     *                   real time location
      **/
     @Override
     public void onMyLocationClick(@NonNull Location mylocation) {
@@ -351,7 +383,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * Starts activity to display riders wallet information
      **/
-    public void openDriverWallet(){
+    public void openDriverWallet() {
         final Intent driverWalletIntent = new Intent(MapsDriverActivity.this, WalletActivity.class);
         startActivity(driverWalletIntent);
     }
@@ -359,10 +391,192 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * Starts activity to allow rider to generate QR
      **/
-    public void scanQR(){
+    public void scanQR() {
         final Intent scanQrProfileIntent = new Intent(MapsDriverActivity.this, scanQrActivity.class);
         startActivity(scanQrProfileIntent);
     }
 
 
+    /***************Leah Adding code here **********************
+     * *********************************************************/
+
+    /**
+     * CHECKS IF LOCATION SERVICES HAVE BEEN ENABLED
+     *
+     * @return true if they have, false if they havent
+     */
+    private boolean checkMapServices() {
+        if (isMapsEnabled()) {
+            return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * MAKING SURE GPS IS ENABLED ON THE DEVICE
+     **/
+    public boolean isMapsEnabled() {
+        final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+        if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            buildAlertMessageNoGps();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * OPENS UP SETTINGS FOR THEM TO TURN ON GPS
+     * IF IT IN NOT ALREADY ON
+     **/
+    private void buildAlertMessageNoGps() {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("This application requires GPS to work properly, do you want to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        Intent enableGpsIntent = new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                        startActivityForResult(enableGpsIntent, PERMISSIONS_REQUEST_ENABLE_GPS);
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    /**
+     * iF USER PERMISSION HAS ALREADY BEEN ACCEPTED IT WILL NOT PROMPT THE USER
+     * AND SET BOOLEAN  TO TRUE
+     * ELSE IT WILL RETURN FALSE
+     *
+     * @return true if user has granted permission, false if user has not
+     */
+    private boolean checkUserPermission() {
+        /*
+         * Request location permission, so that we can get the location of the
+         * device. The result of the permission request is handled by a callback,
+         * onRequestPermissionsResult.
+         */
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                == PackageManager.PERMISSION_GRANTED) {
+            isLocationPermissionGranted = true;
+            return true;
+        } else {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            return false;
+        }
+    }
+
+    /**
+     * SETTING A BOOLEAN TO TRUE IF
+     * ON ACTIVITY REQUEST PERMISSION FINISH
+     * USER HAS ENABLED LOCATION SERVICES
+     * RUNS RIGHT AFTER PERMISSION RESULT
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String permissions[],
+                                           @NonNull int[] grantResults) {
+        isLocationPermissionGranted = false;
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    isLocationPermissionGranted = true;
+                }
+            }
+        }
+    }
+
+
+    /**
+     * GET THE RESULT OF THE REQUEST PERMISSION EVENT
+     * KEEP CHECKING PERMISSION UNTIL GRANTED
+     **/
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult: called.");
+        switch (requestCode) {
+            case PERMISSIONS_REQUEST_ENABLE_GPS: {
+                if (isLocationPermissionGranted == false) {
+                    checkUserPermission();
+                }
+            }
+        }
+    }
+
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        /*if(marker.getSnippet().equals(getUsername())){
+            marker.hideInfoWindow();
+        }
+        else{*/
+
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
+        //builder.setView(R.layout.driver_profile_disp)
+        builder
+                .setMessage("Determine Route to Rider?")
+                .setCancelable(true)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        calculateDirections(marker);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        dialog.cancel();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+    private void calculateDirections(Marker marker) {
+        Log.d(TAG, "calculateDirections: calculating directions.");
+
+        com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
+                marker.getPosition().latitude,
+                marker.getPosition().longitude
+        );
+        DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
+
+        directions.alternatives(true);
+        directions.origin(
+                new com.google.maps.model.LatLng(
+                        marker.getPosition().latitude,
+                        marker.getPosition().longitude
+                )
+        );
+        Log.d(TAG, "calculateDirections: destination: " + destination.toString());
+        directions.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
+            @Override
+            public void onResult(DirectionsResult result) {
+                Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());
+                Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration);
+                Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance);
+                Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
+
+                Log.d(TAG, "onResult: successfully retrieved directions.");
+                //addPolylinesToMap(result);
+            }
+
+            @Override
+            public void onFailure(Throwable e) {
+                Log.e(TAG, "calculateDirections: Failed to get directions: " + e.getMessage());
+
+            }
+        });
+    }
 }
+
+
+
+
