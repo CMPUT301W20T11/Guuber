@@ -1,14 +1,10 @@
 package com.example.guuber.model;
 
-import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -33,6 +29,15 @@ public class GuuDbHelper {
     public static Map<String,Object> Request = new HashMap<>();
     public static Vehicle car;
     public static ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
+
+    private static CollectionReference rating;
+    public static Map<String,Object> Rating = new HashMap<>();
+    public static ArrayList<Map<String, String>> ratingList = new ArrayList<Map<String, String>>();
+
+    //private static CollectionReference wallet;
+    //public static Map<String,Object> Wallet = new HashMap<>();
+    //public static ArrayList<Map<String, String>> walletList = new ArrayList<Map<String, String>>();
+
 
     public GuuDbHelper(FirebaseFirestore db){
         this.db = db.getInstance();
@@ -192,5 +197,123 @@ public class GuuDbHelper {
 //    public Vehicle getVehDetail(User user){
 //
 //    }
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Scrap sections (maybe use it later if other members want ratings/balance to work more like username or phoneNumber)
+     * Got sick of integrating ratings into a bunch of other classes so I just made it a new collection (pretty much same with making balances work the way I wanted it to)
+     *
+    //Updating Positive and Negative Rating, whenever update, it will just increment +1
+    public void updatePosRating(String email)
+    {
+        try
+        {
+            users.document(email).update("AggPositive", FieldValue.increment(1));
+        }
+        catch (Exception e)
+        {
+            System.out.println("Ruh Roh!");
+
+        }
+    }
+    public void updateNegRating(String email)
+    {
+        try
+        {
+            users.document(email).update("AggNegative", FieldValue.increment(1));
+        }
+        catch (Exception e)
+        {
+            System.out.println("Ruh Roh!");
+
+        }
+    }
+     */
+
+    /**
+     * Ratings
+     * @param email
+     * @param AggPositive
+     * @param AggNegative
+     *
+     * TODO:
+     * Test Cases
+     */
+    public void setRating(String email, Integer AggPositive, Integer AggNegative){
+        this.Rating.put("AggPos", AggPositive);
+        this.Rating.put("AggPos", AggNegative);
+        this.Rating.put("email",email);
+
+
+    }
+    public Map<String, Object> getRatingDetail(User user){
+        setProfile(user.getEmail());
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                setRating(documentSnapshot.get("email").toString(), (int) documentSnapshot.getLong("AggPositive").intValue(),(int) documentSnapshot.getLong("AggNegative").intValue());
+            }
+        });
+
+        return Rating;
+    }
+    public ArrayList<Map<String,Integer>> getRatingList(){
+        ratingList.clear();
+        rating.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document : task.getResult()){
+                        Log.d("ratingList",document.getId());
+                        updateReqList(document.getId(),document.getData());
+                    }
+                }
+                else{
+                    Log.d("ratingList","failed");
+                }
+            }
+        });
+        return this.getRatingList();
+    }
+    public void updateRating(String email, Map<String, String> ratingDetails){
+        ratingDetails.put("email",email);
+        this.ratingList.add(ratingDetails);
+    }
+
+
+
+
+
+
+
+
+
+
+
+    /**
+     * Ratings
+     * @param email
+     * @param balance
+     *
+     * TODO:
+     * Finish redoing Wallet/balance
+     * Add other attributes found in the wallet class?
+     * Test Cases
+
+    public void setWallet(String email, Double balance){
+        this.Rating.put("balance", balance);
+        this.Rating.put("email",email);
+
+    }
+    */
 }
 
