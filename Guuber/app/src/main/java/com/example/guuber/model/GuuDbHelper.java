@@ -26,7 +26,7 @@ public class GuuDbHelper {
     private static CollectionReference users;
     private static DocumentReference profile;
     public static User user;
-    public static Map<String,Object> Request;
+    public static Map<String,Object> Request = new HashMap<>();
 
     public GuuDbHelper(FirebaseFirestore db){
         this.db = db.getInstance();
@@ -112,7 +112,7 @@ public class GuuDbHelper {
         users.document(email).update("phoneNumber",number);
     }
 
-    public void makeCurReq(User user,double price, String location){
+    public void makeCurReq(User user,int price, String location){
         setProfile(user.getEmail());
         this.profile.update("reqPrice",price);
         this.profile.update("reqLocation",location);
@@ -122,8 +122,8 @@ public class GuuDbHelper {
         delete.put("reqPrice", FieldValue.delete());
         delete.put("reqLocation",FieldValue.delete());
     }
-    public void setCurRequest(double price ,String location ){
-        this.Request.put("reqPrice",price);
+    public void setCurRequest(Object price , String location ){
+        this.Request.put("reqPrice", price);
         this.Request.put("reqLocation",location);
 
 
@@ -133,7 +133,7 @@ public class GuuDbHelper {
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-               setCurRequest((Double) documentSnapshot.get("reqPrice"),documentSnapshot.get("reqLocation").toString());
+               setCurRequest( documentSnapshot.get("reqPrice"),documentSnapshot.get("reqLocation").toString());
             }
         });
 

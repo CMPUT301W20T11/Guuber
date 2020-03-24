@@ -131,14 +131,13 @@ public class GuuDbHelperTest {
         Thread.sleep(5000);
         User user = dbHelper.getUser("m@gmail.com");
         Thread.sleep(1000);
-        dbHelper.makeCurReq(user,60,"Kingdom of Corona");
+        dbHelper.makeCurReq(user, 60,"Kingdom of Corona");
         Thread.sleep(1000);
         Map<String,Object> reqDetail;
         reqDetail = dbHelper.getCurRequest();
         Thread.sleep(1000);
-        assertEquals(60,reqDetail.get("reqPrice"));
+        assertEquals((long) 60,reqDetail.get("reqPrice"));
         assertEquals("Kingdom of Corona",reqDetail.get("reqLocation"));
-        assertEquals("MattUserName",reqDetail.get("username"));
         dbHelper.cancelRequest();
 
     }
