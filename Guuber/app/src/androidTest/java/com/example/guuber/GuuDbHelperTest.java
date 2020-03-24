@@ -10,6 +10,7 @@ import androidx.test.rule.ActivityTestRule ;
 
 import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
+import com.example.guuber.model.Vehicle;
 import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -51,11 +52,12 @@ public class GuuDbHelperTest {
     private static User mockUser(){
         return new User("780", "m@gmail.com", "Matt", "Dziubina", "1", "MattUserName");
     }
-
     private static User mockUser2(){
         return new User("404","k@gmail.com","k","kk","111","Kale");
     }
     private static User mockUser3() { return new User("777","cabbageplant@gmail.com","Randy","Cabbage","000","MachoPlantRandyCabbage");}
+    private static Vehicle mockCar(){ return new Vehicle("Ford","F-150","blue","Randy Cabbage");
+    }
     @ClassRule
     public static ActivityTestRule<LoginActivity> rule =
             new ActivityTestRule<>(LoginActivity.class,true,true);
@@ -140,7 +142,22 @@ public class GuuDbHelperTest {
         assertEquals("Kingdom of Corona",reqDetail.get("reqLocation"));
         dbHelper.cancelRequest(mockUser());
     }
-    
+    @Test
+    public void VehicleRegisterTest() throws InterruptedException{
+        dbHelper.checkEmail(mockUser3());
+        Thread.sleep(5000);
+        dbHelper.addVehicle(mockUser3(),mockCar());
+        Thread.sleep(1000);
+
+        Vehicle car;
+        car = dbHelper.getCarDetail(mockUser3());
+        Thread.sleep(2000);
+        Vehicle test = mockCar();
+        assertEquals(test.getColor(),car.getColor());
+        assertEquals(test.getMake(),car.getMake());
+        assertEquals(test.getColor(),car.getColor());
+        dbHelper.deleteUser("cabbageplant@gmail.com");
+    }
 
 
 

@@ -210,7 +210,7 @@ public class GuuDbHelper {
                     if(documentSnapshot.get("vehMake") != null){
                         Log.d("carDetails","car exist");
                         findVehicle(documentSnapshot.get("vehMake").toString(),documentSnapshot.get("vehModel").toString(),
-                                documentSnapshot.get("vehColor").toString());
+                                documentSnapshot.get("vehColor").toString(),documentSnapshot.getId());
                     }
                     else{
                         Log.d("carDetails","car does not exist");
@@ -222,12 +222,11 @@ public class GuuDbHelper {
                 }
             }
         });
-        return this.car;
+        return car;
     }
-    public void findVehicle(String make,String model,String color){
-        this.car.setMake(make);
-        this.car.setModel(model);
-        this.car.setColor(color);
+    public void findVehicle(String make,String model,String color,String driver){
+        this.car = new Vehicle(make,model,color,driver);
+        
     }
 
 
