@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.guuber.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -140,15 +141,17 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 									String lastName=documentSnapshot.getString("lastName");
 									String uid=documentSnapshot.getString("uid");
 									String username=documentSnapshot.getString("username");
-									UserData userData = UserData.getInstance();
-									Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" + documentSnapshot.getString("phoneNumber")+" "+userData.getPhoneNumber());
-									userData.setPhoneNumber(documentSnapshot.getString("phoneNumber"));
-									userData.setEmail(documentSnapshot.getString("email"));
-									userData.setFirstName(documentSnapshot.getString("firstName"));
-									userData.setLastName(documentSnapshot.getString("lastName"));
-									userData.setUid(documentSnapshot.getString("uid"));
-									userData.setUsername(documentSnapshot.getString("username"));
-									Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" + documentSnapshot.getString("phoneNumber")+" "+userData.getPhoneNumber());
+									User userInfo = new User();
+									//UserData userData = UserData.getUser();
+									Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" + documentSnapshot.getString("phoneNumber")+" "+userInfo.getPhoneNumber());
+									userInfo.setPhoneNumber(documentSnapshot.getString("phoneNumber"));
+									userInfo.setEmail(documentSnapshot.getString("email"));
+									userInfo.setFirstName(documentSnapshot.getString("firstName"));
+									userInfo.setLastName(documentSnapshot.getString("lastName"));
+									userInfo.setUid(documentSnapshot.getString("uid"));
+									userInfo.setUsername(documentSnapshot.getString("username"));
+									((UserData)(getApplicationContext())).setUser(userInfo);
+									Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" + documentSnapshot.getString("phoneNumber")+" "+userInfo.getPhoneNumber());
 
 								}
 							});
