@@ -23,14 +23,17 @@ import java.util.Map;
 
 public class GuuDbHelper {
     private static FirebaseFirestore db;
+    private static CollectionReference requests;
     private static CollectionReference users;
     private static DocumentReference profile;
     public static User user;
     public static Map<String,Object> Request = new HashMap<>();
+    public static Vehicle car;
 
     public GuuDbHelper(FirebaseFirestore db){
         this.db = db.getInstance();
         this.users = this.db.collection("Users");
+        this.requests = this.db.collection("requests");
         this.user = new User();
     }
 
@@ -90,8 +93,6 @@ public class GuuDbHelper {
                 }
             }
         });
-
-
     }
 
     public void createUser(Map<String,Object> info,User newUser){
@@ -112,32 +113,53 @@ public class GuuDbHelper {
         users.document(email).update("phoneNumber",number);
     }
 
-    public void makeCurReq(User user,int price, String location){
+
+    public void makeReq(User user,int tip, String location){
         setProfile(user.getEmail());
-        this.profile.update("reqPrice",price);
+        this.profile.update("reqTip",tip);
         this.profile.update("reqLocation",location);
+        Map<String,Object> details = new HashMap<>();
+        details.put("reqTip",tip);
+        details.put("reqLocation",location);
+        this.requests.document(user.getEmail()).set(details);
+
+
     }
-    public void cancelRequest(){
+    public void cancelRequest(User user){
         Map<String,Object> delete = new HashMap<>();
-        delete.put("reqPrice", FieldValue.delete());
+        delete.put("reqTip", FieldValue.delete());
         delete.put("reqLocation",FieldValue.delete());
+        this.profile.update(delete);
+        this.requests.document(user.getEmail()).delete();
+
     }
-    public void setCurRequest(Object price , String location ){
-        this.Request.put("reqPrice", price);
+    public void setRequest(String email, Object tip , String location ){
+        this.Request.put("reqTip", tip);
         this.Request.put("reqLocation",location);
+        this.Request.put("email",email);
 
 
     }
-    public Map<String,Object> getCurRequest(){
-
+    public Map<String,Object> getRequestDetail(User user){
+        setProfile(user.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-               setCurRequest( documentSnapshot.get("reqPrice"),documentSnapshot.get("reqLocation").toString());
+               setRequest(documentSnapshot.get("email").toString(), documentSnapshot.get("reqTip"),documentSnapshot.get("reqLocation").toString());
             }
         });
 
         return Request;
     }
+
+    public void regVehicle(User user, Vehicle car){
+        setProfile(user.getEmail());
+        profile.update("vehMake",car.getMake());
+        profile.update("vehModel",car.getModel());
+        profile.update("vehColor",car.getColor());
+    }
+//    public Vehicle getVehDetail(User user){
+//
+//    }
 }
 
