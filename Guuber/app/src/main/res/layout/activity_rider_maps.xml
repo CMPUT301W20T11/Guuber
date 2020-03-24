@@ -22,17 +22,17 @@
         android:id="@+id/make_request_button"
         android:layout_width="370dp"
         android:layout_height="55dp"
+        android:layout_marginStart="8dp"
         android:layout_marginBottom="8dp"
         android:background="@drawable/button_states"
-        android:backgroundTint="#212640"
+        android:backgroundTint="#FF87702E"
         android:fontFamily="monospace"
         android:text="Make Request"
-        android:textColor="#985742"
+        android:textColor="#1A1E37"
         android:textSize="18sp"
         map:layout_constraintBottom_toBottomOf="parent"
-        map:layout_constraintEnd_toEndOf="parent"
-        map:layout_constraintHorizontal_bias="0.526"
         map:layout_constraintStart_toStartOf="parent" />
+
 
     <Spinner
         android:id="@+id/rider_spinner"
@@ -40,7 +40,7 @@
         android:layout_height="30dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="#FF985742"
+        android:background="#262B45"
         map:layout_constraintEnd_toStartOf="@+id/change_origin_button"
         map:layout_constraintHorizontal_bias="0.5"
         map:layout_constraintStart_toStartOf="parent"
