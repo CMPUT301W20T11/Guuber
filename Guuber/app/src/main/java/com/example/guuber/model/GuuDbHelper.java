@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -13,6 +14,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Source;
 
@@ -98,6 +100,7 @@ public class GuuDbHelper {
     public void setProfile(String email){
         this.profile = users.document(email);
     }
+
     public void deleteUser(String email){
         setProfile(email);
         profile.delete();
@@ -109,22 +112,32 @@ public class GuuDbHelper {
         users.document(email).update("phoneNumber",number);
     }
 
-    public void setCurReq(User user,int price, String location){
-        Map<String,Object> requestDetail = new HashMap<>();
-        requestDetail.put("username",user.getUsername());
-        requestDetail.put("cost",price);
-        requestDetail.put("location",location);
-        profile.collection("curRequest").document("curRequest").set(requestDetail);
+    public void makeCurReq(User user,double price, String location){
+        setProfile(user.getEmail());
+        this.profile.update("reqPrice",price);
+        this.profile.update("reqLocation",location);
     }
     public void cancelRequest(){
-        profile.collection("curRequest").document("curRequest").delete();
+        Map<String,Object> delete = new HashMap<>();
+        delete.put("reqPrice", FieldValue.delete());
+        delete.put("reqLocation",FieldValue.delete());
     }
-    public Map<String,Object> getRequest(){
-       DocumentSnapshot details= profile.collection("curRequest").document("curRequest").get().getResult();
-       Request.put("username",details.get("username"));
-       Request.put("cost",details.get("cost"));
-       Request.put("location",details.get("location"));
-       return Request;
+    public void setCurRequest(double price ,String location ){
+        this.Request.put("reqPrice",price);
+        this.Request.put("reqLocation",location);
+
+
+    }
+    public Map<String,Object> getCurRequest(){
+
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+               setCurRequest((Double) documentSnapshot.get("reqPrice"),documentSnapshot.get("reqLocation").toString());
+            }
+        });
+
+        return Request;
     }
 }
 
