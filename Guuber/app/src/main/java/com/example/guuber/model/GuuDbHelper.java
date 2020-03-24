@@ -16,8 +16,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,6 +32,7 @@ public class GuuDbHelper {
     public static User user;
     public static Map<String,Object> Request = new HashMap<>();
     public static Vehicle car;
+    public static ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
 
     public GuuDbHelper(FirebaseFirestore db){
         this.db = db.getInstance();
@@ -150,6 +154,28 @@ public class GuuDbHelper {
         });
 
         return Request;
+    }
+    public ArrayList<Map<String,Object>> getReqList(){
+        reqList.clear();
+        requests.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document : task.getResult()){
+                        Log.d("requestList",document.getId());
+                        updateReqList(document.getId(),document.getData());
+                    }
+                }
+                else{
+                    Log.d("requestList","failed");
+                }
+            }
+        });
+        return this.getReqList();
+    }
+    public void updateReqList(String email,Map<String,Object> reqDetails){
+        reqDetails.put("email",email);
+        this.reqList.add(reqDetails);
     }
 
     public void regVehicle(User user, Vehicle car){

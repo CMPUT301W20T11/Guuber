@@ -55,7 +55,7 @@ public class GuuDbHelperTest {
     private static User mockUser2(){
         return new User("404","k@gmail.com","k","kk","111","Kale");
     }
-
+    private static User mockUser3() { return new User("777","cabbageplant@gmail.com","Randy","Cabbage","000","MachoPlantRandyCabbage");}
     @ClassRule
     public static ActivityTestRule<LoginActivity> rule =
             new ActivityTestRule<>(LoginActivity.class,true,true);
@@ -134,13 +134,15 @@ public class GuuDbHelperTest {
         dbHelper.makeReq(user, 60,"Kingdom of Corona");
         Thread.sleep(1000);
         Map<String,Object> reqDetail;
-        reqDetail = dbHelper.getRequest();
+        reqDetail = dbHelper.getRequestDetail(mockUser());
         Thread.sleep(1000);
         assertEquals((long) 60,reqDetail.get("reqTip"));
         assertEquals("Kingdom of Corona",reqDetail.get("reqLocation"));
         dbHelper.cancelRequest(mockUser());
-
     }
+    
+
+
 
     @AfterClass
     public static void tearDown() throws InterruptedException {
