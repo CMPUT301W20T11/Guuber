@@ -11,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.guuber.model.Driver;
+import com.example.guuber.model.User;
 import com.example.guuber.model.Vehicle;
 
 /**
@@ -41,7 +42,8 @@ public class DriverProfilActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.driver_profile_disp);
-        UserData userData = UserData.getInstance();
+        //UserData userData = UserData.getInstance();
+        User userInfo = ((UserData)(getApplicationContext())).getUser();
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -62,9 +64,9 @@ public class DriverProfilActivity extends AppCompatActivity {
 //        phoneNumber = myself.getPhoneNumber();
 //        username = myself.getFirstName();
 //        email = myself.getEmail();
-        phoneNumber = userData.getPhoneNumber();
-        username = userData.getUsername();
-        email = userData.getEmail();
+        phoneNumber = userInfo.getPhoneNumber();
+        username = userInfo.getUsername();
+        email = userInfo.getEmail();
 
         carReg = myself.getVehicle().getReg();
         status = myself.getStatus();

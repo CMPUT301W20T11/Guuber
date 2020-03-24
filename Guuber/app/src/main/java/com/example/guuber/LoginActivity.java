@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.guuber.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
@@ -130,8 +131,6 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 							uRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
 								@Override
 								public void onSuccess(DocumentSnapshot documentSnapshot) {
-
-
 									if(!documentSnapshot.exists()){
 										Log.d(TAG, "User not found in DB: " + documentSnapshot.getData());
 										RegisterFragment registerFragment = RegisterFragment.newInstance(user.getUid(), user.getEmail());
@@ -140,23 +139,6 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 										Log.d(TAG, "User info pulled from DB1 " + documentSnapshot.getData());
 										updateUI(user);
 									}
-									// make singleton with user data
-									String phoneNumber=documentSnapshot.getString("phoneNumber");
-									String email=documentSnapshot.getString("email");
-									String firstName=documentSnapshot.getString("firstName");
-									String lastName=documentSnapshot.getString("lastName");
-									String uid=documentSnapshot.getString("uid");
-									String username=documentSnapshot.getString("username");
-									UserData userData = UserData.getInstance();
-									Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" + documentSnapshot.getString("phoneNumber")+" "+userData.getPhoneNumber());
-									userData.setPhoneNumber(documentSnapshot.getString("phoneNumber"));
-									userData.setEmail(documentSnapshot.getString("email"));
-									userData.setFirstName(documentSnapshot.getString("firstName"));
-									userData.setLastName(documentSnapshot.getString("lastName"));
-									userData.setUid(documentSnapshot.getString("uid"));
-									userData.setUsername(documentSnapshot.getString("username"));
-									Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" + documentSnapshot.getString("phoneNumber")+" "+userData.getPhoneNumber());
-
 								}
 							});
 						} else {
@@ -219,6 +201,17 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
 
 		if(user!=null) {
+			// Populate the singleton
+			uRef = db.collection("UsersTest").document(user.getUid());
+			uRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+				@Override
+				public void onSuccess(DocumentSnapshot documentSnapshot) {
+					User loggedUser = documentSnapshot.toObject(User.class);
+					((UserData)(getApplicationContext())).setUser(loggedUser);
+				}
+			});
+
+			// Go to home screen depending on user type
 			if (signInType == 0) {
 				//if user is a Rider
 				homeScreen = new Intent(this, MapsRiderActivity.class);

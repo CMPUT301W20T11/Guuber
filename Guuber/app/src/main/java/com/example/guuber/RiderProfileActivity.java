@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.guuber.model.Rider;
+import com.example.guuber.model.User;
 
 
 /**
@@ -40,8 +41,8 @@ public class RiderProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rider_profile_disp);
-        UserData userData = UserData.getInstance();
-
+        //UserData userData = UserData.getInstance();
+        User userInfo = ((UserData)(getApplicationContext())).getUser();
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -59,13 +60,13 @@ public class RiderProfileActivity extends AppCompatActivity {
 //        username = myself.getFirstName();
 //        email = myself.getEmail();
         // changed to access singleton
-        phoneNumber = userData.getPhoneNumber();
-        username = userData.getUsername();
-        email = userData.getEmail();
+        phoneNumber = userInfo.getPhoneNumber();
+        username = userInfo.getUsername();
+        email = userInfo.getEmail();
 
         phoneNumberField.setText(phoneNumber);
         // for testing please disregard
-        Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" +" "+userData.getPhoneNumber());
+        Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" +" "+userInfo.getPhoneNumber());
         usernameField.setText(username);
         emailField.setText(email);
         likeButton.setImageResource(R.drawable.smile);
