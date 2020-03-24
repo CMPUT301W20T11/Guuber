@@ -140,7 +140,7 @@ public class GuuDbHelperTest {
         assertEquals("Kingdom of Corona",reqDetail.get("reqLocation"));
         dbHelper.cancelRequest(mockUser());
     }
-    
+
 
 
 

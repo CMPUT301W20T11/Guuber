@@ -178,6 +178,11 @@ public class GuuDbHelper {
         this.reqList.add(reqDetails);
     }
 
+    public void acceptReq(Map<String,Object> reqDetails,User driver){
+        setProfile(driver.getEmail());
+
+    }
+
     public void regVehicle(User user, Vehicle car){
         setProfile(user.getEmail());
         profile.update("vehMake",car.getMake());
