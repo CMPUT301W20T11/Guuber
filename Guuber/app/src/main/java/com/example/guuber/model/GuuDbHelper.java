@@ -191,18 +191,44 @@ public class GuuDbHelper {
         requests.document(rider.getEmail()).delete();
         setProfile(driver.getEmail());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
-        
+
     }
 
-    public void regVehicle(User user, Vehicle car){
+    public void addVehicle(User user, Vehicle car){
         setProfile(user.getEmail());
         profile.update("vehMake",car.getMake());
         profile.update("vehModel",car.getModel());
         profile.update("vehColor",car.getColor());
     }
-//    public Vehicle getVehDetail(User user){
-//
-//    }
+    public Vehicle getCarDetail(User driver){
+        setProfile(driver.getEmail());
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()){
+                    Log.d("doc","found document");
+                    if(documentSnapshot.get("vehMake") != null){
+                        Log.d("carDetails","car exist");
+                        findVehicle(documentSnapshot.get("vehMake").toString(),documentSnapshot.get("vehModel").toString(),
+                                documentSnapshot.get("vehColor").toString());
+                    }
+                    else{
+                        Log.d("carDetails","car does not exist");
+                    }
+
+                }
+                else{
+                    Log.d("doc","Cannot find document");
+                }
+            }
+        });
+        return this.car;
+    }
+    public void findVehicle(String make,String model,String color){
+        this.car.setMake(make);
+        this.car.setModel(model);
+        this.car.setColor(color);
+    }
 
 
 
