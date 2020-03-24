@@ -123,23 +123,24 @@ public class GuuDbHelper {
     }
 
 
-    public void makeReq(User user,int tip, String location){
-        setProfile(user.getEmail());
+    public void makeReq(User rider,int tip, String location){
+        setProfile(rider.getEmail());
         this.profile.update("reqTip",tip);
         this.profile.update("reqLocation",location);
         Map<String,Object> details = new HashMap<>();
         details.put("reqTip",tip);
         details.put("reqLocation",location);
-        this.requests.document(user.getEmail()).set(details);
+        this.requests.document(rider.getEmail()).set(details);
 
 
     }
-    public void cancelRequest(User user){
+    public void cancelRequest(User rider){
         Map<String,Object> delete = new HashMap<>();
         delete.put("reqTip", FieldValue.delete());
         delete.put("reqLocation",FieldValue.delete());
+        setProfile(rider.getEmail());
         this.profile.update(delete);
-        this.requests.document(user.getEmail()).delete();
+        this.requests.document(rider.getEmail()).delete();
 
     }
     public void setRequest(String email, Object tip , String location ){
@@ -176,16 +177,21 @@ public class GuuDbHelper {
                 }
             }
         });
-        return this.getReqList();
+        return this.reqList;
     }
     public void updateReqList(String email,Map<String,Object> reqDetails){
         reqDetails.put("email",email);
         this.reqList.add(reqDetails);
     }
 
-    public void acceptReq(Map<String,Object> reqDetails,User driver){
+    public void acceptedReq(User rider, User driver){
+        setProfile(rider.getEmail());
+        profile.update("reqDriver",driver.getEmail());
+        Map<String,Object> reqDetails = getRequestDetail(rider);
+        requests.document(rider.getEmail()).delete();
         setProfile(driver.getEmail());
-
+        profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
+        
     }
 
     public void regVehicle(User user, Vehicle car){
