@@ -7,7 +7,11 @@
          location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+
+    <uses-feature
+        android:glEsVersion="0x00020000"
+        android:required="true" />
 
     <application
         android:name=".UserData"
@@ -16,8 +20,8 @@
         android:label="Guuber"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.AppCompat.NoActionBar">
-        <activity android:name=".WalletActivity"></activity>
+        android:theme="@style/Theme.AppCompat">
+        <activity android:name=".WalletActivity" />
         <activity android:name=".scanQrActivity" />
         <activity android:name=".QrActivity" />
         <activity android:name=".makeRequestScreen1" />
@@ -39,20 +43,23 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyBrMB718EfayxLwWRqw3MMRYq_bWooDkm8" />
-
         <meta-data
             android:name="com.google.android.gms.vision.DEPENDENCIES"
             android:value="barcode" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
 
         <activity
             android:name=".MapsRiderActivity"
-            android:label="MAP">
-        </activity>
-
+            android:label="MAP"></activity>
         <activity
             android:name=".MapsDriverActivity"
-            android:label="MAP">
-        </activity>
+            android:label="MAP"></activity>
     </application>
 
 </manifest>

@@ -44,7 +44,7 @@ public class RiderProfileActivity extends AppCompatActivity {
         //UserData userData = UserData.getInstance();
         User userInfo = ((UserData)(getApplicationContext())).getUser();
         /**display the back button**/
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         myself = new Rider("+263784446345", "musariri@ualberta.ca", "Tinashe",
                 "Musariri");
