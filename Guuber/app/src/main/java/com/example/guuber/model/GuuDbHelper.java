@@ -123,13 +123,17 @@ public class GuuDbHelper {
     }
 
 
-    public void makeReq(User rider,int tip, String location){
+    public void makeReq(User rider,int tip, String location,String oriLat,String oriLng,String desLat,String desLng){
         setProfile(rider.getEmail());
-        this.profile.update("reqTip",tip);
-        this.profile.update("reqLocation",location);
         Map<String,Object> details = new HashMap<>();
         details.put("reqTip",tip);
         details.put("reqLocation",location);
+        details.put("oriLat",oriLat);
+        details.put("oriLng",oriLng);
+        details.put("desLat",desLat);
+        details.put("desLng",desLng);
+        this.profile.update(details);
+
         this.requests.document(rider.getEmail()).set(details);
 
 
@@ -143,9 +147,13 @@ public class GuuDbHelper {
         this.requests.document(rider.getEmail()).delete();
 
     }
-    public void setRequest(String email, Object tip , String location ){
+    public void setRequest(String email, Object tip ,String location, String oriLat,String oriLng,String desLat,String desLng ){
         this.Request.put("reqTip", tip);
         this.Request.put("reqLocation",location);
+        this.Request.put("oriLat",oriLat);
+        this.Request.put("oriLng",oriLng);
+        this.Request.put("desLat",desLat);
+        this.Request.put("desLng",desLng);
         this.Request.put("email",email);
 
 
@@ -155,7 +163,10 @@ public class GuuDbHelper {
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-               setRequest(documentSnapshot.get("email").toString(), documentSnapshot.get("reqTip"),documentSnapshot.get("reqLocation").toString());
+               setRequest(documentSnapshot.get("email").toString(), documentSnapshot.get("reqTip"),
+                       documentSnapshot.get("reqLocation").toString(),documentSnapshot.get("oriLat").toString(),
+                       documentSnapshot.get("oriLng").toString(),documentSnapshot.get("desLat").toString(),
+                       documentSnapshot.get("desLng").toString());
             }
         });
 
@@ -226,7 +237,7 @@ public class GuuDbHelper {
     }
     public void findVehicle(String make,String model,String color,String driver){
         this.car = new Vehicle(make,model,color,driver);
-        
+
     }
 
 
