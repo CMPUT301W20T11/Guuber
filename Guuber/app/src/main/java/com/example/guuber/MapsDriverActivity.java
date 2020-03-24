@@ -526,8 +526,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
-        //builder.setView(R.layout.driver_profile_disp) setting the builder to the riders profile
+        //builder.setView(R.layout.driver_profile_disp)
         builder
+                .setView(R.layout.driver_profile_disp)
                 .setMessage("Determine Route to Rider?")
                 .setCancelable(true)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -554,19 +555,19 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 marker.getPosition().latitude,
                 marker.getPosition().longitude
         );
-        DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
+        DirectionsApiRequest driverDirections = new DirectionsApiRequest(geoApiContext);
 
         /**from the drivers current position**/
         LatLng currDriverLocation = getDriverLocation();
-        directions.alternatives(true);
-        directions.origin(
+        //directions.alternatives(true);
+        driverDirections.origin(
                 new com.google.maps.model.LatLng(
                         currDriverLocation.latitude,
                         currDriverLocation.longitude
                 )
         );
         Log.d(TAG, "calculateDirections: destination: " + destination.toString());
-        directions.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
+        driverDirections.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
             public void onResult(DirectionsResult result) {
                 Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());
