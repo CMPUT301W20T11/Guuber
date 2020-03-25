@@ -98,7 +98,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         setContentView(R.layout.activity_rider_maps);
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
-        while (!checkUserPermission()) {
+        /*******************FORSURE NEEDS TO BE CHANGED***********************/
+        while (!isLocationPermissionGranted) {
             checkUserPermission();
         }
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()

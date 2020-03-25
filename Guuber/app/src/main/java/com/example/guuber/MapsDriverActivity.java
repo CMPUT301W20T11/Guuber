@@ -99,9 +99,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         setContentView(R.layout.activity_driver_maps);
         driverSpinner = findViewById(R.id.driver_spinner);
         geoLocationSearch = findViewById(R.id.geo_location_EditText);
+
 
         /**instructions for User to provide their destination
          * delayed to give time for map rendering**/
@@ -114,6 +116,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }, 3000);
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
+        /*******************FORSURE NEEDS TO BE CHANGED***********************/
         while (!checkUserPermission()) {
             checkUserPermission();
         }
