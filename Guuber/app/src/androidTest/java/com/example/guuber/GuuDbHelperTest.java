@@ -99,11 +99,19 @@ public class GuuDbHelperTest {
     @Test
     public void LoginUserTest() throws InterruptedException{
         User obtain = dbHelper.getUser("kluc1@ualberta.ca");
-        Thread.sleep(1000);
-
+        Thread.sleep(2000);
         assertEquals("Kelly",obtain.getFirstName());
         assertEquals("kluc1@ualberta.ca",obtain.getEmail());
         assertEquals((Integer) 1, obtain.getRider());
+        User user = dbHelper.getUser("kluc1@ualberta.ca");
+        Thread.sleep(1000);
+        dbHelper.makeReq(user,20,"A pit","1620","1620","1080","1080");
+        Thread.sleep(1000);
+        Map<String,Object> reqDetail = dbHelper.getRiderRequest(user);
+        Thread.sleep(1000);
+        assertEquals("A pit",reqDetail.get("reqLocation"));
+        dbHelper.cancelRequest(user);
+
 
     }
 
