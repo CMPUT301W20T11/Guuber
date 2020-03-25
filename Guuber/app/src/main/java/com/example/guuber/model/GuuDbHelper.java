@@ -32,9 +32,9 @@ public class GuuDbHelper {
     public static Vehicle car;
     public static ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
 
-    private static CollectionReference rating;
-    public static Map<String,Object> Rating = new HashMap<>();
-    public static ArrayList<Map<String, String>> ratingList = new ArrayList<Map<String, String>>();
+    //private static CollectionReference rating;
+    //public static Map<String,Object> Rating = new HashMap<>();
+    //public static ArrayList<Map<String, String>> ratingList = new ArrayList<Map<String, String>>();
 
 
     private static CollectionReference wallet;
