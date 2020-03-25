@@ -136,7 +136,7 @@ public class GuuDbHelperTest {
         dbHelper.makeReq(user, 60,"Kingdom of Corona","0000","0000","1000","1000");
         Thread.sleep(1000);
         Map<String,Object> reqDetail;
-        reqDetail = dbHelper.getRequestDetail(mockUser());
+        reqDetail = dbHelper.getRiderRequest(mockUser());
         Thread.sleep(1000);
         assertEquals((long) 60,reqDetail.get("reqTip"));
         assertEquals("Kingdom of Corona",reqDetail.get("reqLocation"));
@@ -145,6 +145,11 @@ public class GuuDbHelperTest {
         assertEquals("1000",reqDetail.get("desLat"));
         assertEquals("1000",reqDetail.get("desLng"));
         dbHelper.cancelRequest(mockUser());
+    }
+
+    @Test
+    public void requestTest() throws InterruptedException{
+        
     }
     @Test
     public void VehicleRegisterTest() throws InterruptedException{

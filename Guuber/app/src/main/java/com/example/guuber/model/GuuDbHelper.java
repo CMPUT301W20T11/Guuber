@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
+import com.google.gson.internal.$Gson$Preconditions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -138,13 +139,37 @@ public class GuuDbHelper {
 
 
     }
-    public void cancelRequest(User rider){
-        Map<String,Object> delete = new HashMap<>();
-        delete.put("reqTip", FieldValue.delete());
-        delete.put("reqLocation",FieldValue.delete());
+    public void cancelRequest(User rider) {
         setProfile(rider.getEmail());
-        this.profile.update(delete);
-        this.requests.document(rider.getEmail()).delete();
+        profile.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if (task.isSuccessful()) {
+                    DocumentSnapshot doc = task.getResult();
+                    if (doc.exists()) {
+                        Map<String, Object> delete = new HashMap<>();
+                        delete.put("reqTip", FieldValue.delete());
+                        delete.put("reqLocation", FieldValue.delete());
+                        delete.put("oriLat", FieldValue.delete());
+                        delete.put("oriLng", FieldValue.delete());
+                        delete.put("desLat", FieldValue.delete());
+                        delete.put("desLng", FieldValue.delete());
+                        if (doc.get("reqDriver") != null) {
+                            delete.put("reqDriver", FieldValue.delete());
+                            setProfile(doc.get("reqDriver").toString());
+                            profile.collection("driveRequest").document(rider.getEmail()).delete();
+                            setProfile(rider.getEmail());
+                            profile.update(delete);
+                        } else {
+
+                            setProfile(rider.getEmail());
+                            profile.update(delete);
+                            requests.document(rider.getEmail()).delete();
+                        }
+                    }
+                }
+            }
+        });
 
     }
     public void setRequest(String email, Object tip ,String location, String oriLat,String oriLng,String desLat,String desLng ){
@@ -158,8 +183,8 @@ public class GuuDbHelper {
 
 
     }
-    public Map<String,Object> getRequestDetail(User user){
-        setProfile(user.getEmail());
+    public Map<String,Object> getRiderRequest(User rider){
+        setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -172,6 +197,23 @@ public class GuuDbHelper {
 
         return Request;
     }
+    public Map<String,Object> getDriverActiveReq(User driver){
+        setProfile(driver.getEmail());
+       profile.collection("driveRequest").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+           @Override
+           public void onComplete(@NonNull Task<QuerySnapshot> task) {
+               if(task.isSuccessful()){
+                   for(QueryDocumentSnapshot doc : task.getResult()){
+                       setRequest(doc.getId(),doc.get("reqTip").toString(),doc.get("reqLocation").toString(),
+                               doc.get("oriLat").toString(),doc.get("oriLng").toString(),
+                               doc.get("desLat").toString(),doc.get("desLng").toString());
+                   }
+               }
+           }
+       });
+        return Request;
+    }
+
     public ArrayList<Map<String,Object>> getReqList(){
         reqList.clear();
         requests.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -195,10 +237,11 @@ public class GuuDbHelper {
         this.reqList.add(reqDetails);
     }
 
-    public void acceptedReq(User rider, User driver){
+
+    public void reqAccepted(User rider, User driver){
         setProfile(rider.getEmail());
         profile.update("reqDriver",driver.getEmail());
-        Map<String,Object> reqDetails = getRequestDetail(rider);
+        Map<String,Object> reqDetails = getRiderRequest(rider);
         requests.document(rider.getEmail()).delete();
         setProfile(driver.getEmail());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
