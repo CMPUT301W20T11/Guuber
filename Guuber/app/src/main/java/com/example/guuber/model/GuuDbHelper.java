@@ -199,19 +199,18 @@ public class GuuDbHelper {
     }
     public Map<String,Object> getDriverActiveReq(User driver){
         setProfile(driver.getEmail());
-       profile.collection("driveRequest").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+       Task<QuerySnapshot> activeReq =  profile.collection("driveRequest").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
            @Override
            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-               if(task.isSuccessful()){
-                   for(QueryDocumentSnapshot doc : task.getResult()){
-                       setRequest(doc.getId(),doc.get("reqTip").toString(),doc.get("reqLocation").toString(),
-                               doc.get("oriLat").toString(),doc.get("oriLng").toString(),
-                               doc.get("desLat").toString(),doc.get("desLng").toString());
-                   }
-               }
+                if(task.isSuccessful()){
+                    DocumentSnapshot activeReq = task.getResult().getDocuments().get(0);
+                    setRequest(activeReq.getId(),activeReq.get("reqTip").toString(),activeReq.get("reqLocation").toString(),
+                            activeReq.get("oriLat").toString(),activeReq.get("oriLng").toString(),
+                            activeReq.get("desLat").toString(),activeReq.get("desLng").toString());
+                }
            }
        });
-        return Request;
+       return Request;
     }
 
     public ArrayList<Map<String,Object>> getReqList(){
@@ -238,10 +237,11 @@ public class GuuDbHelper {
     }
 
 
-    public void reqAccepted(User rider, User driver){
+    public void reqAccepted(User rider, User driver) throws InterruptedException {
         setProfile(rider.getEmail());
         profile.update("reqDriver",driver.getEmail());
         Map<String,Object> reqDetails = getRiderRequest(rider);
+        Thread.sleep(1000);
         requests.document(rider.getEmail()).delete();
         setProfile(driver.getEmail());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);

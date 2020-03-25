@@ -31,6 +31,7 @@ import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
@@ -149,7 +150,43 @@ public class GuuDbHelperTest {
 
     @Test
     public void requestTest() throws InterruptedException{
-        
+        dbHelper.checkEmail(mockUser());
+        Thread.sleep(1000);
+        dbHelper.checkEmail(mockUser2());
+        Thread.sleep(1000);
+        dbHelper.checkEmail(mockUser3());
+        Thread.sleep(1000);
+        User user = dbHelper.getUser("m@gmail.com");
+        Thread.sleep(1000);
+        dbHelper.makeReq(user, 60,"Kingdom of Corona","0000","0000","1000","1000");
+        Thread.sleep(1000);
+        user = dbHelper.getUser("k@gmail.com");
+        Thread.sleep(1000);
+        dbHelper.makeReq(user,10,"A deserted island","9999","9999","7777","7777");
+        Thread.sleep(1000);
+        ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
+        reqList = dbHelper.getReqList();
+        Thread.sleep(1000);
+        assertEquals("m@gmail.com",reqList.get(1).get("email"));
+        assertEquals("Kingdom of Corona",reqList.get(1).get("reqLocation"));
+        assertEquals("k@gmail.com",reqList.get(0).get("email"));
+        assertEquals("A deserted island",reqList.get(0).get("reqLocation"));
+
+        dbHelper.cancelRequest(mockUser2());
+        Thread.sleep(1000);
+        reqList = dbHelper.getReqList();
+        Thread.sleep(1000);
+        assertEquals(1,reqList.size());
+
+        dbHelper.reqAccepted(mockUser(),mockUser3());
+        Thread.sleep(1000);
+        reqList = dbHelper.getReqList();
+        Thread.sleep(1000);
+        Map<String,Object> driverCurReq= dbHelper.getDriverActiveReq(mockUser3());
+        Thread.sleep(1000);
+        assertEquals(0,reqList.size());
+        assertEquals("m@gmail.com",driverCurReq.get("email"));
+
     }
     @Test
     public void VehicleRegisterTest() throws InterruptedException{
