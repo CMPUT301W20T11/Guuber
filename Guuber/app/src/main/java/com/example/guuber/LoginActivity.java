@@ -127,7 +127,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 							final FirebaseUser user = mAuth.getCurrentUser();
 
 							// Check if user has registered
-							uRef = db.collection("UsersTest").document(user.getUid());
+							uRef = db.collection("Users").document(user.getEmail());
 							uRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
 								@Override
 								public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -202,7 +202,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
         Context context = LoginActivity.this;
 		if(user!=null) {
 			// Populate the singleton
-			uRef = db.collection("UsersTest").document(user.getUid());
+			uRef = db.collection("Users").document(user.getEmail());
 			uRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
 				@Override
 				public void onSuccess(DocumentSnapshot documentSnapshot) {

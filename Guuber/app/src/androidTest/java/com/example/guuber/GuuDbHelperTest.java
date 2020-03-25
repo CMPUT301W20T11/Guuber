@@ -51,12 +51,12 @@ public class GuuDbHelperTest {
 
 
     private static User mockUser(){
-        return new User("780", "m@gmail.com", "Matt", "Dziubina", "1", "MattUserName");
+        return new User("780", "m@gmail.com", "Matt", "Dziubina", "1", "MattUserName",0,0);
     }
     private static User mockUser2(){
-        return new User("404","k@gmail.com","k","kk","111","Kale");
+        return new User("404","k@gmail.com","k","kk","111","Kale",0,0);
     }
-    private static User mockUser3() { return new User("777","cabbageplant@gmail.com","Randy","Cabbage","000","MachoPlantRandyCabbage");}
+    private static User mockUser3() { return new User("777","cabbageplant@gmail.com","Randy","Cabbage","000","MachoPlantRandyCabbage",0,0);}
     private static Vehicle mockCar(){ return new Vehicle("Ford","F-150","blue","Randy Cabbage");
     }
     @ClassRule

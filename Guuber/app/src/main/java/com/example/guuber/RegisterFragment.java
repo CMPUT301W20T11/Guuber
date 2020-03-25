@@ -27,7 +27,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class RegisterFragment extends DialogFragment {
 	private FirebaseFirestore db = FirebaseFirestore.getInstance();
-	private CollectionReference uRef = db.collection("UsersTest");
+	private CollectionReference uRef = db.collection("Users");
 
 
 	// Keys for the fragment inputs
@@ -143,7 +143,7 @@ public class RegisterFragment extends DialogFragment {
 							}
 							// Query the username to ensure its unique before adding to database TODO
 
-							uRef.document(uid).set(user);
+							uRef.document(user.getEmail()).set(user);
 							listener.onOkPressed();
 
 
