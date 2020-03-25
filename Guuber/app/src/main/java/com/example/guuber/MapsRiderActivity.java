@@ -97,18 +97,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         setContentView(R.layout.activity_rider_maps);
 
-        /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
-        /*******************FORSURE NEEDS TO BE CHANGED***********************/
-        if (!checkUserPermission()) {
-            checkUserPermission();
-        }
-
-
-        if (geoRiderApiContext == null) {
-            geoRiderApiContext = new GeoApiContext.Builder()
-                    .apiKey(getString(R.string.maps_key))
-                    .build();
-        }
 
 
         /**instructions for User to provide their destination
@@ -183,6 +171,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
 
+
+        /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
+        if (geoRiderApiContext == null) {
+            geoRiderApiContext = new GeoApiContext.Builder()
+                    .apiKey(getString(R.string.maps_key))
+                    .build();
+        }
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.rider_map);
         mapFragment.getMapAsync(this);

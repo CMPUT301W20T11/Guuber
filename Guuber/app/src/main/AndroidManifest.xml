@@ -56,10 +56,10 @@
 
         <activity
             android:name=".MapsRiderActivity"
-            android:label="MAP"></activity>
+            android:label="MAP" />
         <activity
             android:name=".MapsDriverActivity"
-            android:label="MAP"></activity>
+            android:label="MAP" />
     </application>
 
 </manifest>

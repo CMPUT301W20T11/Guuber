@@ -30,11 +30,9 @@ public class GuuDbHelper {
     public static Vehicle car = new Vehicle();
     public static ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
 
-    //private static CollectionReference rating;
-    //public static Map<String,Object> Rating = new HashMap<>();
-    //public static ArrayList<Map<String, String>> ratingList = new ArrayList<Map<String, String>>();
 
-    public static Wallet wall;
+
+    //public static Wallet wall;
     //private static CollectionReference wallet;
     //public static Map<String,Object> Wallet = new HashMap<>();
     //public static ArrayList<Map<String, String>> walletList = new ArrayList<Map<String, String>>();
@@ -59,7 +57,10 @@ public class GuuDbHelper {
                             documentSnapshot.get("lastName").toString(),
                             documentSnapshot.get("uid").toString(),
                             documentSnapshot.get("username").toString(),
-                            (int)(long) documentSnapshot.get("rider"));
+                            (int)(long) documentSnapshot.get("rider"),
+                            (int)(long) documentSnapshot.get("posRating"),
+                            (int)(long) documentSnapshot.get("negRating")
+                    );
                 }
                 else{
                     Log.d("user","user does not exist");
@@ -69,7 +70,7 @@ public class GuuDbHelper {
     }
 
     //helper function
-    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider){
+    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating){
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
         this.user.setFirstName(first);
@@ -77,6 +78,10 @@ public class GuuDbHelper {
         this.user.setUid(uid);
         this.user.setUsername(uname);
         this.user.setRider(rider);
+
+        this.user.setPosRating(posRating);
+        this.user.setNegRating(negRating);
+
 
     }
     //get user information
@@ -96,6 +101,10 @@ public class GuuDbHelper {
         user.put("phoneNumber",newUser.getPhoneNumber());
         user.put("uid",newUser.getUid());
         user.put("rider",newUser.getRider());
+
+        user.put("posRating", newUser.getPosRating());
+        user.put("negRating", newUser.getNegRating());
+
 
 
         users.document(newUser.getEmail()).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -128,6 +137,14 @@ public class GuuDbHelper {
     }
     public void updatePhoneNumber(String email,String number){
         users.document(email).update("phoneNumber",number);
+    }
+
+    // Every time you update either of the ratings it automatically increments
+    public void updatePosRating(String email){
+        users.document(email).update("posRating", FieldValue.increment(1));
+    }
+    public void updateNegRating(String email){
+        users.document(email).update("negRating", FieldValue.increment(1));
     }
 
 
