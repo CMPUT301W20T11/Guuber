@@ -81,7 +81,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private LatLng origin;
     private LatLng destination;
     private String coordsToChange;
-    private LatLng riderLocation;
 
     /*******NEW MAPS INTEGRATION**/
     private boolean isLocationPermissionGranted = false;
@@ -90,7 +89,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final String TAG = "MapsRiderActivity";
     private GeoApiContext geoRiderApiContext = null;
 
-    /*********************/
 
 
     @Override
@@ -100,6 +98,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         setContentView(R.layout.activity_rider_maps);
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
+        while (!checkUserPermission()) {
+            checkUserPermission();
+        }
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.rider_map);
         mapFragment.getMapAsync(this);
@@ -206,9 +207,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     }
 
-
     /**
-     * LITERALLY WONT LET THE USER AVOID GIVING PERMISSIONS
+     * WONT LET THE USER AVOID GIVING PERMISSIONS
      */
     @Override
     protected void onResume() {
@@ -219,6 +219,44 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             }
         }
     }
+
+    /**********************************SPINNER METHODS*****************************************/
+
+    /**
+     * Starts activity containing trip history for rider
+     **/
+    public void viewRiderTrips() {
+        final Intent riderTripsIntent = new Intent(MapsRiderActivity.this, ViewTripsActivity.class);
+        startActivity(riderTripsIntent);
+    }
+
+    /**
+     * Starts activity to display riders profile
+     **/
+    public void viewRiderProfile() {
+        final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, RiderProfileActivity.class);
+        startActivity(riderProfileIntent);
+    }
+
+    /**
+     * Starts activity to display riders wallet information
+     **/
+    public void openRiderWallet(){
+        final Intent riderWalletIntent = new Intent(MapsRiderActivity.this, WalletActivity.class);
+        startActivity(riderWalletIntent);
+    }
+
+    /**
+     * Starts activity to allow rider to generate QR
+     **/
+    public void makeQR(){
+        final Intent qrProfileIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
+        startActivity(qrProfileIntent);
+    }
+
+    /**********************************END SPINNER METHODS*****************************************/
+
+
 
 
      /**
@@ -236,7 +274,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         guuberRiderMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
         guuberRiderMap.setOnInfoWindowClickListener(MapsRiderActivity.this);
 
-
         /**
          * logs the coordinates in console upon map click
          * this is giving the user a chance to set their pickup
@@ -245,15 +282,15 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
          **/
         guuberRiderMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
-            public void onMapClick(LatLng arg0){
-                android.util.Log.i("onMapClick", arg0.toString());
-                android.util.Log.i("onMapClick", arg0.toString());
-                if (getChangingCoordinate() == "origin"){
+            public void onMapClick(LatLng arg0) {
+                //android.util.Log.i("onMapClick", arg0.toString());
+                //android.util.Log.i("onMapClick", arg0.toString());
+                if (getChangingCoordinate() == "origin") {
                     setMarker(arg0, "origin");
                     setOrigin(arg0);
                     originSetToast();
-                }else if (getChangingCoordinate() == "destination") {
-                    setMarker(arg0,"destination");
+                } else if (getChangingCoordinate() == "destination") {
+                    setMarker(arg0, "destination");
                     setDestination(arg0);
                     destinationSetToast();
                 }
@@ -263,7 +300,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         if (checkUserPermission()) {
             /**
-            * if user permission have been checked
+             * if user permission have been checked
              * and location permission has been granted...
              **/
             guuberRiderMap.setMyLocationEnabled(true);
@@ -277,9 +314,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             if (location != null) {
                 /**create a new LatLng location object for the user current location**/
                 LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                //android.util.Log.i(TAG, "SEETING ORIGIN");
                 setOrigin(currentLocation);
-
 
                 /**move the camera to current location**/
                 CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -288,39 +323,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         .build();
                 guuberRiderMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
-
                 /**because use provided origin, assume they are ready to pick their destination*/
                 setChangingCoordinate("destination");
             }
-        } else {
-            /**
-             * if user permission have been checked
-             * and location permission has not been granted...
-             **/
-            android.util.Log.i("onMapClick", "GOING TO EDMONTON");
-            guuberRiderMap.setMyLocationEnabled(false);
-            LatLng UniversityOfAlberta = new LatLng( 53.5213 , -113.5213);
-
-            /**move the camera to current location**/
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(UniversityOfAlberta)
-                    .zoom(12)
-                    .build();
-            guuberRiderMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-            /**because use provided origin, assume they are ready to pick their destination*/
-            setChangingCoordinate("origin");
         }
-
     }
 
-    public void setRiderLocation(LatLng location){
-        this.riderLocation = location;
-    }
 
-    public LatLng getRiderLocation(){
-        return riderLocation;
-    }
 
     /**
      * set user origin as their currentlocation
@@ -332,7 +341,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
     /**
-     * returns user origin (pickup location)
+     * @returns rider origin (pickup location)
      **/
     public LatLng getOrigin(){
         return origin;
@@ -373,18 +382,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         Toast.makeText(MapsRiderActivity.this,message,Toast.LENGTH_LONG).show();
     }
 
-    /**
-     * set a marker given LATLNG information
-     * @param locationToMark is location to set marker on
-     **/
-    public void setMarker(LatLng locationToMark, String title){
-        guuberRiderMap.addMarker(new MarkerOptions()
-                .position(locationToMark)
-                .flat(false)
-                .title(title)
-                );
-    }
-
 
     /**
      * determine whether or not the user is changing their origin or destination
@@ -403,6 +400,20 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      */
     public String getChangingCoordinate(){
         return coordsToChange;
+    }
+
+
+
+    /**
+     * set a marker given LATLNG information
+     * @param locationToMark is location to set marker on
+     **/
+    public void setMarker(LatLng locationToMark, String title){
+        guuberRiderMap.addMarker(new MarkerOptions()
+                .position(locationToMark)
+                .flat(false)
+                .title(title)
+                );
     }
 
 
@@ -427,39 +438,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         Toast.makeText(this, "Current location:\n" + mylocation, Toast.LENGTH_LONG).show();
     }
 
-    /**
-     * Starts activity containing trip history for rider
-     **/
-    public void viewRiderTrips() {
-        final Intent riderTripsIntent = new Intent(MapsRiderActivity.this, ViewTripsActivity.class);
-        startActivity(riderTripsIntent);
-    }
 
     /**
-     * Starts activity to display riders profile
-     **/
-    public void viewRiderProfile() {
-        final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, RiderProfileActivity.class);
-        startActivity(riderProfileIntent);
-    }
-
-    /**
-     * Starts activity to display riders wallet information
-     **/
-    public void openRiderWallet(){
-        final Intent riderWalletIntent = new Intent(MapsRiderActivity.this, WalletActivity.class);
-        startActivity(riderWalletIntent);
-    }
-
-    /**
-     * Starts activity to allow rider to generate QR
-     **/
-    public void makeQR(){
-        final Intent qrProfileIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
-        startActivity(qrProfileIntent);
-    }
-
-
+     * CHECKS IF LOCATION SERVICES HAVE BEEN ENABLED
+     * @return true if they have, false if they haven't
+     */
     private boolean checkMapServices() {
         if (isMapsEnabled()) {
             return true;
@@ -480,6 +463,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         }
         return true;
     }
+
 
     /**
      * OPENS UP SETTINGS FOR THEM TO TURN ON GPS
@@ -530,9 +514,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * RUNS RIGHT AFTER PERMISSION RESULT
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         isLocationPermissionGranted = false;
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
@@ -562,22 +544,16 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         }
     }
 
+
     @Override
     public void onInfoWindowClick(Marker marker) {
-        /*if(marker.getSnippet().equals(getUsername())){
-            marker.hideInfoWindow();
-        }
-        else{*/
-
-
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
-        //builder.setView(R.layout.driver_profile_disp) setting the builder to the riders profile
         builder
                 .setMessage("Determine Route to Destination?")
                 .setCancelable(true)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        calculateDirections(marker);
+                        calculateDirections();
                         dialog.dismiss();
                     }
                 })
@@ -591,27 +567,19 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     }
 
 
-
-
-
-    private void calculateDirections(Marker marker) {
+    private void calculateDirections() {
         Log.d(TAG, "calculateDirections: calculating directions.");
 
-        /**to the clicked markers destination**/
+        /**from riders set destination**/
         LatLng riderDestination = getDestination();
-       // LatLng riderDestination = new LatLng(37.40748, -122.062959);
-        /**to the clicked markers destination**/
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
                 riderDestination.latitude,
                 riderDestination.longitude
         );
-
         DirectionsApiRequest riderDirections = new DirectionsApiRequest(geoRiderApiContext);
 
-        /**from the drivers current position**/
+        /**from the riders set Origin**/
         LatLng currRiderLocation = getOrigin();
-        //LatLng currRiderLocation = new LatLng(37.4812, -122.072959);
-        //directions.alternatives(true);
         riderDirections.origin(
                 new com.google.maps.model.LatLng(
                         currRiderLocation.latitude,
@@ -619,63 +587,46 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 )
         );
 
-
         Log.d(TAG, "calculateDirections: destination: " + destination.toString());
         riderDirections.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
             public void onResult(DirectionsResult result) {
-                Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());
+                /**Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());
                 Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration);
                 Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance);
                 Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
-
-                Log.d(TAG, "onResult: successfully retrieved directions.");
+                Log.d(TAG, "onResult: successfully retrieved directions.");**/
                 addPolylinesToMap(result);
             }
-
             @Override
             public void onFailure(Throwable e) {
                 Log.e(TAG, "calculateDirections: Failed to get directions: " + e.getMessage());
-
             }
         });
     }
 
-
-
+    /**
+     * add polyline to map based on the geo coords from the calculated route
+     * @param result is the route determined by calculate directions
+     **/
     private void addPolylinesToMap(final DirectionsResult result){
-
-
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-
-
-                Log.d(TAG, "run: result routes: " + result.routes.length);
-
                 for(DirectionsRoute route: result.routes){
-                    Log.d(TAG, "run: leg: " + route.legs[0].toString());
                     List<com.google.maps.model.LatLng> decodedPath = PolylineEncoding.decode(route.overviewPolyline.getEncodedPath());
-
                     List<LatLng> newDecodedPath = new ArrayList<>();
 
                     // This loops through all the LatLng coordinates of ONE polyline.
                     for(com.google.maps.model.LatLng latLng: decodedPath){
-
-                        Log.d(TAG, "run: latlng: " + latLng.toString());
-
                         newDecodedPath.add(new LatLng(
                                 latLng.lat,
                                 latLng.lng
                         ));
-
                     }
-
                     Polyline polyline = guuberRiderMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
                     polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.polyLinesColors));
                     polyline.setClickable(true);
-
-
                 }
             }
         });
