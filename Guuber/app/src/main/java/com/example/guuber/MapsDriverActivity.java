@@ -5,14 +5,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
-import android.Manifest;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -29,17 +26,13 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.guuber.model.Rider;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.maps.CameraUpdate;
+import com.example.guuber.model.User;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -297,7 +290,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     public void drawOpenRequests() {
         /**near San Fran google Plex (where emulator location is)**/
         LatLng mockLatLng = new LatLng(37.40748, -122.062959);
-        Rider mockRider = new Rider("780-123-4565", "mockEmail", "leah", "copeland");
+        User mockRider = new User("780-123-4565", "mockEmail", "leah", "copeland");
 
         guuberDriverMap.addMarker(new MarkerOptions()
                 .position(mockLatLng)

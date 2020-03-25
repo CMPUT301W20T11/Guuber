@@ -7,11 +7,9 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.guuber.model.Rider;
 import com.example.guuber.model.User;
 
 
@@ -21,7 +19,7 @@ import com.example.guuber.model.User;
 
 public class RiderProfileActivity extends AppCompatActivity {
 
-    Rider myself;
+    User myself;
     String username;
     String email;
     String phoneNumber;
@@ -46,8 +44,8 @@ public class RiderProfileActivity extends AppCompatActivity {
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        myself = new Rider("+263784446345", "musariri@ualberta.ca", "Tinashe",
-                "Musariri");
+//        myself = new User("+263784446345", "musariri@ualberta.ca", "Tinashe",
+//                "Musariri");
 
         phoneNumberField = findViewById(R.id.phoneTextRdIn);
         usernameField = findViewById(R.id.usernameTextRdIn);

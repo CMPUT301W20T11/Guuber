@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.example.guuber.model.Driver;
+import com.example.guuber.model.User;
 
 /** TripHistoryAdapter class is a custom
  * adapter class that enables us to populate a
@@ -22,7 +22,7 @@ import com.example.guuber.model.Driver;
  * currently this class has no data provided to it. adapter is empty
  *****
  */
-public class TripHistoryAdapter extends ArrayAdapter<Driver> {
+public class TripHistoryAdapter extends ArrayAdapter<User> {
 
     private Context context;
 
