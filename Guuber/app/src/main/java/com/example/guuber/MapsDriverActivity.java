@@ -120,9 +120,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         while (!checkUserPermission()) {
             checkUserPermission();
         }
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.driver_map);
-        mapFragment.getMapAsync(this);
+
         if (geoApiContext == null) {
             geoApiContext = new GeoApiContext.Builder()
                     .apiKey(getString(R.string.maps_key))
@@ -186,6 +184,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 driverSpinner.setSelection(MENU);
             }
         });
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.driver_map);
+        mapFragment.getMapAsync(this);
 
     }
 
@@ -491,22 +493,42 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
         //builder.setView(R.layout.driver_profile_disp)
         builder
-                .setView(R.layout.driver_profile_disp)
-                .setMessage("Determine Route to Rider?")
+                .setView(R.layout.rider_profile_disp)
+                .setMessage("What would you like to do?")
                 .setCancelable(true)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Preview Riders Route", new DialogInterface.OnClickListener() {
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         calculateDirections(marker);
                         dialog.dismiss();
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
+                    }
+                })
+                .setNegativeButton("Offer Them a Ride", new DialogInterface.OnClickListener() {
+                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        offerRide(marker);
                     }
                 });
         final AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    /**
+     * @// TODO: 3/25/2020
+     *
+     */
+    public void offerRide(Marker marker){
+        //"open request!" --> pickup location for
+        //marker is set to the pickup location of the request
+        //need to view the route to riders destination
+
+        //need to get the user so we can send them a notification
+        //need to get the driver so we can show the user the drivers pf
+
     }
 
 

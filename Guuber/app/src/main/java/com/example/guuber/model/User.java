@@ -14,6 +14,10 @@ public class User{
     private String uid;
     private String username;
     private Integer isRider = 1;
+
+    private int posRating;
+    private int negRating;
+
     /**
      * Empty constructor for firebase use
      */
@@ -27,8 +31,9 @@ public class User{
      * @param email - User email
      * @param firstName - User first name
      * @param lastName - User last name
+     *
      */
-    public User(String phoneNumber, String email, String firstName, String lastName, String uid, String uname) {
+    public User(String phoneNumber, String email, String firstName, String lastName, String uid, String uname, int posRating, int negRating) {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.firstName = firstName;
@@ -36,6 +41,10 @@ public class User{
         this.uid = uid;
         this.username = uname;
         wallet = new Wallet();
+
+        this.posRating = posRating;
+        this.negRating = negRating;
+
     }
 
     /**
@@ -45,12 +54,15 @@ public class User{
      * @param firstName - User first name
      * @param lastName - User last name
      */
-    public User(String phoneNumber, String email, String firstName, String lastName) {
+    public User(String phoneNumber, String email, String firstName, String lastName, int posRating, int negRating) {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         wallet = new Wallet();
+
+        this.posRating = posRating;
+        this.negRating = negRating;
     }
 
     // In case we need vehicle objects, may be deleted
@@ -69,6 +81,23 @@ public class User{
 //    public void setVehicle(Vehicle vehicle) {
 //        this.vehicle = vehicle;
 //    }
+
+    public int getPosRating(){
+        return posRating;
+    }
+
+    public void setPosRating(int posRating){
+        this.posRating = posRating;
+    }
+
+    public int getNegRating(){
+        return negRating;
+    }
+
+    public void setNegRating(int negRating){
+        this.negRating = negRating;
+    }
+
 
     /**
      *  Set rider status

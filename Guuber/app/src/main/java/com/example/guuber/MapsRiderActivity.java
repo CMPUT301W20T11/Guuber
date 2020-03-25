@@ -99,16 +99,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         /*******************FORSURE NEEDS TO BE CHANGED***********************/
-        if (!isLocationPermissionGranted) {
+        if (!checkUserPermission()) {
             checkUserPermission();
         }
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.rider_map);
-        mapFragment.getMapAsync(this);
 
-        /**SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.rider_map);
-        mapFragment.getMapAsync(this);**/
+
         if (geoRiderApiContext == null) {
             geoRiderApiContext = new GeoApiContext.Builder()
                     .apiKey(getString(R.string.maps_key))
@@ -159,30 +154,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         });
 
 
-        /*******************LEAH REMOVED THIS*********************/
-        /*** onClickListener for the make a request button****
-        makeRqButton = findViewById(R.id.make_request_button);
-        makeRqButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                /**error handling for null origin or destination
-                if (getOrigin() == null || getDestination() == null){
-                    if(getOrigin() == null && getDestination() == null){
-                        Toast.makeText(MapsRiderActivity.this,"Please Set Pickup and DropOffLocation!",Toast.LENGTH_LONG).show();
-                    }else if (getOrigin() == null){
-                        Toast.makeText(MapsRiderActivity.this,"Please Set Pickup Location!",Toast.LENGTH_LONG).show();
-                    }else{
-                        Toast.makeText(MapsRiderActivity.this,"Please Set DropOff Location!",Toast.LENGTH_LONG).show();
-                    }
-                }else{
-                    /**else start makeRequest intent
-                    final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, makeRequestScreen1.class);
-                    /**send getDestination and get getOrigin through the intent
-                    startActivity(riderProfileIntent);
-                }
-            }
-        });****/
-
         /** onClickListener for calling methods based on the item in
          * the spinner drop down menu that is clicked**/
         riderSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener(){
@@ -211,6 +182,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 riderSpinner.setSelection(MENU);
             }
         });
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.rider_map);
+        mapFragment.getMapAsync(this);
 
     }
 

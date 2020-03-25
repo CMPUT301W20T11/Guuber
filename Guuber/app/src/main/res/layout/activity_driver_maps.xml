@@ -11,28 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="60dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="4dp"
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintTop_toTopOf="parent"
         tools:context=".MapsDriverActivity"
         tools:layout="@layout/activity_driver_maps" />
 
-    <Button
-        android:id="@+id/browse_request_button"
-        android:layout_width="370dp"
-        android:layout_height="55dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/button_states"
-        android:backgroundTint="#7A5826"
-        android:fontFamily="monospace"
-        android:text="Offer Request"
-        android:textColor="#111A51"
-        android:textSize="18sp"
-        map:layout_constraintBottom_toBottomOf="parent"
-        map:layout_constraintEnd_toEndOf="parent"
-        map:layout_constraintHorizontal_bias="0.526"
-        map:layout_constraintStart_toStartOf="parent" />
+
 
     <Spinner
         android:id="@+id/driver_spinner"

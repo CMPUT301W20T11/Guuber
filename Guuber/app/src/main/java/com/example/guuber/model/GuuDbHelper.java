@@ -303,7 +303,7 @@ public class GuuDbHelper {
 
 
 
-
+/*******************
 
     /**
      * Ratings
@@ -314,7 +314,7 @@ public class GuuDbHelper {
  * TODO:
      * Remove everything below, would be easier to have ratings incorporated in user like username or Uid is
      * 
-     */
+     *
     public void createRating(User user, Integer AggPositive, Integer AggNegative){
         setProfile(user.getEmail());
         Map<String, Integer> info = new HashMap<>();
@@ -347,15 +347,6 @@ public class GuuDbHelper {
         setProfile(user.getEmail());
         profile.update("AggNegative", FieldValue.increment(1));
     }
-
-
-
-
-
-
-
-
-
 
 
 
