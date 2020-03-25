@@ -98,7 +98,7 @@ public class RegisterFragment extends DialogFragment {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) {
 					// The toggle is enabled
-					isRider =0;
+					isRider = 0;
 				} else {
 					// The toggle is disabled
 					isRider = 1;

@@ -288,7 +288,9 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
 	public  void userPermissionsRationale(){
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Hey there Friend. To have the best experience with this application, we ask you provide us your location. Dont worry. we are just going to sell it and exploit information that makes you vunerable.")
+        builder.setMessage("Hey there Friend. To have the best experience with this application, " +
+				"we ask you provide us your location. Don't worry. We are just going to sell it and " +
+				"exploit information that makes you vunerable.")
 				.setCancelable(false)
                 .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
 					@Override
