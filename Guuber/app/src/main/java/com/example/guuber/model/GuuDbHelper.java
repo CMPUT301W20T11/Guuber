@@ -203,11 +203,17 @@ public class GuuDbHelper {
            @Override
            public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()){
-                    DocumentSnapshot activeReq = task.getResult().getDocuments().get(0);
-                    setRequest(activeReq.getId(),activeReq.get("reqTip").toString(),activeReq.get("reqLocation").toString(),
-                            activeReq.get("oriLat").toString(),activeReq.get("oriLng").toString(),
-                            activeReq.get("desLat").toString(),activeReq.get("desLng").toString());
+                    if(!task.getResult().isEmpty()) {
+                        DocumentSnapshot activeReq = task.getResult().getDocuments().get(0);
+                        setRequest(activeReq.getId(), activeReq.get("reqTip").toString(), activeReq.get("reqLocation").toString(),
+                                activeReq.get("oriLat").toString(), activeReq.get("oriLng").toString(),
+                                activeReq.get("desLat").toString(), activeReq.get("desLng").toString());
+                    }
+                    else{
+                        Request.clear();
+                    }
                 }
+
            }
        });
        return Request;

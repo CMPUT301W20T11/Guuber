@@ -129,7 +129,7 @@ public class GuuDbHelperTest {
         dbHelper.deleteUser("k@gmail.com");
     }
     @Test
-    public void createRequest() throws InterruptedException{
+    public void createRequestTest() throws InterruptedException{
         dbHelper.checkEmail(mockUser);
         Thread.sleep(5000);
         User user = dbHelper.getUser("m@gmail.com");
@@ -187,6 +187,11 @@ public class GuuDbHelperTest {
         assertEquals(0,reqList.size());
         assertEquals("m@gmail.com",driverCurReq.get("email"));
 
+        dbHelper.cancelRequest(mockUser());
+        Thread.sleep(1000);
+        driverCurReq = dbHelper.getDriverActiveReq(mockUser3());
+        Thread.sleep(1000);
+        assertEquals(null,driverCurReq.get("email"));
     }
     @Test
     public void VehicleRegisterTest() throws InterruptedException{
