@@ -136,7 +136,7 @@ public class RegisterFragment extends DialogFragment {
 							String lnameS = lname.getText().toString();
 							String phoneNS = phoneN.getText().toString();
 							String userNameS = userName.getText().toString();
-							User user = new User(phoneNS, emailS,fnameS,lnameS,uid, userNameS);
+							User user = new User(phoneNS, emailS,fnameS,lnameS,uid, userNameS, 0, 0);
 							// Check if user is rider or driver
 							if (isRider == 0) {
 								user.setRider(0);
