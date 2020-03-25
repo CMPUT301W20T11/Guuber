@@ -15,8 +15,8 @@ public class User{
     private String username;
     private Integer isRider = 1;
 
-    private int posRating;
-    private int negRating;
+    private Integer posRating;
+    private Integer negRating;
 
     /**
      * Empty constructor for firebase use
