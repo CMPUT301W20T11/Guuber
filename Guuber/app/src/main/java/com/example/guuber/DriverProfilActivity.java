@@ -6,11 +6,9 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.guuber.model.Driver;
 import com.example.guuber.model.User;
 import com.example.guuber.model.Vehicle;
 
@@ -19,7 +17,7 @@ import com.example.guuber.model.Vehicle;
  */
 
 public class DriverProfilActivity extends AppCompatActivity {
-    Driver myself;
+    User myself;
     String username;
     String email;
     String phoneNumber;
@@ -49,8 +47,8 @@ public class DriverProfilActivity extends AppCompatActivity {
 
         vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
 
-        myself = new Driver("+15879388900", "osiemusariri@gmail.com", "Oswell",
-        "Musariri", "1", "TestUserName", vehicle);
+        //myself = new Driver("+15879388900", "osiemusariri@gmail.com", "Oswell",
+       // "Musariri", "1", "TestUserName", vehicle);
 
         vehicleRegField = findViewById(R.id.carRegTextDrIn);
         phoneNumberField = findViewById(R.id.phoneTextDrIn);
@@ -68,8 +66,8 @@ public class DriverProfilActivity extends AppCompatActivity {
         username = userInfo.getUsername();
         email = userInfo.getEmail();
 
-        carReg = myself.getVehicle().getReg();
-        status = myself.getStatus();
+        //carReg = myself.getVehicle().getReg();
+        //status = myself.getStatus();
 
         vehicleRegField.setText(carReg);
         phoneNumberField.setText(phoneNumber);

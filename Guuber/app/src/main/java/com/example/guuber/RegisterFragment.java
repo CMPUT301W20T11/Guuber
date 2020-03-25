@@ -14,7 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.guuber.model.User;
@@ -41,6 +44,8 @@ public class RegisterFragment extends DialogFragment {
 	private EditText fname;
 	private EditText lname;
 	private EditText phoneN;
+	private Switch isRiderSwitch;
+	private Integer isRider = 1;
 
 
 	public RegisterFragment() {
@@ -88,6 +93,21 @@ public class RegisterFragment extends DialogFragment {
 		fname = view.findViewById(R.id.fname_et);
 		lname = view.findViewById(R.id.lname_et);
 		phoneN = view.findViewById(R.id.phone_et);
+		isRiderSwitch = view.findViewById(R.id.driver_switch);
+		isRiderSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				if (isChecked) {
+					// The toggle is enabled
+					isRider =0;
+				} else {
+					// The toggle is disabled
+					isRider = 1;
+				}
+			}
+		});
+
+
+
 
 		AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
@@ -117,7 +137,10 @@ public class RegisterFragment extends DialogFragment {
 							String phoneNS = phoneN.getText().toString();
 							String userNameS = userName.getText().toString();
 							User user = new User(phoneNS, emailS,fnameS,lnameS,uid, userNameS);
-
+							// Check if user is rider or driver
+							if (isRider == 0) {
+								user.setRider(0);
+							}
 							// Query the username to ensure its unique before adding to database TODO
 
 							uRef.document(uid).set(user);

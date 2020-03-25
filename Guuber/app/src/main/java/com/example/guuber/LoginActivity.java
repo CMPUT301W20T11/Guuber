@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 	private FirebaseAuth mAuth;
 	private static final String TAG = "LoginActivity";
 	private GoogleSignInClient mGoogleSignInClient;
-	private RadioGroup radioGroup;
+	//private RadioGroup radioGroup;
 
 	private FirebaseFirestore db = FirebaseFirestore.getInstance();
 	private DocumentReference uRef;
@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		SignInButton signInButton = findViewById(R.id.sign_in_button);
-		radioGroup = findViewById(R.id.radio_group);
+		//radioGroup = findViewById(R.id.radio_group);
 
 		// Configure sign-in to request the user's ID, email address, and basic
 		// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -136,7 +136,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 										RegisterFragment registerFragment = RegisterFragment.newInstance(user.getUid(), user.getEmail());
 										registerFragment.show(getSupportFragmentManager(), "Register");
 									}else{
-										Log.d(TAG, "User info pulled from DB1 " + documentSnapshot.getData());
+										Log.d(TAG, "User info pulled from DB " + documentSnapshot.getData());
 										updateUI(user);
 									}
 								}
@@ -194,12 +194,12 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
 	private void updateUI(FirebaseUser user) {
 		// TODO check what type of user is logged in and display its appropriate homepage
-		Intent homeScreen;
-		int radioButtonID = radioGroup.getCheckedRadioButtonId();
-		View radioButton = radioGroup.findViewById(radioButtonID);
-		int signInType = radioGroup.indexOfChild(radioButton);
 
-
+		//int radioButtonID = radioGroup.getCheckedRadioButtonId();
+		//View radioButton = radioGroup.findViewById(radioButtonID);
+        //int signInType = 0;
+        User loggedUser = null;
+        Context context = LoginActivity.this;
 		if(user!=null) {
 			// Populate the singleton
 			uRef = db.collection("UsersTest").document(user.getUid());
@@ -208,19 +208,27 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 				public void onSuccess(DocumentSnapshot documentSnapshot) {
 					User loggedUser = documentSnapshot.toObject(User.class);
 					((UserData)(getApplicationContext())).setUser(loggedUser);
-				}
+                    Intent homeScreen;
+                    int signInType = 0;
+                    if (loggedUser.getRider() == 0) { signInType = 1; }
+
+                    // Go to home screen depending on user type
+                    if (signInType == 1) {
+                        //if user is a Rider
+                        homeScreen = new Intent(context, MapsRiderActivity.class);
+                    } else {
+                        //else user is a driver
+                        homeScreen = new Intent(context, MapsDriverActivity.class);
+                    }
+
+                    startActivity(homeScreen);
+                }
 			});
 
-			// Go to home screen depending on user type
-			if (signInType == 0) {
-				//if user is a Rider
-				homeScreen = new Intent(this, MapsRiderActivity.class);
-			} else {
-				//else user is a driver
-				homeScreen = new Intent(this, MapsDriverActivity.class);
-			}
 
-			startActivity(homeScreen);
+
+
+
 		}
 
 	}

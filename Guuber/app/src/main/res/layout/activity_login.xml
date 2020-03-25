@@ -8,28 +8,28 @@
     android:gravity="center_horizontal|center_vertical"
     tools:context=".LoginActivity">
 
-    <RadioGroup
-        android:id="@+id/radio_group"
-        android:checkedButton="@+id/rider_selection"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sign_in_button">
+<!--    <RadioGroup-->
+<!--        android:id="@+id/radio_group"-->
+<!--        android:checkedButton="@+id/rider_selection"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.5"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/sign_in_button">-->
 
-        <RadioButton
-            android:id="@+id/rider_selection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="As Rider" />
+<!--        <RadioButton-->
+<!--            android:id="@+id/rider_selection"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="As Rider" />-->
 
-        <RadioButton
-            android:id="@+id/driver_selection"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="As Driver" />
-    </RadioGroup>
+<!--        <RadioButton-->
+<!--            android:id="@+id/driver_selection"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:text="As Driver" />-->
+<!--    </RadioGroup>-->
 
     <ImageView
         android:id="@+id/imageView"
