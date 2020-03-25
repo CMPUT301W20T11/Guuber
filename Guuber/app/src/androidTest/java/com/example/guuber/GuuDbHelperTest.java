@@ -137,9 +137,9 @@ public class GuuDbHelperTest {
         dbHelper.updatePosRating("k@gmail.com");
         Thread.sleep(1000);
 
-        assertEquals("IWantDie",user.getUsername());
-        assertEquals("696969",user.getPhoneNumber());
-        assertEquals(2,user.getPosRating());
+        assertEquals("IWantDie", user.getUsername());
+        assertEquals("696969", user.getPhoneNumber());
+        assertEquals(2, user.getPosRating());
         dbHelper.deleteUser("k@gmail.com");
     }
     @Test
