@@ -13,7 +13,7 @@ public class User{
     private String lastName;
     private String uid;
     private String username;
-
+    private Integer isRider = 1;
     /**
      * Empty constructor for firebase use
      */
@@ -53,6 +53,38 @@ public class User{
         wallet = new Wallet();
     }
 
+    // In case we need vehicle objects, may be deleted
+//    /**
+//     * Get vehicle object
+//     * @return
+//     */
+//    public Vehicle getVehicle() {
+//        return vehicle;
+//    }
+//
+//    /**
+//     * Set vehicle object
+//     * @param vehicle
+//     */
+//    public void setVehicle(Vehicle vehicle) {
+//        this.vehicle = vehicle;
+//    }
+
+    /**
+     *  Set rider status
+     * @param rider
+     */
+    public void setRider(Integer rider) {
+        isRider = rider;
+    }
+
+    /**
+     * Get rider status
+     * @return
+     */
+    public Integer getRider() {
+        return isRider;
+    }
 
     /**
      * Get user wallet
