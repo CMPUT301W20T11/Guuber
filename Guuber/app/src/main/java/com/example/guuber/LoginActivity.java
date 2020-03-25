@@ -2,7 +2,10 @@ package com.example.guuber;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -43,6 +46,10 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * to log in as rider or driver
  */
 public class LoginActivity extends AppCompatActivity implements RegisterFragment.OnFragmentInteractionListener {
+	private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
+	public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 12;
+	private boolean isLocationPermissionGranted = false;
+
 	private static final int RC_SIGN_IN = 9001;
 
 	private FirebaseAuth mAuth;
@@ -95,21 +102,23 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 
-		// Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-		if (requestCode == RC_SIGN_IN) {
-			Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
-			try {
-				// Google Sign In was successful, authenticate with Firebase
-				GoogleSignInAccount account = task.getResult(ApiException.class);
-				firebaseAuthWithGoogle(account);
-			} catch (ApiException e) {
-				// Google Sign In failed, update UI appropriately
-				Log.w(TAG, "Google sign in failed", e);
-				// [START_EXCLUDE]
-				updateUI(null);
-				// [END_EXCLUDE]
+		switch(requestCode){// Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
+			case RC_SIGN_IN: {
+				Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
+				try {
+					// Google Sign In was successful, authenticate with Firebase
+					GoogleSignInAccount account = task.getResult(ApiException.class);
+					firebaseAuthWithGoogle(account);
+				} catch (ApiException e) {
+					// Google Sign In failed, update UI appropriately
+					Log.w(TAG, "Google sign in failed", e);
+					// [START_EXCLUDE]
+					updateUI(null);
+					// [END_EXCLUDE]
+				}
 			}
 		}
+
 	}
 
 	// [START auth_with_google]
@@ -197,41 +206,42 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
 		//int radioButtonID = radioGroup.getCheckedRadioButtonId();
 		//View radioButton = radioGroup.findViewById(radioButtonID);
-        //int signInType = 0;
-        User loggedUser = null;
-        Context context = LoginActivity.this;
-		if(user!=null) {
+		//int signInType = 0;
+		User loggedUser = null;
+		Context context = LoginActivity.this;
+		if (user != null) {
 			// Populate the singleton
 			uRef = db.collection("UsersTest").document(user.getUid());
 			uRef.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
 				@Override
 				public void onSuccess(DocumentSnapshot documentSnapshot) {
 					User loggedUser = documentSnapshot.toObject(User.class);
-					((UserData)(getApplicationContext())).setUser(loggedUser);
-                    Intent homeScreen;
-                    int signInType = 0;
-                    if (loggedUser.getRider() == 0) { signInType = 1; }
+					((UserData) (getApplicationContext())).setUser(loggedUser);
+					Intent homeScreen;
+					int signInType = 0;
+					if (loggedUser.getRider() == 0) {
+						signInType = 1;
+					}
 
-                    // Go to home screen depending on user type
-                    if (signInType == 1) {
-                        //if user is a Rider
-                        homeScreen = new Intent(context, MapsRiderActivity.class);
-                    } else {
-                        //else user is a driver
-                        homeScreen = new Intent(context, MapsDriverActivity.class);
-                    }
+					// Go to home screen depending on user type
+					if (signInType == 1) {
+						//if user is a Rider
+						homeScreen = new Intent(context, MapsRiderActivity.class);
+					} else {
+						//else user is a driver
+						homeScreen = new Intent(context, MapsDriverActivity.class);
+					}
 
-                    startActivity(homeScreen);
-                }
+					startActivity(homeScreen);
+				}
 			});
-
-
-
-
+		} else {
+			/**if the user has never registered before we have to get permissiosn**/
+			checkUserPermissions();
+			}
 
 		}
 
-	}
 
 	// Register fragment cancel button onClick listener implementation
 	@Override
@@ -246,6 +256,55 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		updateUI(user);
 	}
 
+	public void checkUserPermissions(){
+		if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
+				android.Manifest.permission.ACCESS_FINE_LOCATION)
+				== PackageManager.PERMISSION_GRANTED) {
+					isLocationPermissionGranted = true;
+			} else {
+				ActivityCompat.requestPermissions(this,
+						new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+						PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+				}
+			}
 
+	@Override
+	public void onRequestPermissionsResult(int requestCode,
+										   String[] permissions, int[] grantResults) {
+		switch (requestCode) {
+			case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
+				// If request is cancelled, the result arrays are empty.
+				if (grantResults.length > 0
+						&& grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+					isLocationPermissionGranted = true;
+				} else {
+					userPermissionsRationale();
+				}
+				return;
+			}
+
+		}
+	}
+
+	public  void userPermissionsRationale(){
+		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Hey there Friend. To have the best experience with this application, we ask you provide us your location. Dont worry. we are just going to sell it and exploit information that makes you vunerable.")
+				.setCancelable(false)
+                .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						checkUserPermissions();
+						dialog.dismiss();
+					}
+				});
+	final AlertDialog alert = builder.create();
+        alert.show();
+	}
 
 }
+
+
+
+
+
+

@@ -86,12 +86,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /*******NEW MAPS INTEGRATION**/
     private boolean isLocationPermissionGranted = false;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
-    private static int REQUEST_FINE_LOCATION_PERMISSION = 11;
     public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 12;
-    public static final int ERROR_DIALOG_REQUEST = 13;
     private static final String TAG = "MapsDriverActivity";
     private GeoApiContext geoApiContext = null;
-
     /*********************/
 
 
@@ -115,17 +112,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             }
         }, 3000);
 
-        /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
-        /*******************FORSURE NEEDS TO BE CHANGED***********************/
-        while (!checkUserPermission()) {
-            checkUserPermission();
-        }
-
-        if (geoApiContext == null) {
-            geoApiContext = new GeoApiContext.Builder()
-                    .apiKey(getString(R.string.maps_key))
-                    .build();
-        }
 
 
         /**when driver clicks search button,
@@ -185,6 +171,13 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
+
+        /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
+        if (geoApiContext == null) {
+            geoApiContext = new GeoApiContext.Builder()
+                    .apiKey(getString(R.string.maps_key))
+                    .build();
+        }
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.driver_map);
         mapFragment.getMapAsync(this);
@@ -299,6 +292,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             /*** draw the open requests on the map. currently they are just mock requests**/
             drawOpenRequests();
         }
+
     }
 
     /**
