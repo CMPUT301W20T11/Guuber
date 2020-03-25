@@ -27,7 +27,7 @@ public class GuuDbHelper {
     private static DocumentReference profile;
     public static User user;
     public static Map<String,Object> Request = new HashMap<>();
-    public static Vehicle car;
+    public static Vehicle car = new Vehicle();
     public static ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
 
 
@@ -311,7 +311,10 @@ public class GuuDbHelper {
         return car;
     }
     public void findVehicle(String make,String model,String color,String driver){
-        this.car = new Vehicle(make,model,color,driver);
+        this.car.setMake(make);
+        this.car.setModel(model);
+        this.car.setColor(color);
+        this.car.setReg(driver);
 
     }
 
