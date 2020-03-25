@@ -41,7 +41,7 @@ public class DatabaseAndroidTest {
 
 
 	private static User mockUser(){
-		return new User("780", "m@gmail.com", "Matt", "Dziubina", "1", "MattUserName");
+		return new User("780", "m@gmail.com", "Matt", "Dziubina", "1", "MattUserName",0,0);
 	}
 
 	@ClassRule

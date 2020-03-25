@@ -55,8 +55,11 @@ public class GuuDbHelper {
                 if(documentSnapshot.exists()){
                     Log.d("user","found user");
                     setUser(documentSnapshot.get("phoneNumber").toString(),documentSnapshot.get("email").toString(),
-                            documentSnapshot.get("first").toString(),documentSnapshot.get("last").toString(),
-                            documentSnapshot.get("uid").toString(),documentSnapshot.get("username").toString());
+                            documentSnapshot.get("firstName").toString(),
+                            documentSnapshot.get("lastName").toString(),
+                            documentSnapshot.get("uid").toString(),
+                            documentSnapshot.get("username").toString(),
+                            (int)(long) documentSnapshot.get("rider"));
                 }
                 else{
                     Log.d("user","user does not exist");
@@ -66,13 +69,14 @@ public class GuuDbHelper {
     }
 
     //helper function
-    public void setUser(String phone,String email,String first,String last,String uid,String uname){
+    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider){
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
         this.user.setFirstName(first);
         this.user.setLastName(last);
         this.user.setUid(uid);
         this.user.setUsername(uname);
+        this.user.setRider(rider);
 
     }
     //get user information
@@ -85,12 +89,13 @@ public class GuuDbHelper {
     //NOTE: USED TO CREATE USERS
     public void checkEmail(User newUser){
         Map<String,Object> user = new HashMap<>();
-        user.put("first",newUser.getFirstName());
-        user.put("last",newUser.getLastName());
+        user.put("firstName",newUser.getFirstName());
+        user.put("lastName",newUser.getLastName());
         user.put("email",newUser.getEmail());
         user.put("username",newUser.getUsername());
         user.put("phoneNumber",newUser.getPhoneNumber());
         user.put("uid",newUser.getUid());
+        user.put("rider",newUser.getRider());
 
 
         users.document(newUser.getEmail()).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {

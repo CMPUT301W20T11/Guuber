@@ -93,11 +93,19 @@ public class GuuDbHelperTest {
         dbHelper.deleteUser("m@gmail.com");
         Thread.sleep(5000);
 
-
-
-
     }
 
+//    testing to see if the user creation from login activity can be obtain from the database
+    @Test
+    public void LoginUserTest() throws InterruptedException{
+        User obtain = dbHelper.getUser("kluc1@ualberta.ca");
+        Thread.sleep(1000);
+
+        assertEquals("Kelly",obtain.getFirstName());
+        assertEquals("kluc1@ualberta.ca",obtain.getEmail());
+        assertEquals((Integer) 1, obtain.getRider());
+
+    }
 
 //    fails when run all test passes when ran individually
     @Test
