@@ -15,11 +15,9 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
-import com.google.gson.internal.$Gson$Preconditions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class GuuDbHelper {
@@ -36,10 +34,10 @@ public class GuuDbHelper {
     //public static Map<String,Object> Rating = new HashMap<>();
     //public static ArrayList<Map<String, String>> ratingList = new ArrayList<Map<String, String>>();
 
-
-    private static CollectionReference wallet;
-    public static Map<String,Object> Wallet = new HashMap<>();
-    public static ArrayList<Map<String, String>> walletList = new ArrayList<Map<String, String>>();
+    public static Wallet wall;
+    //private static CollectionReference wallet;
+    //public static Map<String,Object> Wallet = new HashMap<>();
+    //public static ArrayList<Map<String, String>> walletList = new ArrayList<Map<String, String>>();
 
 
     public GuuDbHelper(FirebaseFirestore db){
@@ -93,6 +91,8 @@ public class GuuDbHelper {
         user.put("username",newUser.getUsername());
         user.put("phoneNumber",newUser.getPhoneNumber());
         user.put("uid",newUser.getUid());
+
+
         users.document(newUser.getEmail()).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -124,6 +124,8 @@ public class GuuDbHelper {
     public void updatePhoneNumber(String email,String number){
         users.document(email).update("phoneNumber",number);
     }
+
+
 
 
     public void makeReq(User rider,int tip, String location,String oriLat,String oriLng,String desLat,String desLng){
@@ -306,21 +308,21 @@ public class GuuDbHelper {
     /**
      * Ratings
      * @param email
+     * @param user
      * @param AggPositive
      * @param AggNegative
-     *
+ * TODO:
      * Remove everything below, would be easier to have ratings incorporated in user like username or Uid is
-     *
-     * TODO:
-     * Test Cases
-
-    public void setRating(User user, Integer AggPositive, Integer AggNegative){
+     * 
+     */
+    public void createRating(User user, Integer AggPositive, Integer AggNegative){
         setProfile(user.getEmail());
-        Map<String,Object> details = new HashMap<>();
-        details.put("AggPositive", AggPositive);
-        details.put("AggNegative", AggNegative);
+        Map<String, Integer> info = new HashMap<>();
+        info.put("AggPositive", AggPositive);
+        info.put("AggNegative", AggNegative);
         //this.Rating.put("email",email);
 
+        this.ratings.document(user.getEmail()).set(info);
 
     }
     public Map<String, Object> getRatingDetail(User user){
@@ -337,16 +339,15 @@ public class GuuDbHelper {
     public void updatePositiveRating(String email, Integer AggPositive)
     {
         setProfile(user.getEmail());
-        profile.document(email).update("AggPositive", FieldValue.increment(1));
-
-
+        profile.update("AggPositive", FieldValue.increment(1));
 
     }
     public void updateNegativeRating(String email, Integer AggNegative)
     {
-
+        setProfile(user.getEmail());
+        profile.update("AggNegative", FieldValue.increment(1));
     }
-*/
+
 
 
 
@@ -369,13 +370,44 @@ public class GuuDbHelper {
      * Finish redoing Wallet/balance
      * Add other attributes found in the wallet class?
      * Test Cases
-     * */
+     *
 
-
-
+    public void createWallet(User user, Wallet wall) // adds init wallet to db
+    {
+        setProfile(user.getEmail());
+        profile.update("balance", wall.getBalance());
+        profile.update("transactions", wall.getTransactions());
 
     }
+    public Wallet getWalletDetail(User user)
+    {
+        setProfile(user.getEmail());
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()){
+                    Log.d("doc","found document");
+                    if(documentSnapshot.get("balance") != null){
+                        Log.d("WalletDetails","wallet exists");
+                        findWallet(documentSnapshot.getDouble("balance"), documentSnapshot.get("transactions").toString(),documentSnapshot.getId());
+                    }
+                    else{
+                        Log.d("WalletDetails","wallet does not exist");
+                    }
 
+                } 
+                else{
+                    Log.d("doc","Cannot find document");
+                }
+            }
+        });
+        return wall;
+    }
+
+    private void findWallet(Double balance, String transactions, String user) {
+        this.wall = new Wallet();
+    }
+*/
 
 }
 
