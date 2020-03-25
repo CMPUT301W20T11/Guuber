@@ -17,6 +17,8 @@ public class Wallet {
 		transactions = new ArrayList<Transaction>();
 	}
 
+
+
 	/**
 	 * Deposit an amount to wallet
 	 * @param amount - Amount to deposit
