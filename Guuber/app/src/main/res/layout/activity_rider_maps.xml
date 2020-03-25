@@ -11,27 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="60dp"
-        android:layout_marginBottom="70dp"
+        android:layout_marginBottom="8dp"
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintStart_toStartOf="parent"
         map:layout_constraintTop_toTopOf="parent"
-        tools:context=".MapsDriverActivity"
+        tools:context=".MapsRiderActivity"
         tools:layout="@layout/activity_rider_maps" />
 
-    <Button
-        android:id="@+id/make_request_button"
-        android:layout_width="370dp"
-        android:layout_height="55dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginBottom="8dp"
-        android:background="@drawable/button_states"
-        android:backgroundTint="#FF87702E"
-        android:fontFamily="monospace"
-        android:text="Make Request"
-        android:textColor="#1A1E37"
-        android:textSize="18sp"
-        map:layout_constraintBottom_toBottomOf="parent"
-        map:layout_constraintStart_toStartOf="parent" />
 
 
     <Spinner

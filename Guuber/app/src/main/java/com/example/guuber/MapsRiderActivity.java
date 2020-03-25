@@ -76,7 +76,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int  QR = 4;
 
     private GoogleMap guuberRiderMap;
-    private Button makeRqButton, changeOriginButton, changeDestinationButton;
+    private Button changeOriginButton, changeDestinationButton;
     private Spinner riderSpinner;
     private LatLng origin;
     private LatLng destination;
@@ -99,12 +99,16 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         /*******************FORSURE NEEDS TO BE CHANGED***********************/
-        while (!isLocationPermissionGranted) {
+        if (!isLocationPermissionGranted) {
             checkUserPermission();
         }
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.rider_map);
         mapFragment.getMapAsync(this);
+
+        /**SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.rider_map);
+        mapFragment.getMapAsync(this);**/
         if (geoRiderApiContext == null) {
             geoRiderApiContext = new GeoApiContext.Builder()
                     .apiKey(getString(R.string.maps_key))
@@ -154,12 +158,14 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             }
         });
 
-        /*** onClickListener for the make a request button*/
+
+        /*******************LEAH REMOVED THIS*********************/
+        /*** onClickListener for the make a request button****
         makeRqButton = findViewById(R.id.make_request_button);
         makeRqButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                /**error handling for null origin or destination*/
+                /**error handling for null origin or destination
                 if (getOrigin() == null || getDestination() == null){
                     if(getOrigin() == null && getDestination() == null){
                         Toast.makeText(MapsRiderActivity.this,"Please Set Pickup and DropOffLocation!",Toast.LENGTH_LONG).show();
@@ -169,13 +175,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         Toast.makeText(MapsRiderActivity.this,"Please Set DropOff Location!",Toast.LENGTH_LONG).show();
                     }
                 }else{
-                    /**else start makeRequest intent**/
+                    /**else start makeRequest intent
                     final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, makeRequestScreen1.class);
-                    /**send getDestination and get getOrigin through the intent**/
+                    /**send getDestination and get getOrigin through the intent
                     startActivity(riderProfileIntent);
                 }
             }
-        });
+        });****/
 
         /** onClickListener for calling methods based on the item in
          * the spinner drop down menu that is clicked**/
@@ -287,11 +293,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 //android.util.Log.i("onMapClick", arg0.toString());
                 //android.util.Log.i("onMapClick", arg0.toString());
                 if (getChangingCoordinate() == "origin") {
-                    setMarker(arg0, "origin");
+                    setMarker(arg0, "Origin");
                     setOrigin(arg0);
                     originSetToast();
                 } else if (getChangingCoordinate() == "destination") {
-                    setMarker(arg0, "destination");
+                    setMarker(arg0, "Destination");
                     setDestination(arg0);
                     destinationSetToast();
                 }
@@ -540,6 +546,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             case PERMISSIONS_REQUEST_ENABLE_GPS: {
                 if (isLocationPermissionGranted == false) {
                     checkUserPermission();
+
                 }
             }
         }
@@ -550,21 +557,46 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     public void onInfoWindowClick(Marker marker) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
         builder
-                .setMessage("Determine Route to Destination?")
+                .setMessage("What would you like to do?")
                 .setCancelable(true)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Display Route Details ", new DialogInterface.OnClickListener() {
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         calculateDirections();
                         dialog.dismiss();
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Make a request", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                makeRequest(marker);
+                            }
+                        }
+                )
+                .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         dialog.cancel();
                     }
                 });
         final AlertDialog alert = builder.create();
         alert.show();
+    }
+
+    /**
+     * parse the coordinates of the origin and the destination
+     * destination is necessarily the marker that was clicked on
+     * convert them to strings and send to Db
+     * @param marker
+     */
+    public void makeRequest(Marker marker){
+        Double originLatitude = getOrigin().latitude;
+        Double originLongitude = getOrigin().longitude;
+        Double destinationLatitude = marker.getPosition().latitude;
+        Double destinationLongitude = marker.getPosition().longitude;
+        android.util.Log.i(TAG, "origin latitude = "+ originLatitude.toString());
+        android.util.Log.i(TAG, "origin longitude = "+ originLongitude.toString());
+        android.util.Log.i(TAG, "destination latitude = "+ destinationLatitude.toString());
+        android.util.Log.i(TAG, "destination longitude = "+destinationLongitude.toString());
+
     }
 
 
