@@ -336,13 +336,13 @@ public class GuuDbHelper {
 
         return Rating;
     }
-    public void updatePositiveRating(String email, Integer AggPositive)
+    public void updatePositiveRating(String email)
     {
         setProfile(user.getEmail());
         profile.update("AggPositive", FieldValue.increment(1));
 
     }
-    public void updateNegativeRating(String email, Integer AggNegative)
+    public void updateNegativeRating(String email)
     {
         setProfile(user.getEmail());
         profile.update("AggNegative", FieldValue.increment(1));
