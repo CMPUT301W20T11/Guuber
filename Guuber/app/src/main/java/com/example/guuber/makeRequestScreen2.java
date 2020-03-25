@@ -5,12 +5,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.guuber.model.Driver;
+import com.example.guuber.model.User;
 import com.example.guuber.model.Vehicle;
 
 
@@ -28,7 +27,7 @@ public class makeRequestScreen2 extends AppCompatActivity{
     private Button viewProfileButton;
     private Button acceptButton;
     private Button declineButton;
-    Driver theDriver;
+    User theDriver;
     Vehicle vehicle;
 
     @Override
@@ -37,8 +36,8 @@ public class makeRequestScreen2 extends AppCompatActivity{
         setContentView(R.layout.make_request_dialog2);
 
         vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
-        theDriver = new Driver("+15879388900", "osiemusariri@gmail.com", "Oswell",
-                "Musariri", "1", "TestUserName", vehicle);
+        //theDriver = new Driver("+15879388900", "osiemusariri@gmail.com", "Oswell",
+        //        "Musariri", "1", "TestUserName", vehicle);
 
         pickup = findViewById(R.id.pickupAddRq2);
         dropoff = findViewById(R.id.dropoffAddRq2);
