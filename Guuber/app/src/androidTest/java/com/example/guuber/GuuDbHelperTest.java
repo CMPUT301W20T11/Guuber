@@ -80,6 +80,7 @@ public class GuuDbHelperTest {
     }
 
 
+//    old test probably doesn't work
     @Test
     public void UserTest() throws InterruptedException{
         dbHelper.checkEmail(mockUser());

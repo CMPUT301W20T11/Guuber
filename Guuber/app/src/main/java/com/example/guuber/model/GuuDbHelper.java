@@ -37,7 +37,10 @@ public class GuuDbHelper {
     //public static Map<String,Object> Wallet = new HashMap<>();
     //public static ArrayList<Map<String, String>> walletList = new ArrayList<Map<String, String>>();
 
-
+    /**
+     * on create
+     * @param db - the instance of a FirebaseFirestone
+     */
     public GuuDbHelper(FirebaseFirestore db){
         this.db = db.getInstance();
         this.users = this.db.collection("Users");
@@ -45,7 +48,11 @@ public class GuuDbHelper {
         this.user = new User();
     }
 
-    //helper function
+    /**
+     * Helper function for getUser
+     * Finds if the document of the email
+     * @param email - the email of the document to find
+     * */
     public void findUser(String email){
         users.document(email).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -69,7 +76,19 @@ public class GuuDbHelper {
         });
     }
 
-    //helper function
+    /**
+     * Helper function
+     * set the user info for getUser
+     * @param phone - user's phonenumber
+     * @param email - user's email
+     * @param first - user's first name
+     * @param last  - user's last name
+     * @param uname  - user's username
+     * @param rider - whether if the user is a rider of driver
+     * @param posRating - number of ratings that are positive
+     * @param negRating - number of ratings that are negative
+     *
+     * */
     public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating){
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
@@ -91,7 +110,8 @@ public class GuuDbHelper {
         return user;
     }
 
-    //NOTE: USED TO CREATE USERS
+    //NOTE: USED TO CREATE USERS however function not used as the user login activity
+    // creates the user account and log them in.
     public void checkEmail(User newUser){
         Map<String,Object> user = new HashMap<>();
         user.put("firstName",newUser.getFirstName());
