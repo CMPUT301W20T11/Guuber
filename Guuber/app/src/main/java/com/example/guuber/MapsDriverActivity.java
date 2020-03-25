@@ -5,11 +5,14 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
 
+import android.Manifest;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -26,13 +29,17 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.guuber.model.User;
+import com.example.guuber.model.Rider;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -48,8 +55,6 @@ import com.google.maps.model.DirectionsRoute;
 import java.util.ArrayList;
 import java.util.List;
 
-//import org.apache.http.HttpResponse;
-//import org.apache.http.client.methods.HttpGet;
 
 /**
  * This class contains the home screen for a Driver.
@@ -109,6 +114,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }, 3000);
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
+        while (!checkUserPermission()) {
+            checkUserPermission();
+        }
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.driver_map);
         mapFragment.getMapAsync(this);
@@ -117,14 +125,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     .apiKey(getString(R.string.maps_key))
                     .build();
         }
-
-
-        /**initialize a spinner and set its adapter, strings are in 'values'**/
-        /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
-         * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
-        ArrayAdapter<String> driverSpinnerAdapter = new ArrayAdapter<String>(MapsDriverActivity.this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menuDriver));
-        driverSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        driverSpinner.setAdapter(driverSpinnerAdapter);
 
 
         /**when driver clicks search button,
@@ -147,6 +147,13 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 }
             }
         });
+
+        /**initialize a spinner and set its adapter, strings are in 'values'**/
+        /**CITATION: Youtube, Coding Demos, Android Drop Down List, Tutorial,
+         * published on August 4,2016 Standard License, https://www.youtube.com/watch?v=urQp7KsQhW8 **/
+        ArrayAdapter<String> driverSpinnerAdapter = new ArrayAdapter<String>(MapsDriverActivity.this, android.R.layout.simple_list_item_1, getResources().getStringArray(R.array.menuDriver));
+        driverSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        driverSpinner.setAdapter(driverSpinnerAdapter);
 
         /**calling methods based on the item in the spinner drop down menu that is clicked**/
         driverSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -192,179 +199,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
-    /**
-     * Manipulates the map once available.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     **/
-    @Override
-    public void onMapReady(GoogleMap googleMap) {
-
-        guuberDriverMap = googleMap;
-        guuberDriverMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        guuberDriverMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
-        guuberDriverMap.setOnInfoWindowClickListener(MapsDriverActivity.this);
-
-        /**
-         * logs the coordinates in console upon map click
-         * this is giving the driver a chance to browse
-         * a specified area for open requests
-         * @params latitude on longitude retrieved from map click
-         **/
-        guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-            @Override
-            public void onMapClick(LatLng arg0) {
-                android.util.Log.i("onMapClick", arg0.toString());
-                geoLocationSearch.setText(arg0.toString());
-                setSearch(arg0);
-
-            }
-        });
-
-
-        if (checkUserPermission()) {
-            /**
-             * if user permission have been checked
-             * and location permission has been granted...
-             **/
-
-            guuberDriverMap.setMyLocationEnabled(true);
-            guuberDriverMap.setOnMyLocationButtonClickListener(this);
-            guuberDriverMap.setOnMyLocationClickListener(this);
-
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
-
-
-            if (location != null) {
-                /**create a new LatLng location object for the user current location**/
-                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                setDriverLocation(currentLocation);
-
-                /**move the camera to current location**/
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(currentLocation)
-                        .zoom(10)
-                        .build();
-                guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }
-        } else {
-            /**
-             * if user permission have been checked
-             * and location permission has not been granted...
-             **/
-            guuberDriverMap.setMyLocationEnabled(false);
-            LatLng UniversityOfAlberta = new LatLng(53.5213, -113.5213);
-
-            /**move the camera to current location**/
-            CameraPosition cameraPosition = new CameraPosition.Builder()
-                    .target(UniversityOfAlberta)
-                    .zoom(12)
-                    .build();
-            guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        }
-
-        /**
-         * draw the open requests on the map
-         * currently they are just mock requests
-         **/
-        drawOpenRequests();
-
-    }
-
-    public void setDriverLocation(LatLng location){
-        this.driverLocation = location;
-    }
-
-    public LatLng getDriverLocation(){
-        return driverLocation;
-    }
-
-
-    /**
-     * render markers on the map based on open requests
-     * currently  there are just mock open requests
-     */
-    public void drawOpenRequests() {
-        /**near San Fran google Plex (where emulator location is)**/
-        LatLng mockLatLng = new LatLng(37.40748, -122.062959);
-        User mockRider = new User("780-123-4565", "mockEmail", "leah", "copeland");
-
-        guuberDriverMap.addMarker(new MarkerOptions()
-                .position(mockLatLng)
-                .flat(false)
-                .title("OPEN REQUEST\n" +
-                        "name: " + mockRider.getFirstName() + " " +
-                        mockRider.getLastName() + "\n " +
-                        "Phone Number: " + mockRider.getPhoneNumber() + " " +
-                        "Email: " + mockRider.getEmail()));
-
-    }
-
-
-    /**
-     * set a marker given LATLNG information
-     *
-     * @param locationToMark is location to set marker on
-     **/
-    public void setMarker(LatLng locationToMark) {
-        guuberDriverMap.addMarker(new MarkerOptions().position(locationToMark));
-    }
-
-    /**
-     * get the LatLng object from
-     * where the driver has set their search to
-     *
-     * @return LatLng object to navigate to
-     */
-    public LatLng getSearch() {
-        return search;
-    }
-
-
-    /**
-     * ser the LatLng object from
-     * where the driver has set their search to
-     *
-     * @param search object to navigate to
-     */
-    public void setSearch(LatLng search) {
-        this.search = search;
-    }
-
-
-    /**
-     * inform the driver they have searched an invalid location
-     **/
-    public void invalidSearchToast() {
-        String toastStr = "Invalid Search! Click on the Map and press Search to Browse Open Requests in That Area";
-        Toast.makeText(MapsDriverActivity.this, toastStr, Toast.LENGTH_LONG).show();
-    }
-
-
-    /**
-     * indicates current location button has been clicked...
-     *
-     * @return false all other times besides onMyLocationButtonClick event
-     **/
-    @Override
-    public boolean onMyLocationButtonClick() {
-        Toast.makeText(this, "clicked on current location", Toast.LENGTH_SHORT).show();
-        return false;
-    }
-
-    /**
-     * displays the details of your location upon click
-     *
-     * @param mylocation is a Location object representing your devices
-     *                   real time location
-     **/
-    @Override
-    public void onMyLocationClick(@NonNull Location mylocation) {
-        Toast.makeText(this, "Current location:\n" + mylocation, Toast.LENGTH_LONG).show();
-    }
+    /****************************************SPINNER METHODS***********************************************/
 
     /**
      * Starts activity containing trip history for driver
@@ -398,13 +233,153 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         startActivity(scanQrProfileIntent);
     }
 
+    /****************************************END SPINNER METHODS***********************************************/
 
-    /***************Leah Adding code here **********************
-     * *********************************************************/
+    /**
+     * Manipulates the map once available.
+     * If Google Play services is not installed on the device, the user will be prompted to install
+     * it inside the SupportMapFragment. This method will only be triggered once the user has
+     * installed Google Play services and returned to the app.
+     **/
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        guuberDriverMap = googleMap;
+        guuberDriverMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+        guuberDriverMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
+        guuberDriverMap.setOnInfoWindowClickListener(MapsDriverActivity.this);
+
+        /**
+         * logs the coordinates in console upon map click
+         * this is giving the driver a chance to browse
+         * a specified area for open requests
+         * @params latitude on longitude retrieved from map click
+         **/
+        guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+            @Override
+            public void onMapClick(LatLng arg0) {
+                //android.util.Log.i("onMapClick", arg0.toString());
+                geoLocationSearch.setText(arg0.toString()); //set the search bar to the coordinates clicked
+                setSearch(arg0);
+            }
+        });
+
+
+        if (checkUserPermission()) {
+            /**
+             * if user permission have been checked
+             * and location permission has been granted...
+             **/
+            guuberDriverMap.setMyLocationEnabled(true);
+            guuberDriverMap.setOnMyLocationButtonClickListener(this);
+            guuberDriverMap.setOnMyLocationClickListener(this);
+
+            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            Criteria criteria = new Criteria();
+            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
+
+            if (location != null) {
+                /**create a new LatLng location object for the user current location**/
+                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                setDriverLocation(currentLocation); //driver must provide their location
+
+                /**move the camera to current location**/
+                CameraPosition cameraPosition = new CameraPosition.Builder()
+                        .target(currentLocation)
+                        .zoom(10)
+                        .build();
+                guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }
+
+            /*** draw the open requests on the map. currently they are just mock requests**/
+            drawOpenRequests();
+        }
+    }
+
+    /**
+     * render markers on the map based on open requests
+     * currently  there are just mock open requests
+     */
+    public void drawOpenRequests() {
+        /**near San Fran google Plex (where emulator location is)**/
+        LatLng mockLatLng = new LatLng(37.40748, -122.062959);
+
+        guuberDriverMap.addMarker(new MarkerOptions()
+                .position(mockLatLng)
+                .flat(false)
+                .title("OPEN REQUEST"));
+    }
+
+    /**
+     * set the driver location
+     * (is necessarily set upon map render
+     * @param location is the drivers current location
+     **/
+    public void setDriverLocation(LatLng location){
+        this.driverLocation = location;
+    }
+
+    /**
+     * @return driver current location
+     */
+    public LatLng getDriverLocation(){
+        return driverLocation;
+    }
+
+
+    /**
+     * get the LatLng object from
+     * where the driver has set their search to
+     * @return LatLng object to navigate to
+     */
+    public LatLng getSearch() {
+        return search;
+    }
+
+
+    /**
+     * ser the LatLng object from
+     * where the driver has set their search to
+     * @param search object to navigate to
+     */
+    public void setSearch(LatLng search) {
+        this.search = search;
+    }
+
+
+    /**
+     * inform the driver they have searched an invalid location
+     **/
+    public void invalidSearchToast() {
+        String toastStr = "Invalid Search! Click on the Map and press Search to Browse Open Requests in That Area";
+        Toast.makeText(MapsDriverActivity.this, toastStr, Toast.LENGTH_LONG).show();
+    }
+
+
+    /**
+     * indicates current location button has been clicked...
+     * @return false all other times besides onMyLocationButtonClick event
+     **/
+    @Override
+    public boolean onMyLocationButtonClick() {
+        Toast.makeText(this, "clicked on current location", Toast.LENGTH_SHORT).show();
+        return false;
+    }
+
+    /**
+     * displays the details of your location upon click
+     * @param mylocation is a Location object representing your devices
+     * real time location
+     **/
+    @Override
+    public void onMyLocationClick(@NonNull Location mylocation) {
+        Toast.makeText(this, "Current location:\n" + mylocation, Toast.LENGTH_LONG).show();
+    }
+
+
 
     /**
      * CHECKS IF LOCATION SERVICES HAVE BEEN ENABLED
-     *
      * @return true if they have, false if they havent
      */
     private boolean checkMapServices() {
@@ -477,9 +452,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * RUNS RIGHT AFTER PERMISSION RESULT
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           @NonNull String permissions[],
-                                           @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         isLocationPermissionGranted = false;
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
@@ -512,15 +485,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        /*if(marker.getSnippet().equals(getUsername())){
-            marker.hideInfoWindow();
-        }
-        else{*/
-
-
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
-        //builder.setView(R.layout.driver_profile_disp) setting the builder to the riders profile
+        //builder.setView(R.layout.driver_profile_disp)
         builder
+                .setView(R.layout.driver_profile_disp)
                 .setMessage("Determine Route to Rider?")
                 .setCancelable(true)
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -547,27 +515,25 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 marker.getPosition().latitude,
                 marker.getPosition().longitude
         );
-        DirectionsApiRequest directions = new DirectionsApiRequest(geoApiContext);
+        DirectionsApiRequest driverDirections = new DirectionsApiRequest(geoApiContext);
 
         /**from the drivers current position**/
         LatLng currDriverLocation = getDriverLocation();
-        directions.alternatives(true);
-        directions.origin(
+        driverDirections.origin(
                 new com.google.maps.model.LatLng(
                         currDriverLocation.latitude,
                         currDriverLocation.longitude
                 )
         );
         Log.d(TAG, "calculateDirections: destination: " + destination.toString());
-        directions.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
+        driverDirections.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
             public void onResult(DirectionsResult result) {
-                Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());
+                /**Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());
                 Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration);
                 Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance);
                 Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
-
-                Log.d(TAG, "onResult: successfully retrieved directions.");
+                Log.d(TAG, "onResult: successfully retrieved directions.");**/
                 addPolylinesToMap(result);
             }
 
@@ -579,58 +545,31 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         });
     }
 
-
-
+    /**
+     * add polyline to map based on the geo coords from the calculated route
+     * @param result is the route determined by calculate directions
+     **/
     private void addPolylinesToMap(final DirectionsResult result){
-
 
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
 
-
-
-                Log.d(TAG, "run: result routes: " + result.routes.length);
-
                 for(DirectionsRoute route: result.routes){
-                    Log.d(TAG, "run: leg: " + route.legs[0].toString());
                     List<com.google.maps.model.LatLng> decodedPath = PolylineEncoding.decode(route.overviewPolyline.getEncodedPath());
-
                     List<LatLng> newDecodedPath = new ArrayList<>();
 
                     // This loops through all the LatLng coordinates of ONE polyline.
                     for(com.google.maps.model.LatLng latLng: decodedPath){
-
-                        Log.d(TAG, "run: latlng: " + latLng.toString());
-
                         newDecodedPath.add(new LatLng(
                                 latLng.lat,
                                 latLng.lng
                         ));
-
                     }
-
-
-                    /**PolylineOptions polylineOptions = new PolylineOptions().width(5).color(Color.RED);
-                    for (LatLng coord : newDecodedPath){
-                         android.util.Log.i("HERES A COORD", coord.toString());
-                        polylineOptions.add(coord);
-                    }
-                    guuberDriverMap.addPolyline(polylineOptions);**/
-
-                    /**for (LatLng coord : newDecodedPath) {
-                        Log.d(TAG, "HERE IS THE LAT LNG TO DRAW" + coord.toString());
-                        Polyline polyline = guuberDriverMap.addPolyline(new PolylineOptions()
-                                .add(new LatLng(coord.latitude, coord.longitude), new LatLng(coord.latitude, coord.longitude))
-                                .width(5)
-                                .color(Color.RED));
-                    }**/
-
 
                     Polyline polyline = guuberDriverMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
                     polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.polyLinesColors));
                     polyline.setClickable(true);
-
 
                 }
             }
