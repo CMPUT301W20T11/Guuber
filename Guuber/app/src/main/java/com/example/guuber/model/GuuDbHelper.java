@@ -343,7 +343,7 @@ public class GuuDbHelper {
      * @return - an ArrayList<Map<String,Object>> </String,Object> of request that need a driver
      * */
     public ArrayList<Map<String,Object>> getReqList(){
-        reqList.clear();
+        //reqList.clear();
         requests.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

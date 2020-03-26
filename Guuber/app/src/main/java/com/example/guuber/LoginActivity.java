@@ -236,7 +236,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 				}
 			});
 		} else {
-			/**if the user has never registered before we have to get permissiosn**/
+			/**if the user has never registered before we have to get permissions**/
 			checkUserPermissions();
 			}
 
@@ -289,8 +289,9 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 	public  void userPermissionsRationale(){
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Hey there Friend. To have the best experience with this application, " +
-				"we ask you provide us your location. Don't worry. We are just going to sell it and " +
-				"exploit information that makes you vunerable.")
+				"we ask you provide us your location. Don't worry. We are just going to sell your data and " +
+				"exploit information that makes you vulnerable. If you have chosen to not be asked again, " +
+                "please visit your app setting and grant us your location permissions")
 				.setCancelable(false)
                 .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
 					@Override

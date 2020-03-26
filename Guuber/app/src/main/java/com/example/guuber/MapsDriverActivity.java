@@ -30,6 +30,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 
+import com.example.guuber.model.GuuDbHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdate;
@@ -45,6 +46,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PendingResult;
@@ -91,6 +93,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private GeoApiContext geoApiContext = null;
     /*********************/
 
+    /***********the databse******/
+    private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
+    private GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +128,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             public void onClick(View v) {
                 if (getSearch() != null) {
                     LatLng parse = getSearch();
+                    drawOpenRequests();
 
                     /**move the camera to searching location**/
                     CameraPosition cameraPosition = new CameraPosition.Builder()
@@ -289,24 +296,22 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
 
-            /*** draw the open requests on the map. currently they are just mock requests**/
-            drawOpenRequests();
+
+
         }
 
     }
 
     /**
      * render markers on the map based on open requests
-     * currently  there are just mock open requests
+     * containing user the requester's profile and
      */
     public void drawOpenRequests() {
-        /**near San Fran google Plex (where emulator location is)**/
-        LatLng mockLatLng = new LatLng(37.40748, -122.062959);
 
-        guuberDriverMap.addMarker(new MarkerOptions()
-                .position(mockLatLng)
-                .flat(false)
-                .title("OPEN REQUEST"));
+        GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
+        ArrayList openRequestList = driverDBHelper.getReqList();
+        android.util.Log.i(TAG, "open requests: " + openRequestList.toString());
+
     }
 
     /**
