@@ -229,7 +229,7 @@ public class GuuDbHelper {
     }
 
     public ArrayList<Map<String,Object>> getReqList(){
-        reqList.clear();
+        //reqList.clear();
         requests.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

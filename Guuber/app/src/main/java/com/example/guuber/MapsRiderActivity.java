@@ -29,6 +29,8 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 
+import com.example.guuber.model.GuuDbHelper;
+import com.example.guuber.model.User;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -88,6 +90,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 12;
     private static final String TAG = "MapsRiderActivity";
     private GeoApiContext geoRiderApiContext = null;
+
+    /***********the databse******/
+    private FirebaseFirestore riderMapsDB = FirebaseFirestore.getInstance();
+    private GuuDbHelper riderDBHelper = new GuuDbHelper(riderMapsDB);
 
 
 
@@ -559,13 +565,28 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      */
     public void makeRequest(Marker marker){
         Double originLatitude = getOrigin().latitude;
+        String orLat = originLatitude.toString();
+
         Double originLongitude = getOrigin().longitude;
+        String orLong = originLongitude.toString();
+
         Double destinationLatitude = marker.getPosition().latitude;
+        String destLat = destinationLatitude.toString();
+
         Double destinationLongitude = marker.getPosition().longitude;
-        android.util.Log.i(TAG, "origin latitude = "+ originLatitude.toString());
-        android.util.Log.i(TAG, "origin longitude = "+ originLongitude.toString());
-        android.util.Log.i(TAG, "destination latitude = "+ destinationLatitude.toString());
-        android.util.Log.i(TAG, "destination longitude = "+destinationLongitude.toString());
+        String destLong = destinationLongitude.toString();
+        //android.util.Log.i(TAG, "origin latitude = "+ originLatitude.toString());
+        //android.util.Log.i(TAG, "origin longitude = "+ originLongitude.toString());
+        //android.util.Log.i(TAG, "destination latitude = "+ destinationLatitude.toString());
+        //android.util.Log.i(TAG, "destination longitude = "+destinationLongitude.toString());
+
+
+        User currUser = ((UserData)(getApplicationContext())).getUser();
+        int testip = 40;
+        String testLocation = "pick me up here";
+        riderDBHelper.makeReq(currUser,testip,testLocation,orLat,orLong,destLat,destLong);
+        android.util.Log.i(TAG, "REQUEST MADE00000000000");
+
 
     }
 
