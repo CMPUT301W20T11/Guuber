@@ -231,6 +231,11 @@ public class GuuDbHelper {
 
 
     }
+
+    /**
+     * Cancels the user's request
+     * @param rider - rider who want to cancel their request
+     */
     public void cancelRequest(User rider) {
         setProfile(rider.getEmail());
         profile.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -246,6 +251,7 @@ public class GuuDbHelper {
                         delete.put("oriLng", FieldValue.delete());
                         delete.put("desLat", FieldValue.delete());
                         delete.put("desLng", FieldValue.delete());
+                        //checks if there is a driver for the request
                         if (doc.get("reqDriver") != null) {
                             delete.put("reqDriver", FieldValue.delete());
                             setProfile(doc.get("reqDriver").toString());
@@ -262,8 +268,18 @@ public class GuuDbHelper {
                 }
             }
         });
-
     }
+    /**
+     * Helper function for getRiderRequest
+     * Sets the request info to be retrieved
+     * @param email - the email of the person
+     * @param tip - amount they person offers
+     * @param location - the destination
+     * @param  oriLat - Latitudinal coordinate of original place to be pickup
+     * @param  oriLng - Longitudinal coordinate of original place to be pickup
+     * @param  desLat - Latitudinal coordinate of the destination
+     * @param  desLng - Latitudinal coordinate of the destination
+     */
     public void setRequest(String email, Object tip ,String location, String oriLat,String oriLng,String desLat,String desLng ){
         this.Request.put("reqTip", tip);
         this.Request.put("reqLocation",location);
@@ -275,6 +291,12 @@ public class GuuDbHelper {
 
 
     }
+
+    /**
+     * Gets the specific request of the rider specified
+     * @param rider - the user who made the request
+     * @return - the details of the request in as a Map<String,Object> format </String,Object>
+     */
     public Map<String,Object> getRiderRequest(User rider){
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -289,6 +311,11 @@ public class GuuDbHelper {
 
         return Request;
     }
+    /**
+     * Get the information of the driver's current active request they have
+     * @param  driver - the driver with a request
+     * @return - the details of the request in as a Map<String,Object> format </String,Object>
+     * */
     public Map<String,Object> getDriverActiveReq(User driver){
         setProfile(driver.getEmail());
        Task<QuerySnapshot> activeReq =  profile.collection("driveRequest").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -311,6 +338,10 @@ public class GuuDbHelper {
        return Request;
     }
 
+    /**
+     * Gets a list of current request that riders post
+     * @return - an ArrayList<Map<String,Object>> </String,Object> of request that need a driver
+     * */
     public ArrayList<Map<String,Object>> getReqList(){
         reqList.clear();
         requests.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -329,12 +360,20 @@ public class GuuDbHelper {
         });
         return this.reqList;
     }
+    /**
+     * Helper function
+     * add the user email to the request detail
+     */
     public void updateReqList(String email,Map<String,Object> reqDetails){
         reqDetails.put("email",email);
         this.reqList.add(reqDetails);
     }
 
-
+    /**
+     * Stores details between driver and rider when a request is accepted
+     * @param rider - the rider with the request and accepts driver
+     * @param driver - the driver who takes the request
+     */
     public void reqAccepted(User rider, User driver) throws InterruptedException {
         setProfile(rider.getEmail());
         profile.update("reqDriver",driver.getEmail());
@@ -345,13 +384,23 @@ public class GuuDbHelper {
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
     }
-
+    /**
+     * Adds or updates the current vehicle to the users profile
+     * @param user - the user who has the registered car
+     * @param car - the car to be register in the database
+     */
     public void addVehicle(User user, Vehicle car){
         setProfile(user.getEmail());
         profile.update("vehMake",car.getMake());
         profile.update("vehModel",car.getModel());
         profile.update("vehColor",car.getColor());
     }
+
+    /**
+     * Gets the information of the vehicle the user has
+     * @param driver - The person who own the vehicle
+     * @return - the details of the vehicle the user owns
+     */
     public Vehicle getCarDetail(User driver){
         setProfile(driver.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -361,7 +410,7 @@ public class GuuDbHelper {
                     Log.d("doc","found document");
                     if(documentSnapshot.get("vehMake") != null){
                         Log.d("carDetails","car exist");
-                        findVehicle(documentSnapshot.get("vehMake").toString(),documentSnapshot.get("vehModel").toString(),
+                        setVehicle(documentSnapshot.get("vehMake").toString(),documentSnapshot.get("vehModel").toString(),
                                 documentSnapshot.get("vehColor").toString(),documentSnapshot.getId());
                     }
                     else{
@@ -376,7 +425,16 @@ public class GuuDbHelper {
         });
         return car;
     }
-    public void findVehicle(String make,String model,String color,String driver){
+
+    /**
+     * Helper function
+     * sets the vehicle info for getCarDetail to user
+     * @param make - the maker of the car
+     * @param model - the model of the car
+     * @param color - the color of the car
+     * @param driver - the car that the driver is registered to
+     */
+    public void setVehicle(String make,String model,String color,String driver){
         this.car.setMake(make);
         this.car.setModel(model);
         this.car.setColor(color);
