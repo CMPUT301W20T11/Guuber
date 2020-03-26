@@ -103,15 +103,23 @@ public class GuuDbHelper {
 
 
     }
-    //get user information
+    /**
+     * Gets the information under the person's email from the database
+     * @param email - the user's email
+     * @return - the user under the email inputted
+     * */
     public User getUser(String email ){
         findUser(email);
         setProfile(email);
         return user;
     }
 
-    //NOTE: USED TO CREATE USERS however function not used as the user login activity
-    // creates the user account and log them in.
+    //NOTE: function should not be used since the users are already created through loginActivity
+    /**
+     * Creates the user's account if it does not exist
+     * @param newUser - the user information
+     *
+     * */
     public void checkEmail(User newUser){
         Map<String,Object> user = new HashMap<>();
         user.put("firstName",newUser.getFirstName());
@@ -140,35 +148,73 @@ public class GuuDbHelper {
             }
         });
     }
-
+    /**
+     * Helper function for checkEmail
+     * creates a document in the database with the user's info
+     */
     public void createUser(Map<String,Object> info,User newUser){
         users.document(newUser.getEmail()).set(info);
     }
+    /**
+     * Helper function
+     * set the profile of a user
+     * @param email - email of the user
+     */
     public void setProfile(String email){
         this.profile = users.document(email);
     }
-
+    /**
+     * Deletes the user from the database
+     * @param email - email of the user
+     * */
     public void deleteUser(String email){
         setProfile(email);
         profile.delete();
     }
+    /**
+     * Updates the username of the user
+     * @param email - the user that want to update their name
+     * @param name - the new name to display
+     */
     public void updateUsername(String email,String name){
         users.document(email).update("username",name);
     }
+    /**
+     * Updates the phonenumber of the user
+     * @param email - the user that wants to update their number
+     * @param number - the new contact number*/
     public void updatePhoneNumber(String email,String number){
         users.document(email).update("phoneNumber",number);
     }
 
     // Every time you update either of the ratings it automatically increments
+    /**
+     * automatically increments the positive rating of the user
+     * @param email - the email of the user
+     */
     public void updatePosRating(String email){
         users.document(email).update("posRating", FieldValue.increment(1));
     }
+    /**
+     * automatically increments the negative rating of the user
+     * @param email - the email of the user
+     */
     public void updateNegRating(String email){
         users.document(email).update("negRating", FieldValue.increment(1));
     }
 
 
 
+    /**
+     * Creates and stores the request into the database
+     * @param rider - the person making the request
+     * @param tip - the extra amount they are willing to pay
+     * @param location - the destination
+     * @param  oriLat - Latitudinal coordinate of original place to be pickup
+     * @param  oriLng - Longitudinal coordinate of original place to be pickup
+     * @param  desLat - Latitudinal coordinate of the destination
+     * @param  desLng - Latitudinal coordinate of the destination
+     */
 
     public void makeReq(User rider,int tip, String location,String oriLat,String oriLng,String desLat,String desLng){
         setProfile(rider.getEmail());
