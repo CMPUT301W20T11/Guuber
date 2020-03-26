@@ -219,7 +219,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 					((UserData) (getApplicationContext())).setUser(loggedUser);
 					Intent homeScreen;
 					int signInType = 0;
-					if (loggedUser.getRider() == 0) {
+					if (loggedUser.getRider() == 1) {
 						signInType = 1;
 					}
 

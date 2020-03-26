@@ -27,19 +27,20 @@ public class GuuDbHelper {
     private static DocumentReference profile;
     public static User user;
     public static Map<String,Object> Request = new HashMap<>();
-    public static Vehicle car;
+    public static Vehicle car = new Vehicle();
     public static ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
 
-    //private static CollectionReference rating;
-    //public static Map<String,Object> Rating = new HashMap<>();
-    //public static ArrayList<Map<String, String>> ratingList = new ArrayList<Map<String, String>>();
 
-    public static Wallet wall;
+
+    //public static Wallet wall;
     //private static CollectionReference wallet;
     //public static Map<String,Object> Wallet = new HashMap<>();
     //public static ArrayList<Map<String, String>> walletList = new ArrayList<Map<String, String>>();
 
-
+    /**
+     * on create
+     * @param db - the instance of a FirebaseFirestone
+     */
     public GuuDbHelper(FirebaseFirestore db){
         this.db = db.getInstance();
         this.users = this.db.collection("Users");
@@ -47,7 +48,11 @@ public class GuuDbHelper {
         this.user = new User();
     }
 
-    //helper function
+    /**
+     * Helper function for getUser
+     * Finds if the document of the email
+     * @param email - the email of the document to find
+     * */
     public void findUser(String email){
         users.document(email).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -59,7 +64,10 @@ public class GuuDbHelper {
                             documentSnapshot.get("lastName").toString(),
                             documentSnapshot.get("uid").toString(),
                             documentSnapshot.get("username").toString(),
-                            (int)(long) documentSnapshot.get("rider"));
+                            (int)(long) documentSnapshot.get("rider"),
+                            (int)(long) documentSnapshot.get("posRating"),
+                            (int)(long) documentSnapshot.get("negRating")
+                    );
                 }
                 else{
                     Log.d("user","user does not exist");
@@ -68,8 +76,20 @@ public class GuuDbHelper {
         });
     }
 
-    //helper function
-    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider){
+    /**
+     * Helper function
+     * set the user info for getUser
+     * @param phone - user's phonenumber
+     * @param email - user's email
+     * @param first - user's first name
+     * @param last  - user's last name
+     * @param uname  - user's username
+     * @param rider - whether if the user is a rider of driver
+     * @param posRating - number of ratings that are positive
+     * @param negRating - number of ratings that are negative
+     *
+     * */
+    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating){
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
         this.user.setFirstName(first);
@@ -78,15 +98,28 @@ public class GuuDbHelper {
         this.user.setUsername(uname);
         this.user.setRider(rider);
 
+        this.user.setPosRating(posRating);
+        this.user.setNegRating(negRating);
+
+
     }
-    //get user information
+    /**
+     * Gets the information under the person's email from the database
+     * @param email - the user's email
+     * @return - the user under the email inputted
+     * */
     public User getUser(String email ){
         findUser(email);
         setProfile(email);
         return user;
     }
 
-    //NOTE: USED TO CREATE USERS
+    //NOTE: function should not be used since the users are already created through loginActivity
+    /**
+     * Creates the user's account if it does not exist
+     * @param newUser - the user information
+     *
+     * */
     public void checkEmail(User newUser){
         Map<String,Object> user = new HashMap<>();
         user.put("firstName",newUser.getFirstName());
@@ -96,6 +129,10 @@ public class GuuDbHelper {
         user.put("phoneNumber",newUser.getPhoneNumber());
         user.put("uid",newUser.getUid());
         user.put("rider",newUser.getRider());
+
+        user.put("posRating", newUser.getPosRating());
+        user.put("negRating", newUser.getNegRating());
+
 
 
         users.document(newUser.getEmail()).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -111,27 +148,73 @@ public class GuuDbHelper {
             }
         });
     }
-
+    /**
+     * Helper function for checkEmail
+     * creates a document in the database with the user's info
+     */
     public void createUser(Map<String,Object> info,User newUser){
         users.document(newUser.getEmail()).set(info);
     }
+    /**
+     * Helper function
+     * set the profile of a user
+     * @param email - email of the user
+     */
     public void setProfile(String email){
         this.profile = users.document(email);
     }
-
+    /**
+     * Deletes the user from the database
+     * @param email - email of the user
+     * */
     public void deleteUser(String email){
         setProfile(email);
         profile.delete();
     }
+    /**
+     * Updates the username of the user
+     * @param email - the user that want to update their name
+     * @param name - the new name to display
+     */
     public void updateUsername(String email,String name){
         users.document(email).update("username",name);
     }
+    /**
+     * Updates the phonenumber of the user
+     * @param email - the user that wants to update their number
+     * @param number - the new contact number*/
     public void updatePhoneNumber(String email,String number){
         users.document(email).update("phoneNumber",number);
     }
 
+    // Every time you update either of the ratings it automatically increments
+    /**
+     * automatically increments the positive rating of the user
+     * @param email - the email of the user
+     */
+    public void updatePosRating(String email){
+        users.document(email).update("posRating", FieldValue.increment(1));
+    }
+    /**
+     * automatically increments the negative rating of the user
+     * @param email - the email of the user
+     */
+    public void updateNegRating(String email){
+        users.document(email).update("negRating", FieldValue.increment(1));
+    }
 
 
+
+    /**
+     * Creates and stores the request into the database
+     * @param rider - the person making the request
+     * @param tip - the extra amount they are willing to pay
+     * @param location - the destination
+     * @param  oriLat - Latitudinal coordinate of original place to be pickup
+     * @param  oriLng - Longitudinal coordinate of original place to be pickup
+     * @param  desLat - Latitudinal coordinate of the destination
+     * @param  desLng - Latitudinal coordinate of the destination
+     */
 
     public void makeReq(User rider,int tip, String location,String oriLat,String oriLng,String desLat,String desLng){
         setProfile(rider.getEmail());
@@ -148,6 +231,11 @@ public class GuuDbHelper {
 
 
     }
+
+    /**
+     * Cancels the user's request
+     * @param rider - rider who want to cancel their request
+     */
     public void cancelRequest(User rider) {
         setProfile(rider.getEmail());
         profile.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -163,6 +251,7 @@ public class GuuDbHelper {
                         delete.put("oriLng", FieldValue.delete());
                         delete.put("desLat", FieldValue.delete());
                         delete.put("desLng", FieldValue.delete());
+                        //checks if there is a driver for the request
                         if (doc.get("reqDriver") != null) {
                             delete.put("reqDriver", FieldValue.delete());
                             setProfile(doc.get("reqDriver").toString());
@@ -179,8 +268,18 @@ public class GuuDbHelper {
                 }
             }
         });
-
     }
+    /**
+     * Helper function for getRiderRequest
+     * Sets the request info to be retrieved
+     * @param email - the email of the person
+     * @param tip - amount they person offers
+     * @param location - the destination
+     * @param  oriLat - Latitudinal coordinate of original place to be pickup
+     * @param  oriLng - Longitudinal coordinate of original place to be pickup
+     * @param  desLat - Latitudinal coordinate of the destination
+     * @param  desLng - Latitudinal coordinate of the destination
+     */
     public void setRequest(String email, Object tip ,String location, String oriLat,String oriLng,String desLat,String desLng ){
         this.Request.put("reqTip", tip);
         this.Request.put("reqLocation",location);
@@ -192,6 +291,12 @@ public class GuuDbHelper {
 
 
     }
+
+    /**
+     * Gets the specific request of the rider specified
+     * @param rider - the user who made the request
+     * @return - the details of the request in as a Map<String,Object> format </String,Object>
+     */
     public Map<String,Object> getRiderRequest(User rider){
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -206,6 +311,11 @@ public class GuuDbHelper {
 
         return Request;
     }
+    /**
+     * Get the information of the driver's current active request they have
+     * @param  driver - the driver with a request
+     * @return - the details of the request in as a Map<String,Object> format </String,Object>
+     * */
     public Map<String,Object> getDriverActiveReq(User driver){
         setProfile(driver.getEmail());
        Task<QuerySnapshot> activeReq =  profile.collection("driveRequest").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -228,6 +338,10 @@ public class GuuDbHelper {
        return Request;
     }
 
+    /**
+     * Gets a list of current request that riders post
+     * @return - an ArrayList<Map<String,Object>> </String,Object> of request that need a driver
+     * */
     public ArrayList<Map<String,Object>> getReqList(){
         //reqList.clear();
         requests.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -246,12 +360,20 @@ public class GuuDbHelper {
         });
         return this.reqList;
     }
+    /**
+     * Helper function
+     * add the user email to the request detail
+     */
     public void updateReqList(String email,Map<String,Object> reqDetails){
         reqDetails.put("email",email);
         this.reqList.add(reqDetails);
     }
 
-
+    /**
+     * Stores details between driver and rider when a request is accepted
+     * @param rider - the rider with the request and accepts driver
+     * @param driver - the driver who takes the request
+     */
     public void reqAccepted(User rider, User driver) throws InterruptedException {
         setProfile(rider.getEmail());
         profile.update("reqDriver",driver.getEmail());
@@ -262,13 +384,23 @@ public class GuuDbHelper {
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
     }
-
+    /**
+     * Adds or updates the current vehicle to the users profile
+     * @param user - the user who has the registered car
+     * @param car - the car to be register in the database
+     */
     public void addVehicle(User user, Vehicle car){
         setProfile(user.getEmail());
         profile.update("vehMake",car.getMake());
         profile.update("vehModel",car.getModel());
         profile.update("vehColor",car.getColor());
     }
+
+    /**
+     * Gets the information of the vehicle the user has
+     * @param driver - The person who own the vehicle
+     * @return - the details of the vehicle the user owns
+     */
     public Vehicle getCarDetail(User driver){
         setProfile(driver.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -278,7 +410,7 @@ public class GuuDbHelper {
                     Log.d("doc","found document");
                     if(documentSnapshot.get("vehMake") != null){
                         Log.d("carDetails","car exist");
-                        findVehicle(documentSnapshot.get("vehMake").toString(),documentSnapshot.get("vehModel").toString(),
+                        setVehicle(documentSnapshot.get("vehMake").toString(),documentSnapshot.get("vehModel").toString(),
                                 documentSnapshot.get("vehColor").toString(),documentSnapshot.getId());
                     }
                     else{
@@ -293,8 +425,20 @@ public class GuuDbHelper {
         });
         return car;
     }
-    public void findVehicle(String make,String model,String color,String driver){
-        this.car = new Vehicle(make,model,color,driver);
+
+    /**
+     * Helper function
+     * sets the vehicle info for getCarDetail to user
+     * @param make - the maker of the car
+     * @param model - the model of the car
+     * @param color - the color of the car
+     * @param driver - the car that the driver is registered to
+     */
+    public void setVehicle(String make,String model,String color,String driver){
+        this.car.setMake(make);
+        this.car.setModel(model);
+        this.car.setColor(color);
+        this.car.setReg(driver);
 
     }
 
@@ -367,6 +511,10 @@ public class GuuDbHelper {
      * Add other attributes found in the wallet class?
      * Test Cases
      *
+// get current balance
+// update balance (updates balance and appends it the the transaction history)
+//
+
 
     public void createWallet(User user, Wallet wall) // adds init wallet to db
     {

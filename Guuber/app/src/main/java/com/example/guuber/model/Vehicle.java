@@ -7,6 +7,12 @@ public class Vehicle {
 	private String reg;
 
 	/**
+	 * Empty constructor for firebase use
+	 */
+	public Vehicle() {
+		// Intentionally left empty
+	}
+	/**
 	 * On create
 	 * @param make - The maker of the vehicle
 	 * @param model - the model of the vehicle
