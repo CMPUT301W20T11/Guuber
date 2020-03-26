@@ -511,6 +511,10 @@ public class GuuDbHelper {
      * Add other attributes found in the wallet class?
      * Test Cases
      *
+// get current balance
+// update balance (updates balance and appends it the the transaction history)
+//
+
 
     public void createWallet(User user, Wallet wall) // adds init wallet to db
     {
