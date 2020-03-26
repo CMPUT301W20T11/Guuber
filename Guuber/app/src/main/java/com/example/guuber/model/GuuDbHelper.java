@@ -32,7 +32,7 @@ public class GuuDbHelper {
 
 
 
-    //public static Wallet wall;
+    public static Wallet wall;
     //private static CollectionReference wallet;
     //public static Map<String,Object> Wallet = new HashMap<>();
     //public static ArrayList<Map<String, String>> walletList = new ArrayList<Map<String, String>>();
@@ -447,111 +447,6 @@ public class GuuDbHelper {
 
 
 
-
-
-
-
-
-/*******************
-
-    /**
-     * Ratings
-     * @param email
-     * @param user
-     * @param AggPositive
-     * @param AggNegative
- * TODO:
-     * Remove everything below, would be easier to have ratings incorporated in user like username or Uid is
-     * 
-     *
-    public void createRating(User user, Integer AggPositive, Integer AggNegative){
-        setProfile(user.getEmail());
-        Map<String, Integer> info = new HashMap<>();
-        info.put("AggPositive", AggPositive);
-        info.put("AggNegative", AggNegative);
-        //this.Rating.put("email",email);
-
-        this.ratings.document(user.getEmail()).set(info);
-
-    }
-    public Map<String, Object> getRatingDetail(User user){
-        setProfile(user.getEmail());
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                setRating(documentSnapshot.get("email").toString(), (int) documentSnapshot.getLong("AggPositive").intValue(),(int) documentSnapshot.getLong("AggNegative").intValue());
-            }
-        });
-
-        return Rating;
-    }
-    public void updatePositiveRating(String email)
-    {
-        setProfile(user.getEmail());
-        profile.update("AggPositive", FieldValue.increment(1));
-
-    }
-    public void updateNegativeRating(String email)
-    {
-        setProfile(user.getEmail());
-        profile.update("AggNegative", FieldValue.increment(1));
-    }
-
-
-
-    /**
-     * Wallet Stuff
-     * @param email
-     * @param balance (updating balance would include deposits and withdrawals)
-     * @param transaction history
-     *
-     *
-     * TODO:
-     * Finish redoing Wallet/balance
-     * Add other attributes found in the wallet class?
-     * Test Cases
-     *
-// get current balance
-// update balance (updates balance and appends it the the transaction history)
-//
-
-
-    public void createWallet(User user, Wallet wall) // adds init wallet to db
-    {
-        setProfile(user.getEmail());
-        profile.update("balance", wall.getBalance());
-        profile.update("transactions", wall.getTransactions());
-
-    }
-    public Wallet getWalletDetail(User user)
-    {
-        setProfile(user.getEmail());
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists()){
-                    Log.d("doc","found document");
-                    if(documentSnapshot.get("balance") != null){
-                        Log.d("WalletDetails","wallet exists");
-                        findWallet(documentSnapshot.getDouble("balance"), documentSnapshot.get("transactions").toString(),documentSnapshot.getId());
-                    }
-                    else{
-                        Log.d("WalletDetails","wallet does not exist");
-                    }
-
-                } 
-                else{
-                    Log.d("doc","Cannot find document");
-                }
-            }
-        });
-        return wall;
-    }
-
-    private void findWallet(Double balance, String transactions, String user) {
-        this.wall = new Wallet();
-    }
-*/
 
 }
 

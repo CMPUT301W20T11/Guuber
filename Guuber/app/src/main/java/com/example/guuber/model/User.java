@@ -7,6 +7,7 @@ import androidx.fragment.app.DialogFragment;
  */
 public class User{
     private Wallet wallet;
+
     private String phoneNumber;
     private String email;
     private String firstName;
