@@ -106,7 +106,7 @@ public class GuuDbHelperTest {
         assertEquals((Integer) 1, obtain.getRider());
         User user = dbHelper.getUser("kluc1@ualberta.ca");
         Thread.sleep(1000);
-        dbHelper.makeReq(user,20,"A pit","1620","1620","1080","1080");
+        dbHelper.makeReq(user,20,"A pit","1620","1620","1080","1080","80");
         Thread.sleep(1000);
         Map<String,Object> reqDetail = dbHelper.getRiderRequest(user);
         Thread.sleep(1000);
@@ -157,7 +157,7 @@ public class GuuDbHelperTest {
         Thread.sleep(5000);
         User user = dbHelper.getUser("m@gmail.com");
         Thread.sleep(1000);
-        dbHelper.makeReq(user, 60,"Kingdom of Corona","0000","0000","1000","1000");
+        dbHelper.makeReq(user, 60,"Kingdom of Corona","0000","0000","1000","1000","5050");
         Thread.sleep(1000);
         Map<String,Object> reqDetail;
         reqDetail = dbHelper.getRiderRequest(mockUser());
@@ -168,6 +168,7 @@ public class GuuDbHelperTest {
         assertEquals("0000",reqDetail.get("oriLng"));
         assertEquals("1000",reqDetail.get("desLat"));
         assertEquals("1000",reqDetail.get("desLng"));
+        assertEquals("5050",reqDetail.get("tripCost"));
         dbHelper.cancelRequest(mockUser());
     }
 
@@ -181,11 +182,11 @@ public class GuuDbHelperTest {
         Thread.sleep(1000);
         User user = dbHelper.getUser("m@gmail.com");
         Thread.sleep(1000);
-        dbHelper.makeReq(user, 60,"Kingdom of Corona","0000","0000","1000","1000");
+        dbHelper.makeReq(user, 60,"Kingdom of Corona","0000","0000","1000","1000","60");
         Thread.sleep(1000);
         user = dbHelper.getUser("k@gmail.com");
         Thread.sleep(1000);
-        dbHelper.makeReq(user,10,"A deserted island","9999","9999","7777","7777");
+        dbHelper.makeReq(user,10,"A deserted island","9999","9999","7777","7777","100");
         Thread.sleep(1000);
         ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
         reqList = dbHelper.getReqList();
