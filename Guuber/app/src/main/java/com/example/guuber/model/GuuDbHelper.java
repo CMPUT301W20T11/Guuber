@@ -259,10 +259,21 @@ public class GuuDbHelper {
                             setProfile(rider.getEmail());
                             profile.update(delete);
                         } else {
-
                             setProfile(rider.getEmail());
+                            Map<String,Object> reqInfo = new HashMap<>();
+                            reqInfo.put("reqTip", doc.get("reqTip"));
+                            reqInfo.put("reqLocation",doc.get("reqLocation"));
+                            reqInfo.put("oriLat",doc.get("oriLat"));
+                            reqInfo.put("oriLng",doc.get("oriLng"));
+                            reqInfo.put("desLat",doc.get("desLat"));
+                            reqInfo.put("desLng",doc.get("desLng"));
+                            reqInfo.put("email",doc.get("email"));
                             profile.update(delete);
                             requests.document(rider.getEmail()).delete();
+                            reqList.remove(reqInfo);
+
+
+
                         }
                     }
                 }
@@ -365,8 +376,10 @@ public class GuuDbHelper {
      * add the user email to the request detail
      */
     public void updateReqList(String email,Map<String,Object> reqDetails){
-        reqDetails.put("email",email);
-        this.reqList.add(reqDetails);
+        reqDetails.put("email", email);
+        if(!reqList.contains(reqDetails)) {
+            this.reqList.add(reqDetails);
+        }
     }
 
     /**
@@ -379,6 +392,7 @@ public class GuuDbHelper {
         profile.update("reqDriver",driver.getEmail());
         Map<String,Object> reqDetails = getRiderRequest(rider);
         Thread.sleep(1000);
+        reqList.remove(reqDetails);
         requests.document(rider.getEmail()).delete();
         setProfile(driver.getEmail());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);

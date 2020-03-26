@@ -190,8 +190,8 @@ public class GuuDbHelperTest {
         ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
         reqList = dbHelper.getReqList();
         Thread.sleep(1000);
-        assertEquals("m@gmail.com",reqList.get(1).get("email"));
-        assertEquals("Kingdom of Corona",reqList.get(1).get("reqLocation"));
+        assertEquals("m@gmail.com",reqList.get(2).get("email"));
+        assertEquals("Kingdom of Corona",reqList.get(2).get("reqLocation"));
         assertEquals("k@gmail.com",reqList.get(0).get("email"));
         assertEquals("A deserted island",reqList.get(0).get("reqLocation"));
 
@@ -199,7 +199,7 @@ public class GuuDbHelperTest {
         Thread.sleep(1000);
         reqList = dbHelper.getReqList();
         Thread.sleep(1000);
-        assertEquals(1,reqList.size());
+        assertEquals(3,reqList.size());
 
         dbHelper.reqAccepted(mockUser(),mockUser3());
         Thread.sleep(1000);
@@ -207,7 +207,7 @@ public class GuuDbHelperTest {
         Thread.sleep(1000);
         Map<String,Object> driverCurReq= dbHelper.getDriverActiveReq(mockUser3());
         Thread.sleep(1000);
-        assertEquals(0,reqList.size());
+        assertEquals(2,reqList.size());
         assertEquals("m@gmail.com",driverCurReq.get("email"));
 
         dbHelper.cancelRequest(mockUser());
