@@ -56,6 +56,7 @@ import com.google.maps.model.DirectionsRoute;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -113,7 +114,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                String toastStr = "Click on the Map and press Search to Browse Open Requests in That Area!";
+                String toastStr = "Click on the Map and double click Search to Browse Open Requests in That Area!";
                 Toast.makeText(MapsDriverActivity.this, toastStr, Toast.LENGTH_LONG).show();
             }
         }, 3000);
@@ -305,13 +306,76 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * render markers on the map based on open requests
      * containing user the requester's profile and
+     * switch case to pull values from the request object
      */
     public void drawOpenRequests() {
+        Double offeredTip = null, destinationLat= null, destinationLong=null, originLat=null, originLong=null;
+        String requestedLocationName=null, email=null;
 
-        GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
-        ArrayList openRequestList = driverDBHelper.getReqList();
-        android.util.Log.i(TAG, "open requests: " + openRequestList.toString());
+        ArrayList<Map<String,Object>> openRequestList = driverDBHelper.getReqList();
+        android.util.Log.i(TAG, "OPEN REQUEST LIST RAW" + openRequestList.toString());
 
+        for (Map<String, Object> map : openRequestList) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+
+                String key = entry.getKey();
+                Object value = entry.getValue();
+
+                switch(key){
+                    case "reqTip":
+                        offeredTip = Double.parseDouble(value.toString());
+                        android.util.Log.i(TAG, "Type of reqTip: " +  offeredTip.toString());
+                        break;
+                    case "reqLocation":
+                        requestedLocationName =  value.toString();
+                        android.util.Log.i(TAG, "Type of reLocation: " +  requestedLocationName);
+                        break;
+                    case "desLat":
+                        destinationLat =  Double.parseDouble(value.toString());
+                        android.util.Log.i(TAG, "Type of desLat: " +  destinationLat.toString());
+                    case "oriLat":
+                        originLat =  Double.parseDouble(value.toString());
+                        android.util.Log.i(TAG, "Type of oriLat : " +  originLat.toString());
+                    case "desLng":
+                        destinationLong =  Double.parseDouble(value.toString());
+                        android.util.Log.i(TAG, "Type of desLng  : " +  destinationLong.toString());
+                    case "oriLng":
+                        originLong =  Double.parseDouble(value.toString());
+                        android.util.Log.i(TAG, "Type of desLng  : " +  originLong.toString());
+                    case "email" :
+                        email = value.toString();
+                        android.util.Log.i(TAG, "Type of email : " +  email);
+                }
+            }
+            draw(originLat, originLong, email);
+        }
+
+    }
+
+    public void draw(Double originLat, Double originLong, String email){
+        if (originLat == null || originLong==null || email ==null){
+            noOpenRequestToast();
+        }else{
+            LatLng request = new LatLng(originLat, originLong);
+            setMarker(request, "Open Request from: " + email);
+        }
+    }
+
+    private void noOpenRequestToast(){
+        String toastStr = "No Open Requests! Try clicking search again";
+        Toast.makeText(MapsDriverActivity.this, toastStr, Toast.LENGTH_LONG).show();
+    }
+
+    /**
+     * set a marker given LATLNG information
+     * @param locationToMark is location to set marker on
+     **/
+    public void setMarker(LatLng locationToMark, String title){
+        guuberDriverMap.addMarker(new MarkerOptions()
+                .position(locationToMark)
+                .flat(false)
+                .title(title)
+        );
     }
 
     /**
