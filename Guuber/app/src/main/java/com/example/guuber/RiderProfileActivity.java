@@ -31,6 +31,7 @@ public class RiderProfileActivity extends AppCompatActivity {
     ImageView dislikeButton;
     ImageView profileImg;
     User userInfo;
+    Boolean editable;
 
     private static final String TAG = "RiderProfileActivity";
     @Override
@@ -38,6 +39,10 @@ public class RiderProfileActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rider_profile_disp);
         userInfo = ((UserData)(getApplicationContext())).getUser();
+
+        String caller = getIntent().getStringExtra("caller");
+        editable = caller.equals("internal");
+
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -55,48 +60,49 @@ public class RiderProfileActivity extends AppCompatActivity {
         /**
          * allows for editing userdata
          */
+        if (editable) {
+            phoneNumberField.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    EditUserdataFragment fragment = new EditUserdataFragment();
+                    Bundle phoneBundle = new Bundle();
+                    phoneBundle.putString("field", "phone number");
+                    phoneBundle.putString("old", phoneNumber);
+                    phoneBundle.putString("activity", "RiderProfileActivity");
+                    fragment.setArguments(phoneBundle);
+                    fragment.show(getSupportFragmentManager(), "Edit Phone Number");
+                    return true;
+                }
+            });
 
-        phoneNumberField.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-               EditUserdataFragment fragment = new EditUserdataFragment();
-               Bundle phoneBundle = new Bundle();
-               phoneBundle.putString("field", "phone number");
-               phoneBundle.putString("old", phoneNumber);
-               phoneBundle.putString("activity", "RiderProfileActivity");
-               fragment.setArguments(phoneBundle);
-               fragment.show(getSupportFragmentManager(), "Edit Phone Number");
-                return true;
-            }
-        });
+            usernameField.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    EditUserdataFragment fragment = new EditUserdataFragment();
+                    Bundle phoneBundle = new Bundle();
+                    phoneBundle.putString("field", "username");
+                    phoneBundle.putString("old", username);
+                    phoneBundle.putString("activity", "RiderProfileActivity");
+                    fragment.setArguments(phoneBundle);
+                    fragment.show(getSupportFragmentManager(), "Edit Phone Number");
+                    return true;
+                }
+            });
 
-        usernameField.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                EditUserdataFragment fragment = new EditUserdataFragment();
-                Bundle phoneBundle = new Bundle();
-                phoneBundle.putString("field", "username");
-                phoneBundle.putString("old", username);
-                phoneBundle.putString("activity", "RiderProfileActivity");
-                fragment.setArguments(phoneBundle);
-                fragment.show(getSupportFragmentManager(), "Edit Phone Number");
-                return true;
-            }
-        });
-
-        emailField.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                EditUserdataFragment fragment = new EditUserdataFragment();
-                Bundle phoneBundle = new Bundle();
-                phoneBundle.putString("field", "email");
-                phoneBundle.putString("old", email);
-                phoneBundle.putString("activity", "RiderProfileActivity");
-                fragment.setArguments(phoneBundle);
-                fragment.show(getSupportFragmentManager(), "Edit Phone Number");
-                return true;
-            }
-        });
+            emailField.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    EditUserdataFragment fragment = new EditUserdataFragment();
+                    Bundle phoneBundle = new Bundle();
+                    phoneBundle.putString("field", "email");
+                    phoneBundle.putString("old", email);
+                    phoneBundle.putString("activity", "RiderProfileActivity");
+                    fragment.setArguments(phoneBundle);
+                    fragment.show(getSupportFragmentManager(), "Edit Phone Number");
+                    return true;
+                }
+            });
+        }
 
         phoneNumberField.setText(phoneNumber);
         // for testing please disregard

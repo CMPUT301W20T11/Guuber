@@ -35,6 +35,7 @@ public class DriverProfilActivity extends AppCompatActivity {
     Button deleteButton;
     Vehicle vehicle;
     User userInfo;
+    Boolean editable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +43,10 @@ public class DriverProfilActivity extends AppCompatActivity {
         setContentView(R.layout.driver_profile_disp);
         //UserData userData = UserData.getInstance();
         userInfo = ((UserData)(getApplicationContext())).getUser();
+
+        String caller = getIntent().getStringExtra("caller");
+        editable = caller.equals("internal");
+
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -63,49 +68,49 @@ public class DriverProfilActivity extends AppCompatActivity {
         /**
          * allows for editing userdata
          */
+        if (editable){
+            phoneNumberField.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    EditUserdataFragment fragment = new EditUserdataFragment();
+                    Bundle phoneBundle = new Bundle();
+                    phoneBundle.putString("field", "phone number");
+                    phoneBundle.putString("old", phoneNumber);
+                    phoneBundle.putString("activity", "DriverProfilActivity");
+                    fragment.setArguments(phoneBundle);
+                    fragment.show(getSupportFragmentManager(), "Edit Phone Number");
+                    return true;
+                }
+            });
 
-        phoneNumberField.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                EditUserdataFragment fragment = new EditUserdataFragment();
-                Bundle phoneBundle = new Bundle();
-                phoneBundle.putString("field", "phone number");
-                phoneBundle.putString("old", phoneNumber);
-                phoneBundle.putString("activity", "DriverProfilActivity");
-                fragment.setArguments(phoneBundle);
-                fragment.show(getSupportFragmentManager(), "Edit Phone Number");
-                return true;
-            }
-        });
+            usernameField.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    EditUserdataFragment fragment = new EditUserdataFragment();
+                    Bundle phoneBundle = new Bundle();
+                    phoneBundle.putString("field", "username");
+                    phoneBundle.putString("old", username);
+                    phoneBundle.putString("activity", "DriverProfilActivity");
+                    fragment.setArguments(phoneBundle);
+                    fragment.show(getSupportFragmentManager(), "Edit Phone Number");
+                    return true;
+                }
+            });
 
-        usernameField.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                EditUserdataFragment fragment = new EditUserdataFragment();
-                Bundle phoneBundle = new Bundle();
-                phoneBundle.putString("field", "username");
-                phoneBundle.putString("old", username);
-                phoneBundle.putString("activity", "DriverProfilActivity");
-                fragment.setArguments(phoneBundle);
-                fragment.show(getSupportFragmentManager(), "Edit Phone Number");
-                return true;
-            }
-        });
-
-        emailField.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                EditUserdataFragment fragment = new EditUserdataFragment();
-                Bundle phoneBundle = new Bundle();
-                phoneBundle.putString("field", "email");
-                phoneBundle.putString("old", email);
-                phoneBundle.putString("activity", "DriverProfilActivity");
-                fragment.setArguments(phoneBundle);
-                fragment.show(getSupportFragmentManager(), "Edit Phone Number");
-                return true;
-            }
-        });
-
+            emailField.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    EditUserdataFragment fragment = new EditUserdataFragment();
+                    Bundle phoneBundle = new Bundle();
+                    phoneBundle.putString("field", "email");
+                    phoneBundle.putString("old", email);
+                    phoneBundle.putString("activity", "DriverProfilActivity");
+                    fragment.setArguments(phoneBundle);
+                    fragment.show(getSupportFragmentManager(), "Edit Phone Number");
+                    return true;
+                }
+            });
+        }
 
         vehicleRegField.setText(carReg);
         phoneNumberField.setText(phoneNumber);

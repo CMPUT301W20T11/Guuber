@@ -215,9 +215,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     /**
      * Starts activity to display riders profile
+     * Restricted by flag to use with internal profile view only and not view by external user
      **/
     public void viewRiderProfile() {
-        final Intent riderProfileIntent = new Intent(MapsRiderActivity.this, RiderProfileActivity.class);
+        Intent riderProfileIntent = new Intent(MapsRiderActivity.this, RiderProfileActivity.class);
+        riderProfileIntent.putExtra("caller", "internal");
         startActivity(riderProfileIntent);
     }
 
