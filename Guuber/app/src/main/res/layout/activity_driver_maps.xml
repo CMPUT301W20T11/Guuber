@@ -10,7 +10,7 @@
         class="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="50dp"
         android:layout_marginBottom="4dp"
         map:layout_constraintBottom_toBottomOf="parent"
         map:layout_constraintStart_toStartOf="parent"
@@ -34,7 +34,7 @@
 
     <EditText
         android:id="@+id/geo_location_EditText"
-        android:layout_width="200dp"
+        android:layout_width="180dp"
         android:layout_height="30dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
@@ -42,6 +42,7 @@
         android:hint="click on map"
         android:inputType="numberDecimal"
         android:textColor="#0B0E23"
+        android:textSize="10sp"
         map:layout_constraintEnd_toStartOf="@+id/driver_search_button"
         map:layout_constraintHorizontal_bias="0.5"
         map:layout_constraintStart_toEndOf="@+id/driver_spinner"
