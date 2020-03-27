@@ -17,7 +17,6 @@ import com.example.guuber.model.Vehicle;
  */
 
 public class DriverProfilActivity extends AppCompatActivity {
-    User myself;
     String username;
     String email;
     String phoneNumber;
@@ -35,20 +34,18 @@ public class DriverProfilActivity extends AppCompatActivity {
 
     Button deleteButton;
     Vehicle vehicle;
+    User userInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.driver_profile_disp);
         //UserData userData = UserData.getInstance();
-        User userInfo = ((UserData)(getApplicationContext())).getUser();
+        userInfo = ((UserData)(getApplicationContext())).getUser();
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
-
-        //myself = new Driver("+15879388900", "osiemusariri@gmail.com", "Oswell",
-       // "Musariri", "1", "TestUserName", vehicle);
 
         vehicleRegField = findViewById(R.id.carRegTextDrIn);
         phoneNumberField = findViewById(R.id.phoneTextDrIn);
@@ -59,15 +56,56 @@ public class DriverProfilActivity extends AppCompatActivity {
         dislikeButton = findViewById(R.id.dislikeButtonDrIn);
         profileImg = findViewById(R.id.imageViewDrIn);
 
-//        phoneNumber = myself.getPhoneNumber();
-//        username = myself.getFirstName();
-//        email = myself.getEmail();
         phoneNumber = userInfo.getPhoneNumber();
         username = userInfo.getUsername();
         email = userInfo.getEmail();
 
-        //carReg = myself.getVehicle().getReg();
-        //status = myself.getStatus();
+        /**
+         * allows for editing userdata
+         */
+
+        phoneNumberField.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                EditUserdataFragment fragment = new EditUserdataFragment();
+                Bundle phoneBundle = new Bundle();
+                phoneBundle.putString("field", "phone number");
+                phoneBundle.putString("old", phoneNumber);
+                phoneBundle.putString("activity", "DriverProfilActivity");
+                fragment.setArguments(phoneBundle);
+                fragment.show(getSupportFragmentManager(), "Edit Phone Number");
+                return true;
+            }
+        });
+
+        usernameField.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                EditUserdataFragment fragment = new EditUserdataFragment();
+                Bundle phoneBundle = new Bundle();
+                phoneBundle.putString("field", "username");
+                phoneBundle.putString("old", username);
+                phoneBundle.putString("activity", "DriverProfilActivity");
+                fragment.setArguments(phoneBundle);
+                fragment.show(getSupportFragmentManager(), "Edit Phone Number");
+                return true;
+            }
+        });
+
+        emailField.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                EditUserdataFragment fragment = new EditUserdataFragment();
+                Bundle phoneBundle = new Bundle();
+                phoneBundle.putString("field", "email");
+                phoneBundle.putString("old", email);
+                phoneBundle.putString("activity", "DriverProfilActivity");
+                fragment.setArguments(phoneBundle);
+                fragment.show(getSupportFragmentManager(), "Edit Phone Number");
+                return true;
+            }
+        });
+
 
         vehicleRegField.setText(carReg);
         phoneNumberField.setText(phoneNumber);
@@ -85,15 +123,6 @@ public class DriverProfilActivity extends AppCompatActivity {
             System.out.println("first statement.");
         }
         });
-
-        //deleteButton = findViewById(R.id.deleteAccButtonDrIn);
-//        deleteButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                System.out.println("first statement.");
-//            }
-//        });
-
     }
     /**implement logic here for what you want to
      * happen upon back button press**/
@@ -105,6 +134,18 @@ public class DriverProfilActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+    public void updateData(String field, String value){
+
+        if (field.equals("email")){
+            userInfo.setEmail(value);
+        }
+        else if (field.equals("phone number")){
+            userInfo.setPhoneNumber(value);
+        }
+        else if (field.equals("username")){
+            userInfo.setUsername(value);
         }
     }
 }

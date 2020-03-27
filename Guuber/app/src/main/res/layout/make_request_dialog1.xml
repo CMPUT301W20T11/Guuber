@@ -86,9 +86,10 @@
     <TextView
         android:id="@+id/fareamtRq1"
         android:layout_width="162dp"
-        android:layout_height="29dp"
+        android:layout_height="32dp"
         android:layout_marginBottom="132dp"
         android:text="Estimate fare amount: $170"
+        android:textSize="12dp"
         android:background="#464849"
         app:layout_constraintBottom_toBottomOf="@+id/blackImRq1"
         app:layout_constraintStart_toStartOf="@id/blackImRq1" />
