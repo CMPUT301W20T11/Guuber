@@ -56,9 +56,12 @@ import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 import com.google.maps.model.Distance;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import static java.lang.Math.abs;
 
 
 /**
@@ -86,7 +89,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private LatLng origin;
     private LatLng destination;
     private String coordsToChange;
-    private Distance distance;
+    private Double tripCost;
     /*******NEW MAPS INTEGRATION**/
     private boolean isLocationPermissionGranted = false;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
@@ -551,7 +554,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
         builder
                 .setView(edittext)
-                .setMessage("This trip will cost you: $69")
+                .setMessage("This trip will cost you: $" + getTripCost())
                 .setCancelable(true)
                 .setNegativeButton("Make a request", new DialogInterface.OnClickListener() {
                             @Override
@@ -628,14 +631,15 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         riderDirections.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
             public void onResult(DirectionsResult result) {
-                /**Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());**/
+                /**Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());
                 Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration);
                 Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance);
-
                 /**Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
                 Log.d(TAG, "onResult: successfully retrieved directions.");**/
-                Distance distance = result.routes[0].legs[0].distance;
-                setDistance(distance);
+
+                Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].duration.inSeconds);
+                setTripCost(result.routes[0].legs[0].duration.inSeconds);
+
                 addPolylinesToMap(result);
             }
             @Override
@@ -645,13 +649,16 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         });
     }
 
-    public void setDistance(Distance distance){
-        this.distance = distance;
+
+
+    public void setTripCost(long durationInSeconds){
+        long minutes = durationInSeconds/60;
+        Double tripCost = minutes * 0.75;
+        this.tripCost = tripCost;
     }
 
-    public Distance getDistance(){
-        //int intDistance = Integer.parseInt(String.valueOf(distance));
-        return distance;
+    public Double getTripCost(){
+        return tripCost;
     }
 
     /**
@@ -687,9 +694,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     public void onPolylineClick(Polyline polyline) {
         polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this,R.color.clickedPolyLinesColors));
         polyline.setZIndex(1);
-        Distance distance = getDistance();
-        android.util.Log.i(TAG, "this is the parsed distance: " + distance);
-        polyline.setTag(distance);
 
     }
 }
