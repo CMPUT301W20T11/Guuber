@@ -25,12 +25,14 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 
 import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
+import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -52,6 +54,7 @@ import com.google.maps.PendingResult;
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
+import com.google.maps.model.Distance;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,7 +70,7 @@ import java.util.List;
  *  Class is representative of current application functionality
  */
 
-public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
+public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener, GoogleMap.OnPolylineClickListener {
 
 
     /**spinner codes**/
@@ -83,7 +86,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private LatLng origin;
     private LatLng destination;
     private String coordsToChange;
-
+    private Distance distance;
     /*******NEW MAPS INTEGRATION**/
     private boolean isLocationPermissionGranted = false;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
@@ -258,6 +261,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         guuberRiderMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         guuberRiderMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
         guuberRiderMap.setOnInfoWindowClickListener(MapsRiderActivity.this);
+        guuberRiderMap.setOnPolylineClickListener(MapsRiderActivity.this);
 
         /**
          * logs the coordinates in console upon map click
@@ -279,7 +283,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     setDestination(arg0);
                     destinationSetToast();
                 }
-            }
+
+                    guuberRiderMap.clear();
+                    setMarker(getOrigin(), "Origin");
+                    setMarker(getDestination(), "destination");
+                    calculateDirections();
+                }
+
         });
 
 
@@ -533,20 +543,21 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     @Override
     public void onInfoWindowClick(Marker marker) {
+        final EditText edittext = new EditText(MapsRiderActivity.this);
+        edittext.setHint("enter a tip");
+        edittext.setGravity(0);
+        edittext.setWidth(2);
+
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
         builder
-                .setMessage("What would you like to do?")
+                .setView(edittext)
+                .setMessage("This trip will cost you: $69")
                 .setCancelable(true)
-                .setPositiveButton("Display Route Details ", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        calculateDirections();
-                        dialog.dismiss();
-                    }
-                })
                 .setNegativeButton("Make a request", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 makeRequest(marker);
+                                dialog.dismiss();
                             }
                         }
                 )
@@ -590,7 +601,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         riderDBHelper.makeReq(currUser,testip,testLocation,orLat,orLong,destLat,destLong,tripCost);
         android.util.Log.i(TAG, "REQUEST MADE00000000000");
 
-
     }
 
 
@@ -618,11 +628,14 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         riderDirections.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
             public void onResult(DirectionsResult result) {
-                /**Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());
+                /**Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());**/
                 Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration);
                 Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance);
-                Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
+
+                /**Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
                 Log.d(TAG, "onResult: successfully retrieved directions.");**/
+                Distance distance = result.routes[0].legs[0].distance;
+                setDistance(distance);
                 addPolylinesToMap(result);
             }
             @Override
@@ -630,6 +643,15 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 Log.e(TAG, "calculateDirections: Failed to get directions: " + e.getMessage());
             }
         });
+    }
+
+    public void setDistance(Distance distance){
+        this.distance = distance;
+    }
+
+    public Distance getDistance(){
+        //int intDistance = Integer.parseInt(String.valueOf(distance));
+        return distance;
     }
 
     /**
@@ -652,12 +674,22 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         ));
                     }
                     Polyline polyline = guuberRiderMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
-                    polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.polyLinesColors));
+                    polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.clickedPolyLinesColors));
                     polyline.setClickable(true);
+
                 }
             }
         });
     }
 
 
+    @Override
+    public void onPolylineClick(Polyline polyline) {
+        polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this,R.color.clickedPolyLinesColors));
+        polyline.setZIndex(1);
+        Distance distance = getDistance();
+        android.util.Log.i(TAG, "this is the parsed distance: " + distance);
+        polyline.setTag(distance);
+
+    }
 }
