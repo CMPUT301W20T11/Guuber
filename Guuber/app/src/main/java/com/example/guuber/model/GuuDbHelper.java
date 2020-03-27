@@ -210,13 +210,14 @@ public class GuuDbHelper {
      * @param rider - the person making the request
      * @param tip - the extra amount they are willing to pay
      * @param location - the destination
-     * @param  oriLat - Latitudinal coordinate of original place to be pickup
-     * @param  oriLng - Longitudinal coordinate of original place to be pickup
-     * @param  desLat - Latitudinal coordinate of the destination
-     * @param  desLng - Latitudinal coordinate of the destination
+     * @param oriLat - Latitudinal coordinate of original place to be pickup
+     * @param oriLng - Longitudinal coordinate of original place to be pickup
+     * @param desLat - Latitudinal coordinate of the destination
+     * @param desLng - Latitudinal coordinate of the destination
+     * @param tripCost - the cost of the trip
      */
 
-    public void makeReq(User rider,int tip, String location,String oriLat,String oriLng,String desLat,String desLng){
+    public void makeReq(User rider,int tip, String location,String oriLat,String oriLng,String desLat,String desLng,String tripCost){
         setProfile(rider.getEmail());
         Map<String,Object> details = new HashMap<>();
         details.put("reqTip",tip);
@@ -225,6 +226,7 @@ public class GuuDbHelper {
         details.put("oriLng",oriLng);
         details.put("desLat",desLat);
         details.put("desLng",desLng);
+        details.put("tripCost",tripCost);
         this.profile.update(details);
 
         this.requests.document(rider.getEmail()).set(details);
@@ -251,6 +253,7 @@ public class GuuDbHelper {
                         delete.put("oriLng", FieldValue.delete());
                         delete.put("desLat", FieldValue.delete());
                         delete.put("desLng", FieldValue.delete());
+                        delete.put("tripCost",FieldValue.delete());
                         //checks if there is a driver for the request
                         if (doc.get("reqDriver") != null) {
                             delete.put("reqDriver", FieldValue.delete());
@@ -259,10 +262,22 @@ public class GuuDbHelper {
                             setProfile(rider.getEmail());
                             profile.update(delete);
                         } else {
-
                             setProfile(rider.getEmail());
+                            Map<String,Object> reqInfo = new HashMap<>();
+                            reqInfo.put("reqTip", doc.get("reqTip"));
+                            reqInfo.put("reqLocation",doc.get("reqLocation"));
+                            reqInfo.put("oriLat",doc.get("oriLat"));
+                            reqInfo.put("oriLng",doc.get("oriLng"));
+                            reqInfo.put("desLat",doc.get("desLat"));
+                            reqInfo.put("desLng",doc.get("desLng"));
+                            reqInfo.put("email",doc.get("email"));
+                            reqInfo.put("tripCost",doc.get("tripCost"));
                             profile.update(delete);
                             requests.document(rider.getEmail()).delete();
+                            reqList.remove(reqInfo);
+
+
+
                         }
                     }
                 }
@@ -273,14 +288,15 @@ public class GuuDbHelper {
      * Helper function for getRiderRequest
      * Sets the request info to be retrieved
      * @param email - the email of the person
-     * @param tip - amount they person offers
+     * @param tip - extra amount the person offers
      * @param location - the destination
-     * @param  oriLat - Latitudinal coordinate of original place to be pickup
-     * @param  oriLng - Longitudinal coordinate of original place to be pickup
-     * @param  desLat - Latitudinal coordinate of the destination
-     * @param  desLng - Latitudinal coordinate of the destination
+     * @param oriLat - Latitudinal coordinate of original place to be pickup
+     * @param oriLng - Longitudinal coordinate of original place to be pickup
+     * @param desLat - Latitudinal coordinate of the destination
+     * @param desLng - Latitudinal coordinate of the destination
+     * @param tripCost - the cost of the trip
      */
-    public void setRequest(String email, Object tip ,String location, String oriLat,String oriLng,String desLat,String desLng ){
+    public void setRequest(String email, Object tip ,String location, String oriLat,String oriLng,String desLat,String desLng,String tripCost){
         this.Request.put("reqTip", tip);
         this.Request.put("reqLocation",location);
         this.Request.put("oriLat",oriLat);
@@ -288,6 +304,7 @@ public class GuuDbHelper {
         this.Request.put("desLat",desLat);
         this.Request.put("desLng",desLng);
         this.Request.put("email",email);
+        this.Request.put("tripCost",tripCost);
 
 
     }
@@ -305,12 +322,14 @@ public class GuuDbHelper {
                setRequest(documentSnapshot.get("email").toString(), documentSnapshot.get("reqTip"),
                        documentSnapshot.get("reqLocation").toString(),documentSnapshot.get("oriLat").toString(),
                        documentSnapshot.get("oriLng").toString(),documentSnapshot.get("desLat").toString(),
-                       documentSnapshot.get("desLng").toString());
+                       documentSnapshot.get("desLng").toString(),documentSnapshot.get("tripCost").toString());
             }
         });
 
         return Request;
     }
+
+    //gets the first document of the driver request
     /**
      * Get the information of the driver's current active request they have
      * @param  driver - the driver with a request
@@ -326,7 +345,8 @@ public class GuuDbHelper {
                         DocumentSnapshot activeReq = task.getResult().getDocuments().get(0);
                         setRequest(activeReq.getId(), activeReq.get("reqTip").toString(), activeReq.get("reqLocation").toString(),
                                 activeReq.get("oriLat").toString(), activeReq.get("oriLng").toString(),
-                                activeReq.get("desLat").toString(), activeReq.get("desLng").toString());
+                                activeReq.get("desLat").toString(), activeReq.get("desLng").toString(),
+                                activeReq.get("tripCost").toString());
                     }
                     else{
                         Request.clear();
@@ -343,7 +363,6 @@ public class GuuDbHelper {
      * @return - an ArrayList<Map<String,Object>> </String,Object> of request that need a driver
      * */
     public ArrayList<Map<String,Object>> getReqList(){
-        //reqList.clear();
         requests.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -365,8 +384,10 @@ public class GuuDbHelper {
      * add the user email to the request detail
      */
     public void updateReqList(String email,Map<String,Object> reqDetails){
-        reqDetails.put("email",email);
-        this.reqList.add(reqDetails);
+        reqDetails.put("email", email);
+        if(!reqList.contains(reqDetails)) {
+            this.reqList.add(reqDetails);
+        }
     }
 
     /**
@@ -379,6 +400,7 @@ public class GuuDbHelper {
         profile.update("reqDriver",driver.getEmail());
         Map<String,Object> reqDetails = getRiderRequest(rider);
         Thread.sleep(1000);
+        reqList.remove(reqDetails);
         requests.document(rider.getEmail()).delete();
         setProfile(driver.getEmail());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
@@ -445,7 +467,7 @@ public class GuuDbHelper {
 
 
 
-
+    
 
 
 }

@@ -583,8 +583,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         User currUser = ((UserData)(getApplicationContext())).getUser();
         int testip = 40;
+        String tripCost = "50";
         String testLocation = "pick me up here";
-        riderDBHelper.makeReq(currUser,testip,testLocation,orLat,orLong,destLat,destLong);
+        riderDBHelper.makeReq(currUser,testip,testLocation,orLat,orLong,destLat,destLong,tripCost);
         android.util.Log.i(TAG, "REQUEST MADE00000000000");
 
 
