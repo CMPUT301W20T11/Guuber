@@ -57,7 +57,10 @@ public class EditUserdataFragment extends DialogFragment {
                             Toast.makeText(getActivity(), "Changes saved!", Toast.LENGTH_LONG).show();
                             if (activit.equals("RiderProfileActivity")){
                             ((RiderProfileActivity) getActivity()).updateData(fields, confirmText.getText().toString());}
-                            //else driver profile activity
+                            else{
+                                ((DriverProfilActivity) getActivity()).updateData(fields, confirmText.getText().toString());
+                            }
+
 
                         }
                     }
