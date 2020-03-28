@@ -24,6 +24,8 @@ import com.example.guuber.model.User;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
 
 public class RegisterFragment extends DialogFragment {
 	private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -135,7 +137,15 @@ public class RegisterFragment extends DialogFragment {
 							String lnameS = lname.getText().toString();
 							String phoneNS = phoneN.getText().toString();
 							String userNameS = userName.getText().toString();
-							User user = new User(phoneNS, emailS,fnameS,lnameS,uid, userNameS, 0, 0);
+
+							/*******************************************************************/
+							/********the below line has errors. making a temp change to run*******/
+							//User user = new User(phoneNS, emailS,fnameS,lnameS,uid, userNameS, 0, 0);
+							ArrayList tempTransactionArray = new ArrayList<>();
+							tempTransactionArray.add(0.0);
+							User user = new User(phoneNS, emailS,fnameS,lnameS,0, 0, 0.0, tempTransactionArray);
+							/*****************************END CHANGES****************************/
+
 							// Check if user is rider or driver
 							if (isRider == 0) {
 								user.setRider(0);
