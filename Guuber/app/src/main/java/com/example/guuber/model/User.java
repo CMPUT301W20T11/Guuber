@@ -2,6 +2,8 @@ package com.example.guuber.model;
 
 import androidx.fragment.app.DialogFragment;
 
+import java.util.ArrayList;
+
 /**
  * Base app user class
  */
@@ -19,6 +21,9 @@ public class User{
     private Integer posRating;
     private Integer negRating;
 
+    private Double balance;
+    private ArrayList<Double> transactions;
+
     /**
      * Empty constructor for firebase use
      */
@@ -34,7 +39,7 @@ public class User{
      * @param lastName - User last name
      *
      */
-    public User(String phoneNumber, String email, String firstName, String lastName, String uid, String uname, int posRating, int negRating) {
+    public User(String phoneNumber, String email, String firstName, String lastName, String uid, String uname, int posRating, int negRating, Double balance, ArrayList<Double> transactions) {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.firstName = firstName;
@@ -46,6 +51,10 @@ public class User{
         this.posRating = posRating;
         this.negRating = negRating;
 
+
+        this.balance = balance;
+        this.transactions = transactions;
+
     }
 
     /**
@@ -55,7 +64,7 @@ public class User{
      * @param firstName - User first name
      * @param lastName - User last name
      */
-    public User(String phoneNumber, String email, String firstName, String lastName, int posRating, int negRating) {
+    public User(String phoneNumber, String email, String firstName, String lastName, int posRating, int negRating, Double balance, ArrayList<Double> transactions) {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.firstName = firstName;
@@ -64,6 +73,9 @@ public class User{
 
         this.posRating = posRating;
         this.negRating = negRating;
+
+        this.balance = balance;
+        this.transactions = transactions;
     }
 
     // In case we need vehicle objects, may be deleted
@@ -228,5 +240,21 @@ public class User{
      */
     public void rateUser(){}
 
+
+
+
+
+    // Since every user has to have a wallet, maybe keep wallet info in here?
+    /**
+     * Users balance
+     */
+    public Double setBalance(Double Balance) {this.balance = 0.00;}
+    public Double getBalance() {return balance;}
+
+    /**
+     * Users transaction history
+     */
+    public ArrayList<Double> setTransHistory(ArrayList<Double> transactions) {this.transactions = transactions;}
+    public ArrayList<Double> getTransHistory() {return transactions;}
 
 }
