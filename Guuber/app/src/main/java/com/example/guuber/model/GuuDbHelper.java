@@ -195,6 +195,7 @@ public class GuuDbHelper {
     public void updatePosRating(String email){
         users.document(email).update("posRating", FieldValue.increment(1));
     }
+
     /**
      * automatically increments the negative rating of the user
      * @param email - the email of the user
@@ -406,6 +407,7 @@ public class GuuDbHelper {
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
     }
+
     /**
      * Adds or updates the current vehicle to the users profile
      * @param user - the user who has the registered car

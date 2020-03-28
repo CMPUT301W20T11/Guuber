@@ -561,14 +561,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
         builder
                 .setMessage("What would you like to do?")
-                /**.setPositiveButton("Preview Route", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        android.util.Log.i(TAG, "getting rider request");
-                        calculateDirectionsBetweenPickupandDropOff(marker);
-                        calculateDirectionsToPickup(marker);
-                        dialog.dismiss();
-                    }
-                })**/
                 .setPositiveButton("View This Riders Profile", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
