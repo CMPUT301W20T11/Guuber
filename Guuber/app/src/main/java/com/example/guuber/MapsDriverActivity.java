@@ -95,6 +95,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private GeoApiContext geoApiContext = null;
     /*********************/
 
+    // Activity result codes
+    private static final int QR_SCAN_CODE = 4;
+
     /***********the databse******/
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
@@ -238,7 +241,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      **/
     public void scanQR() {
         final Intent scanQrProfileIntent = new Intent(MapsDriverActivity.this, scanQrActivity.class);
-        startActivity(scanQrProfileIntent);
+        startActivityForResult(scanQrProfileIntent, QR_SCAN_CODE);
     }
 
     /****************************************END SPINNER METHODS***********************************************/
@@ -550,6 +553,16 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             case PERMISSIONS_REQUEST_ENABLE_GPS: {
                 if (isLocationPermissionGranted == false) {
                     checkUserPermission();
+                }
+            }
+            case QR_SCAN_CODE: {
+                // TODO for LEAH
+                if (resultCode == RESULT_OK) {
+                    Toast.makeText(this, "Transaction processed", Toast.LENGTH_SHORT).show();
+                    // Transaction went through, call some function for the next step of ride
+                } else {
+                    // Transaction failed, call some function to cancel the ride
+                    Toast.makeText(this, "Transaction failed", Toast.LENGTH_SHORT).show();
                 }
             }
         }
