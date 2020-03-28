@@ -79,6 +79,8 @@ public class User{
     }
 
 
+
+
     // In case we need vehicle objects, may be deleted
 //    /**
 //     * Get vehicle object
