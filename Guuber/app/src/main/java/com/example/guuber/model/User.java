@@ -248,13 +248,14 @@ public class User{
     /**
      * Users balance
      */
-    public Double setBalance(Double Balance) {this.balance = 0.00;}
+    public void setBalance(Double Balance) {this.balance = 0.00;}
+
     public Double getBalance() {return balance;}
 
     /**
      * Users transaction history
      */
-    public ArrayList<Double> setTransHistory(ArrayList<Double> transactions) {this.transactions = transactions;}
+    public void setTransHistory(ArrayList<Double> transactions) {this.transactions = transactions;}
     public ArrayList<Double> getTransHistory() {return transactions;}
 
 }
