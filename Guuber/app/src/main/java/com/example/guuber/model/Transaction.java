@@ -16,19 +16,21 @@ public class Transaction {
     private String date;
     private double amount;
     private String id;
+    private String message;
 
     /**
      * Transaction between wallets
      * @param amount - Transaction amount
      * @param id - Transaction id
      */
-    public Transaction(double amount, String id) {
+    public Transaction(double amount, String id, String message) {
         Date datetime = new Date();
         this.time = tFormat.format(datetime);
         this.date = dFormat.format(datetime);
 
         this.amount = amount;
         this.id = id;
+        this.message = message;
     }
 
 
@@ -94,5 +96,21 @@ public class Transaction {
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * Get transaction message
+     * @return - Transaction string
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * Set transaction message
+     * @param message - Transaction message string
+     */
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

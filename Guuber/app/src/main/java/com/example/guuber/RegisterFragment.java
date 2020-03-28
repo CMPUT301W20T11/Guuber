@@ -44,7 +44,6 @@ public class RegisterFragment extends DialogFragment {
 	private EditText fname;
 	private EditText lname;
 	private EditText phoneN;
-	private Switch isRiderSwitch;
 	private Integer isRider = 1;
 
 
@@ -93,7 +92,7 @@ public class RegisterFragment extends DialogFragment {
 		fname = view.findViewById(R.id.fname_et);
 		lname = view.findViewById(R.id.lname_et);
 		phoneN = view.findViewById(R.id.phone_et);
-		isRiderSwitch = view.findViewById(R.id.driver_switch);
+		Switch isRiderSwitch = view.findViewById(R.id.driver_switch);
 		isRiderSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) {
