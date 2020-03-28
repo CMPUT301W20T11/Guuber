@@ -78,7 +78,7 @@ import static java.lang.Math.abs;
  *  Class is representative of current application functionality
  */
 
-public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener, GoogleMap.OnPolylineClickListener {
+public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener{
 
 
     /**spinner codes**/
@@ -104,7 +104,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final String TAG = "MapsRiderActivity";
     private GeoApiContext geoRiderApiContext = null;
 
-    /***********the databse******/
+    /***********the database******/
     private FirebaseFirestore riderMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper riderDBHelper = new GuuDbHelper(riderMapsDB);
 
@@ -270,7 +270,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         guuberRiderMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         guuberRiderMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
         guuberRiderMap.setOnInfoWindowClickListener(MapsRiderActivity.this);
-        guuberRiderMap.setOnPolylineClickListener(MapsRiderActivity.this);
 
         /**
          * logs the coordinates in console upon map click
@@ -632,7 +631,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         String testLocation = "pick me up here";
 
         riderDBHelper.makeReq(currUser,testip,testLocation,orLat,orLong,destLat,destLong,tripCost);
-        android.util.Log.i(TAG, "REQUEST MADE00000000000");
+        android.util.Log.i(TAG, "REQUEST MADE");
 
     }
 
@@ -646,8 +645,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     };
 
 
+    /**
+     * calculate the direction from the riders
+     * origin the riders destination
+     */
     private void calculateDirections() {
-        Log.d(TAG, "calculateDirections: calculating directions.");
 
         /**from riders set destination**/
         LatLng riderDestination = getDestination();
@@ -666,19 +668,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 )
         );
 
-        Log.d(TAG, "calculateDirections: destination: " + destination.toString());
         riderDirections.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
             public void onResult(DirectionsResult result) {
-                /**Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());
-                Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration);
-                Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance);
-                /**Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
-                Log.d(TAG, "onResult: successfully retrieved directions.");**/
-
-                Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].duration.inSeconds);
                 setTripCost(result.routes[0].legs[0].duration.inSeconds);
-
                 addPolylinesToMap(result);
             }
             @Override
@@ -689,25 +682,38 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     }
 
 
-
+    /**
+     * a function returning the price of the trip
+     * @param durationInSeconds is the route duration, in seconds
+     */
     public void setTripCost(long durationInSeconds){
         long minutes = durationInSeconds/60;
         Double tripCost = minutes * 0.75;
         this.tripCost = tripCost;
     }
 
+    /**
+     * @return cost of the trip
+     */
     public Double getTripCost(){
         return tripCost;
     }
 
+    /**
+     * @param tipPercentage is an integer representing the tip percentage the rider has chosen
+     */
     public void setTip(int tipPercentage){
         tip = getTripCost() * (tipPercentage/100);
         this.tip = Math.round(tip * 100.0) / 100.0;;
     }
 
+    /**
+     * @return the tip offered
+     */
     public Double getTip(){
         return tip;
     }
+
 
     /**
      * add polyline to map based on the geo coords from the calculated route
@@ -721,7 +727,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     List<com.google.maps.model.LatLng> decodedPath = PolylineEncoding.decode(route.overviewPolyline.getEncodedPath());
                     List<LatLng> newDecodedPath = new ArrayList<>();
 
-                    // This loops through all the LatLng coordinates of ONE polyline.
+
                     for(com.google.maps.model.LatLng latLng: decodedPath){
                         newDecodedPath.add(new LatLng(
                                 latLng.lat,
@@ -730,18 +736,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     }
                     polyline = guuberRiderMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
                     polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.clickedPolyLinesColors));
-                    polyline.setClickable(true);
-
                 }
             }
         });
     }
 
-
-    @Override
-    public void onPolylineClick(Polyline polyline) {
-        polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this,R.color.clickedPolyLinesColors));
-        polyline.setZIndex(1);
-
-    }
 }

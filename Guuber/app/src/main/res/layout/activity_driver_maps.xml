@@ -34,7 +34,7 @@
 
     <EditText
         android:id="@+id/geo_location_EditText"
-        android:layout_width="180dp"
+        android:layout_width="0dp"
         android:layout_height="30dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="8dp"
