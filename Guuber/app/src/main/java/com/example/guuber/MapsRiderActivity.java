@@ -87,6 +87,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int VIEWTRIPS = 2;
     private static final int  WALLET = 3;
     private static final int  QR = 4;
+    private static final int QR_REQ_CODE = 3;
 
     private GoogleMap guuberRiderMap;
     private Button changeOriginButton, changeDestinationButton;
@@ -250,10 +251,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     public void makeQR(){
         final Intent qrProfileIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
 
-        // TODO: Template for how I expect the QR info to be passed
-        String info = "riderEmail, amount";
+        // TODO: Template for how I expect the QR info to be passed (rideremail,amount)
+        String info = "md801003@gmail.com,20";
         qrProfileIntent.putExtra("INFO_TAG", info);
-        startActivity(qrProfileIntent);
+        startActivityForResult(qrProfileIntent, QR_REQ_CODE);
     }
 
     /**********************************END SPINNER METHODS*****************************************/
@@ -552,6 +553,16 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
                 }
             }
+            case QR_REQ_CODE:{
+                // TODO for LEAH
+                if(resultCode == RESULT_OK){
+                    Toast.makeText(this, "Transaction processed",  Toast.LENGTH_SHORT).show();
+                    // Transaction went through, call some function for the next step of ride
+                }else{
+                    // Transaction failed, call some function to cancel the ride
+                    Toast.makeText(this, "Transaction failed",  Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 
@@ -764,12 +775,17 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
                         android.util.Log.i(TAG,"Pay Driver Button Clicked");
                         final Intent payDriverIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
-                        payDriverIntent.putExtra("TRIP_COST", getTripCost());
-                        payDriverIntent.putExtra("TIP", getTip());
-                        payDriverIntent.putExtra("RIDERS_EMAIL", ridersEmail);
-                        startActivity(payDriverIntent);
 
-                        /**some condition to check whether or not driver is actually paid so user can start using app**/
+                        // Get total fee
+                        String amount = String.valueOf(getTripCost() + getTip());
+
+                        // Send email and fee to intent by a comma separated string
+                        payDriverIntent.putExtra("INFO_TAG", ridersEmail +"," + amount);
+
+                        // Show the generated qr
+                        startActivityForResult(payDriverIntent, 2);
+
+                        // Check whether or not driver is actually paid so user can start using app**/
                     }
                 });
         final AlertDialog alert = builder.create();
