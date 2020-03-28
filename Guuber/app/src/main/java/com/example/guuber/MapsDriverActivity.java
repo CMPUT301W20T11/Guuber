@@ -31,6 +31,7 @@ import android.widget.Toast;
 
 
 import com.example.guuber.model.GuuDbHelper;
+import com.example.guuber.model.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.maps.CameraUpdate;
@@ -348,19 +349,22 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         android.util.Log.i(TAG, "Type of email : " +  email);
                 }
             }
-            draw(originLat, originLong, email);
+            draw(originLat, originLong, destinationLat, destinationLong, email);
         }
 
     }
 
-    public void draw(Double originLat, Double originLong, String email){
-        if (originLat == null || originLong==null || email ==null){
+    public void draw(Double originLat, Double originLong, Double destinationLat, Double destinationLong, String email){
+        if (originLat == null || originLong==null || email ==null || destinationLat ==null || destinationLong == null){
             noOpenRequestToast();
         }else{
-            LatLng request = new LatLng(originLat, originLong);
-            setMarker(request, "Open Request from: " + email);
+            LatLng requestStart = new LatLng(originLat, originLong);
+            setMarker(requestStart, email);
+
         }
     }
+
+
 
     private void noOpenRequestToast(){
         String toastStr = "No Open Requests! Try clicking search again";
@@ -555,15 +559,23 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onInfoWindowClick(Marker marker) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
-        //builder.setView(R.layout.driver_profile_disp)
         builder
-                .setView(R.layout.rider_profile_disp)
                 .setMessage("What would you like to do?")
-                .setCancelable(true)
-                .setPositiveButton("Preview Riders Route", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Preview Route", new DialogInterface.OnClickListener() {
                     public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        calculateDirections(marker);
+                        android.util.Log.i(TAG, "getting rider request");
+                        calculateDirectionsBetweenPickupandDropOff(marker);
+                        calculateDirectionsToPickup(marker);
                         dialog.dismiss();
+                    }
+                })
+                .setNeutralButton("View This Riders Profile", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        /**********TINASHE********/
+                        //view the rider of this requests profile
+                        //marker.getTitle() is equal to email
+                        //user = whateverdtabasename.getUser(marker.title())
                     }
                 })
                 .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
@@ -581,22 +593,62 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         alert.show();
     }
 
+
+    /**
+     * @ TODO: 3/27/2020
+     * @param marker
+     */
+    private void calculateDirectionsBetweenPickupandDropOff(Marker marker){
+        android.util.Log.i(TAG, marker.getTitle());
+        User findUser = driverDBHelper.getUser(marker.getTitle());
+        /**********
+        Map<String,Object> previewingMap = driverDBHelper.getRiderRequest(findUser);
+
+        Log.d(TAG, "calculateDirections: calculating directions.");
+
+        /**to the clicked markers destination**
+        com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
+                marker.getPosition().latitude,
+                marker.getPosition().longitude
+        );
+        DirectionsApiRequest driverDirections = new DirectionsApiRequest(geoApiContext);
+
+        /**from the drivers current position*
+        LatLng currDriverLocation = getDriverLocation();
+        driverDirections.origin(
+                new com.google.maps.model.LatLng(
+                        currDriverLocation.latitude,
+                        currDriverLocation.longitude
+                )
+        );
+        Log.d(TAG, "calculateDirections: destination: " + destination.toString());
+        driverDirections.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
+            @Override
+            public void onResult(DirectionsResult result) {
+                addPolylinesToMap(result);
+            }
+
+            @Override
+            public void onFailure(Throwable e) {
+                Log.e(TAG, "calculateDirections: Failed to get directions: " + e.getMessage());
+
+            }
+        });***********/
+
+
+    }
+
+
     /**
      * @// TODO: 3/25/2020
      *
      */
     public void offerRide(Marker marker){
-        //"open request!" --> pickup location for
-        //marker is set to the pickup location of the request
-        //need to view the route to riders destination
-
-        //need to get the user so we can send them a notification
-        //need to get the driver so we can show the user the drivers pf
-
+        //need to notify the rider somehow that they have an offer
     }
 
 
-    private void calculateDirections(Marker marker) {
+    private void calculateDirectionsToPickup(Marker marker) {
         Log.d(TAG, "calculateDirections: calculating directions.");
 
         /**to the clicked markers destination**/
@@ -618,11 +670,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         driverDirections.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
             public void onResult(DirectionsResult result) {
-                /**Log.d(TAG, "calculateDirections: routes: " + result.routes[0].toString());
-                Log.d(TAG, "calculateDirections: duration: " + result.routes[0].legs[0].duration);
-                Log.d(TAG, "calculateDirections: distance: " + result.routes[0].legs[0].distance);
-                Log.d(TAG, "calculateDirections: geocodedWayPoints: " + result.geocodedWaypoints[0].toString());
-                Log.d(TAG, "onResult: successfully retrieved directions.");**/
                 addPolylinesToMap(result);
             }
 
@@ -634,12 +681,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         });
     }
 
+
     /**
      * add polyline to map based on the geo coords from the calculated route
      * @param result is the route determined by calculate directions
      **/
     private void addPolylinesToMap(final DirectionsResult result){
-
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
@@ -657,8 +704,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     }
 
                     Polyline polyline = guuberDriverMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
-                    polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.polyLinesColors));
-                    polyline.setClickable(true);
+                    polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.clickedPolyLinesColors));
 
                 }
             }
