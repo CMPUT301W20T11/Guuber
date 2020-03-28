@@ -237,21 +237,28 @@ public class GuuDbHelperTest {
         dbHelper.offerRide(mockUser3(),mockUser2());
         Thread.sleep(1000);
         availOffer = dbHelper.seeOffer(mockUser2());
-        Thread.sleep(2000);
+        Thread.sleep(1000);
         assertEquals("cabbageplant@gmail.com",availOffer);
         dbHelper.declineOffer(mockUser2());
         Thread.sleep(1000);
-        String offerStatus = dbHelper.checkOfferStatus(mockUser3());
+        String offerStatus;
+                offerStatus = dbHelper.checkOfferStatus(mockUser3());
         Thread.sleep(1000);
         assertEquals("declined",offerStatus);
         dbHelper.offerRide(mockUser3(),mockUser2());
         Thread.sleep(1000);
+        offerStatus = dbHelper.checkOfferStatus(mockUser3());
+        Thread.sleep(1000);
+        assertEquals("pending",offerStatus);
         dbHelper.acceptOffer(mockUser2());
         Thread.sleep(1000);
         offerStatus = dbHelper.checkOfferStatus(mockUser3());
         Thread.sleep(1000);
         assertEquals("accepted",offerStatus);
-
+        dbHelper.reqAccepted(mockUser2(),mockUser3());
+        Thread.sleep(1000);
+        dbHelper.cancelRequest(mockUser2());
+        Thread.sleep(1000);
         }
     @Test
     public void VehicleRegisterTest() throws InterruptedException{

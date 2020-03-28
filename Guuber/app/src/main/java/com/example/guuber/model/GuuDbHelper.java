@@ -31,6 +31,7 @@ public class GuuDbHelper {
     public static Vehicle car = new Vehicle();
     public static ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
     public static String offerer;
+    public static String offerStat;
 
 
 
@@ -454,15 +455,15 @@ public class GuuDbHelper {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 offerer = documentSnapshot.get("rideOfferFrom").toString();
+                profile.update("rideOfferFrom",FieldValue.delete());
+
             }
         });
-        profile.update("rideOfferFrom",FieldValue.delete());
         setProfile(offerer);
         profile.update("offerTo",FieldValue.delete());
         profile.update("offerStatus","declined");
     }
     public void acceptOffer(User rider){
-        final String[] driver = new String[1];
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -474,23 +475,19 @@ public class GuuDbHelper {
         profile.update("offerStatus","accepted");
     }
 
-    public String checkOfferStatus(User driver){
-        final String[] status = new String[1];
+    public String checkOfferStatus(User driver) throws InterruptedException {
         setProfile(driver.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.get("offerStatus").toString().equals("declined")){
-                    status[0] = "declined";
-
-                }
-                else if (documentSnapshot.get("offerStatus").toString().equals("accepted")){
-                    status[0] = "accepted";
-                }
+                offerStat = documentSnapshot.get("offerStatus").toString();
             }
         });
-        profile.update("offerStatus",FieldValue.delete());
-        return status[0];
+        Thread.sleep(1000);
+        if(offerStat.equals("declined")){
+            profile.update("offerStatus",FieldValue.delete());
+        }
+        return offerStat;
     }
 
 
@@ -509,6 +506,7 @@ public class GuuDbHelper {
         requests.document(rider.getEmail()).delete();
         setProfile(driver.getEmail());
         profile.update("offerTo",FieldValue.delete());
+        profile.update("offerStatus",FieldValue.delete());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
     }
