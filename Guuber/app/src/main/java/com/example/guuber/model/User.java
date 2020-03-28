@@ -78,6 +78,7 @@ public class User{
         this.transactions = transactions;
     }
 
+
     // In case we need vehicle objects, may be deleted
 //    /**
 //     * Get vehicle object

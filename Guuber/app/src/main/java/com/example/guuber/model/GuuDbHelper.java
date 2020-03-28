@@ -18,6 +18,7 @@ import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GuuDbHelper {
@@ -215,6 +216,10 @@ public class GuuDbHelper {
     }
 
 
+
+
+
+
     /**
      * Updates users balance (also updates transactions by appending amount to be added to balance to the transactions list)
      * @param email - the email of the user
@@ -224,6 +229,10 @@ public class GuuDbHelper {
         users.document(email).update("balance", FieldValue.increment(amount));
         users.document(email).update("transactions", FieldValue.arrayUnion(amount)); // currently treats array as a kind of key value pair so transactions with the same amount will not be appended, I am trying to fix this...
     }
+
+
+
+
 
 
     /**
