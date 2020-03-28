@@ -249,6 +249,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      **/
     public void makeQR(){
         final Intent qrProfileIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
+
+        // TODO: Template for how I expect the QR info to be passed
+        String info = "riderEmail, amount";
+        qrProfileIntent.putExtra("INFO_TAG", info);
         startActivity(qrProfileIntent);
     }
 
