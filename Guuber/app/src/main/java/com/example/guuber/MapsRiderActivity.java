@@ -19,14 +19,19 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.NumberPicker;
 import android.widget.Spinner;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 
@@ -86,10 +91,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private GoogleMap guuberRiderMap;
     private Button changeOriginButton, changeDestinationButton;
     private Spinner riderSpinner;
-    private LatLng origin;
-    private LatLng destination;
+    private LatLng origin, destination;
     private String coordsToChange;
-    private Double tripCost;
+    private Double tripCost, tip;
+
     /*******NEW MAPS INTEGRATION**/
     private boolean isLocationPermissionGranted = false;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
@@ -108,7 +113,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_rider_maps);
-
 
 
         /**instructions for User to provide their destination
@@ -138,7 +142,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             public void onClick(View v) {
                 String message = "Click on the Map to Set Your Pickup Location";
                 Toast.makeText(MapsRiderActivity.this,message,Toast.LENGTH_LONG).show();
-                setChangingCoordinate("origin");
+                setChangingCoordinate("Origin");
             }
         });
 
@@ -149,7 +153,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             public void onClick(View v) {
                 String message = "Click on the Map to Set Your Drop-Off Location";
                 Toast.makeText(MapsRiderActivity.this,message,Toast.LENGTH_LONG).show();
-                setChangingCoordinate("destination");
+                setChangingCoordinate("Destination");
             }
         });
 
@@ -275,13 +279,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         guuberRiderMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng arg0) {
-                //android.util.Log.i("onMapClick", arg0.toString());
-                //android.util.Log.i("onMapClick", arg0.toString());
-                if (getChangingCoordinate() == "origin") {
+                if (getChangingCoordinate() == "Origin") {
                     setMarker(arg0, "Origin");
                     setOrigin(arg0);
                     originSetToast();
-                } else if (getChangingCoordinate() == "destination") {
+                } else if (getChangingCoordinate() == "Destination") {
                     setMarker(arg0, "Destination");
                     setDestination(arg0);
                     destinationSetToast();
@@ -289,7 +291,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
                     guuberRiderMap.clear();
                     setMarker(getOrigin(), "Origin");
-                    setMarker(getDestination(), "destination");
+                    setMarker(getDestination(), "Destination");
                     calculateDirections();
                 }
 
@@ -322,7 +324,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 guuberRiderMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
                 /**because use provided origin, assume they are ready to pick their destination*/
-                setChangingCoordinate("destination");
+                setChangingCoordinate("Destination");
             }
         }
     }
@@ -376,7 +378,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * and prompt them to make a request
      **/
     public void destinationSetToast(){
-        String message = "Destination has been changed!\n Make Request?";
+        String message = "Click On Your Destination For Details";
         Toast.makeText(MapsRiderActivity.this,message,Toast.LENGTH_LONG).show();
     }
 
@@ -546,19 +548,23 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        final EditText edittext = new EditText(MapsRiderActivity.this);
-        edittext.setHint("enter a tip");
-        edittext.setGravity(0);
-        edittext.setWidth(2);
+        //LayoutInflater inflater = MapsRiderActivity.this.getLayoutInflater();
+
+        final NumberPicker numberPicker = new NumberPicker(MapsRiderActivity.this);
+        numberPicker.setMaxValue(100);
+        numberPicker.setMinValue(0);
+
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
         builder
-                .setView(edittext)
-                .setMessage("This trip will cost you: $" + getTripCost())
+                .setTitle("This Trip Will Cost You: $" + getTripCost())
+                .setMessage("Choose A Tip Percentage")
+                .setView(numberPicker)
                 .setCancelable(true)
                 .setNegativeButton("Make a request", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                setTip(numberPicker.getValue());
                                 makeRequest(marker);
                                 dialog.dismiss();
                             }
@@ -598,8 +604,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
         User currUser = ((UserData)(getApplicationContext())).getUser();
-        int testip = 40;
-        String tripCost = "50";
+        Double testip = getTip();
+        String tripCost = getTripCost().toString();
         String testLocation = "pick me up here";
         riderDBHelper.makeReq(currUser,testip,testLocation,orLat,orLong,destLat,destLong,tripCost);
         android.util.Log.i(TAG, "REQUEST MADE00000000000");
@@ -659,6 +665,15 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     public Double getTripCost(){
         return tripCost;
+    }
+
+    public void setTip(int tipPercentage){
+        tip = getTripCost() * (tipPercentage/100);
+        this.tip = Math.round(tip * 100.0) / 100.0;;
+    }
+
+    public Double getTip(){
+        return tip;
     }
 
     /**

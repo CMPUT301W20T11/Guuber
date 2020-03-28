@@ -217,7 +217,7 @@ public class GuuDbHelper {
      * @param tripCost - the cost of the trip
      */
 
-    public void makeReq(User rider,int tip, String location,String oriLat,String oriLng,String desLat,String desLng,String tripCost){
+    public void makeReq(User rider, Double tip, String location, String oriLat, String oriLng, String desLat, String desLng, String tripCost){
         setProfile(rider.getEmail());
         Map<String,Object> details = new HashMap<>();
         details.put("reqTip",tip);
