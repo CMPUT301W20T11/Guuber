@@ -411,6 +411,16 @@ public class GuuDbHelper {
         }
     }
 
+    public void offerRide(User driver,User rider){
+        setProfile(rider.getEmail());
+        profile.update("rideOffer",driver.getEmail());
+        
+    }
+
+    public void checkOffers(User Rider){
+
+    }
+
     /**
      * Stores details between driver and rider when a request is accepted
      * @param rider - the rider with the request and accepts driver
