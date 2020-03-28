@@ -95,17 +95,6 @@
         app:layout_constraintTop_toBottomOf="@+id/phoneLabelDrIn" />
 
     <TextView
-        android:id="@+id/availabilityLabelDrIn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="38dp"
-        android:text="Status"
-        android:textColor="#FF5722"
-        app:layout_constraintEnd_toStartOf="@+id/availabilityTextDrIn"
-        app:layout_constraintTop_toBottomOf="@+id/emailLabelDrIn" />
-
-    <TextView
         android:id="@+id/carRegTextDrIn"
         android:layout_width="160dp"
         android:layout_height="20dp"
@@ -150,17 +139,6 @@
         android:textColor="#FFFFFF"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/phoneTextDrIn" />
-
-    <TextView
-        android:id="@+id/availabilityTextDrIn"
-        android:layout_width="215dp"
-        android:layout_height="20dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="56dp"
-        android:ems="10"
-        android:textColor="#FFFFFF"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/emailTextDrIn" />
 
     <TextView
         android:id="@+id/posRateDr"
