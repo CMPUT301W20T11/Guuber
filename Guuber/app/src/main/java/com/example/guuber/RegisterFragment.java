@@ -21,6 +21,7 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.guuber.model.User;
+import com.example.guuber.model.Wallet;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -141,9 +142,7 @@ public class RegisterFragment extends DialogFragment {
 							/*******************************************************************/
 							/********the below line has errors. making a temp change to run*******/
 							//User user = new User(phoneNS, emailS,fnameS,lnameS,uid, userNameS, 0, 0);
-							ArrayList tempTransactionArray = new ArrayList<>();
-							tempTransactionArray.add(0.0);
-							User user = new User(phoneNS, emailS,fnameS,lnameS,0, 0, 0.0, tempTransactionArray);
+							User user = new User(phoneNS, emailS,fnameS,lnameS, userNameS,0, 0);
 							/*****************************END CHANGES****************************/
 
 							// Check if user is rider or driver
@@ -153,6 +152,7 @@ public class RegisterFragment extends DialogFragment {
 							// Query the username to ensure its unique before adding to database TODO
 
 							uRef.document(user.getEmail()).set(user);
+
 							listener.onOkPressed();
 
 
