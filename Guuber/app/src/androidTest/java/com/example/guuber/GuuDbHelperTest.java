@@ -44,21 +44,29 @@ import static org.junit.Assert.assertTrue;
 public class GuuDbHelperTest {
     private static FirebaseFirestore db;
     private static GuuDbHelper dbHelper;
-//    private static CollectionReference users;
+    //    private static CollectionReference users;
     private static User mockUser;
     private static Context instrumentationContext;
     private static Solo solo;
     private User dbUser;
 
 
-    private static User mockUser(){
-        return new User("780", "m@gmail.com", "Matt", "Dziubina", "1", "MattUserName",0,0, 0.00, new ArrayList<Double>());
+    private static User mockUser() {
+//        return new User("780", "m@gmail.com", "Matt", "Dziubina", "1", "MattUserName",0,0, 0.00, new ArrayList<Double>());
+        return new User("780", "m@gmail.com", "Matt", "Dziubina", "MattUserName", 0, 0);
     }
-    private static User mockUser2(){
-        return new User("404","k@gmail.com","k","kk","111","Kale",0,0, 0.00, new ArrayList<Double>());
+
+    private static User mockUser2() {
+//        return new User("404","k@gmail.com","k","kk","111","Kale",0,0, 0.00, new ArrayList<Double>());
+        return new User("404", "k@gmail.com", "k", "kk", "Kale", 0, 0);
     }
-    private static User mockUser3() { return new User("777","cabbageplant@gmail.com","Randy","Cabbage","000","MachoPlantRandyCabbage",0,0, 0.00, new ArrayList<Double>());}
-    ///private static User mockUser7() {return new User("777", "cabbageplant@gmail.com", "Randy", "Cabbage",)}
+
+    private static User mockUser3() {
+//        return new User("777", "cabbageplant@gmail.com", "Randy", "Cabbage", "000", "MachoPlantRandyCabbage", 0, 0, 0.00, new ArrayList<Double>());
+        return new User("777", "cabbageplant@gmail.com", "Randy", "Cabbage", "MachoPlantRandyCabbage", 0, 0);
+    }
+
+
     private static Vehicle mockCar(){ return new Vehicle("Ford","F-150","blue","Randy Cabbage");
     }
     @ClassRule
@@ -108,7 +116,7 @@ public class GuuDbHelperTest {
         assertEquals((Integer) 1, obtain.getRider());
         User user = dbHelper.getUser("kluc1@ualberta.ca");
         Thread.sleep(1000);
-        dbHelper.makeReq(user,20,"A pit","1620","1620","1080","1080","80");
+        dbHelper.makeReq(user, (double) 20,"A pit","1620","1620","1080","1080","80");
         Thread.sleep(1000);
         Map<String,Object> reqDetail = dbHelper.getRiderRequest(user);
         Thread.sleep(1000);
@@ -159,7 +167,7 @@ public class GuuDbHelperTest {
         Thread.sleep(5000);
         User user = dbHelper.getUser("m@gmail.com");
         Thread.sleep(1000);
-        dbHelper.makeReq(user, 60,"Kingdom of Corona","0000","0000","1000","1000","5050");
+        dbHelper.makeReq(user, (double) 60,"Kingdom of Corona","0000","0000","1000","1000","5050");
         Thread.sleep(1000);
         Map<String,Object> reqDetail;
         reqDetail = dbHelper.getRiderRequest(mockUser());
@@ -184,11 +192,11 @@ public class GuuDbHelperTest {
         Thread.sleep(1000);
         User user = dbHelper.getUser("m@gmail.com");
         Thread.sleep(1000);
-        dbHelper.makeReq(user, 60,"Kingdom of Corona","0000","0000","1000","1000","60");
+        dbHelper.makeReq(user, (double) 60,"Kingdom of Corona","0000","0000","1000","1000","60");
         Thread.sleep(1000);
         user = dbHelper.getUser("k@gmail.com");
         Thread.sleep(1000);
-        dbHelper.makeReq(user,10,"A deserted island","9999","9999","7777","7777","100");
+        dbHelper.makeReq(user, (double) 10,"A deserted island","9999","9999","7777","7777","100");
         Thread.sleep(1000);
         ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
         reqList = dbHelper.getReqList();
@@ -219,6 +227,32 @@ public class GuuDbHelperTest {
         Thread.sleep(1000);
         assertEquals(null,driverCurReq.get("email"));
     }
+    @Test
+    public void RequestComTest() throws InterruptedException{
+        dbHelper.makeReq(mockUser2(),(double)10,"Tomorrow Land","69.312031230","72.01230345","30.12031204","50.12312415","20");
+        Thread.sleep(1000);
+        String availOffer = dbHelper.seeOffer(mockUser2());
+        assertEquals(null,availOffer);
+        Thread.sleep(1000);
+        dbHelper.offerRide(mockUser3(),mockUser2());
+        Thread.sleep(1000);
+        availOffer = dbHelper.seeOffer(mockUser2());
+        Thread.sleep(2000);
+        assertEquals("cabbageplant@gmail.com",availOffer);
+        dbHelper.declineOffer(mockUser2());
+        Thread.sleep(1000);
+        String offerStatus = dbHelper.checkOfferStatus(mockUser3());
+        Thread.sleep(1000);
+        assertEquals("declined",offerStatus);
+        dbHelper.offerRide(mockUser3(),mockUser2());
+        Thread.sleep(1000);
+        dbHelper.acceptOffer(mockUser2());
+        Thread.sleep(1000);
+        offerStatus = dbHelper.checkOfferStatus(mockUser3());
+        Thread.sleep(1000);
+        assertEquals("accepted",offerStatus);
+
+        }
     @Test
     public void VehicleRegisterTest() throws InterruptedException{
         dbHelper.checkEmail(mockUser3());

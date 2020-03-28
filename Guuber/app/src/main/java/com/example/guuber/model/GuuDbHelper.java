@@ -435,12 +435,12 @@ public class GuuDbHelper {
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.get("rideOffer").toString() != null){
-                    Log.d("checking offer","found an offer");
-                    offerer = documentSnapshot.get("rideOffer").toString();
+                if(documentSnapshot.get("rideOfferFrom") != null){
+                    Log.d("Rider:checking offer","found an offer");
+                    offerer = documentSnapshot.get("rideOfferFrom").toString();
                 }
                 else{
-                    Log.d("checking offer","cannot find an offer");
+                    Log.d("Rider:checking offer","cannot find an offer");
                     offerer = null;
                 }
             }
@@ -448,20 +448,30 @@ public class GuuDbHelper {
         return offerer;
     }
     public void declineOffer(User rider){
+
+        setProfile(rider.getEmail());
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                offerer = documentSnapshot.get("rideOfferFrom").toString();
+            }
+        });
+        profile.update("rideOfferFrom",FieldValue.delete());
+        setProfile(offerer);
+        profile.update("offerTo",FieldValue.delete());
+        profile.update("offerStatus","declined");
+    }
+    public void acceptOffer(User rider){
         final String[] driver = new String[1];
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                driver[0] = documentSnapshot.get("rideOfferFrom").toString();
+                offerer = documentSnapshot.get("rideOfferFrom").toString();
             }
         });
-        setProfile(driver[0]);
-        profile.update("offerTo",FieldValue.delete());
-        profile.update("offerStatus","declined");
-    }
-    public void acceptOffer(User rider){
-
+        setProfile(offerer);
+        profile.update("offerStatus","accepted");
     }
 
     public String checkOfferStatus(User driver){
@@ -472,12 +482,14 @@ public class GuuDbHelper {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if(documentSnapshot.get("offerStatus").toString().equals("declined")){
                     status[0] = "declined";
+
                 }
                 else if (documentSnapshot.get("offerStatus").toString().equals("accepted")){
                     status[0] = "accepted";
                 }
             }
         });
+        profile.update("offerStatus",FieldValue.delete());
         return status[0];
     }
 
@@ -488,6 +500,7 @@ public class GuuDbHelper {
      * @param driver - the driver who takes the request
      */
     public void reqAccepted(User rider, User driver) throws InterruptedException {
+
         setProfile(rider.getEmail());
         profile.update("reqDriver",driver.getEmail());
         Map<String,Object> reqDetails = getRiderRequest(rider);
@@ -495,7 +508,7 @@ public class GuuDbHelper {
         reqList.remove(reqDetails);
         requests.document(rider.getEmail()).delete();
         setProfile(driver.getEmail());
-        profile.update("offerStatus","accepted");
+        profile.update("offerTo",FieldValue.delete());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
     }
