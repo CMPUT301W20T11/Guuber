@@ -87,6 +87,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int VIEWTRIPS = 2;
     private static final int  WALLET = 3;
     private static final int  QR = 4;
+    private static final int QR_REQ_CODE = 3;
 
     private GoogleMap guuberRiderMap;
     private Button changeOriginButton, changeDestinationButton;
@@ -95,7 +96,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private String coordsToChange;
     private Double tripCost, tip;
     private Polyline polyline;
-    private boolean hasOpenRequest = false;
+    private boolean rideisPending = false;
+    private boolean rideInProgress = false;
     private boolean rideIsOver = false;
 
     /*******NEW MAPS INTEGRATION**/
@@ -114,7 +116,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_rider_maps);
 
 
@@ -123,10 +124,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                String toastStr = "Click on The Map to Start Building your Route!";
-                Toast.makeText(MapsRiderActivity.this,toastStr,Toast.LENGTH_LONG).show();
-            }
-        },3000);
+                Toast.makeText(MapsRiderActivity.this,"Click on The Map to Start Building your Route!",Toast.LENGTH_LONG).show();
+            } },3000);
 
 
         /**initialize a spinner and set its adapter, strings are in 'values'**/
@@ -143,8 +142,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         changeOriginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String message = "Click on the Map to Set Your Pickup Location";
-                Toast.makeText(MapsRiderActivity.this,message,Toast.LENGTH_LONG).show();
+                Toast.makeText(MapsRiderActivity.this,"Click on the Map to Set Your Pickup Location",Toast.LENGTH_LONG).show();
                 setChangingCoordinate("Origin");
             }
         });
@@ -154,8 +152,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         changeDestinationButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String message = "Click on the Map to Set Your Drop-Off Location";
-                Toast.makeText(MapsRiderActivity.this,message,Toast.LENGTH_LONG).show();
+                Toast.makeText(MapsRiderActivity.this,"Click on the Map to Set Your Drop-Off Location",Toast.LENGTH_LONG).show();
                 setChangingCoordinate("Destination");
             }
         });
@@ -193,12 +190,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         if (geoRiderApiContext == null) {
-            geoRiderApiContext = new GeoApiContext.Builder()
-                    .apiKey(getString(R.string.maps_key))
-                    .build();
+            geoRiderApiContext = new GeoApiContext.Builder().apiKey(getString(R.string.maps_key)).build();
         }
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.rider_map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.rider_map);
         mapFragment.getMapAsync(this);
 
     }
@@ -249,7 +243,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      **/
     public void makeQR(){
         final Intent qrProfileIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
-        startActivity(qrProfileIntent);
+
+        // TODO: Template for how I expect the QR info to be passed (rideremail,amount)
+        String info = "md801003@gmail.com,20";
+        qrProfileIntent.putExtra("INFO_TAG", info);
+        startActivityForResult(qrProfileIntent, QR_REQ_CODE);
     }
 
     /**********************************END SPINNER METHODS*****************************************/
@@ -281,7 +279,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         guuberRiderMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng arg0) {
-                if (hasOpenRequest == false) {
+                //cant build a route unless you cancel the current one
+                if (rideisPending == false || rideInProgress ==false ) {
                     if (getChangingCoordinate() == "Origin") {
                         setMarker(arg0, "Origin");
                         setOrigin(arg0);
@@ -295,7 +294,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     guuberRiderMap.clear();
                     setMarker(getOrigin(), "Origin");
                     setMarker(getDestination(), "Destination");
-                    calculateDirections();
+                    calculateDirections(); //automatically calculates directions and draws a route
                 } else {
                     cancelRequestFirstToast();
                 }
@@ -303,12 +302,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         });
 
-
+        //redundant
         if (checkUserPermission()) {
-            /**
-             * if user permission have been checked
-             * and location permission has been granted...
-             **/
+            /*** if user permission have been checked and location permission has been granted...**/
             guuberRiderMap.setMyLocationEnabled(true);
             guuberRiderMap.setOnMyLocationButtonClickListener(this);
             guuberRiderMap.setOnMyLocationClickListener(this);
@@ -323,10 +319,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 setOrigin(currentLocation);
 
                 /**move the camera to current location**/
-                CameraPosition cameraPosition = new CameraPosition.Builder()
-                        .target(currentLocation)
-                        .zoom(10)
-                        .build();
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(currentLocation).zoom(10).build();
                 guuberRiderMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
                 /**because use provided origin, assume they are ready to pick their destination*/
@@ -347,7 +340,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
     /**
-     * @returns rider origin (pickup location)
+     ** @returns rider origin (pickup location)
      **/
     public LatLng getOrigin(){
         return origin;
@@ -358,8 +351,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * let the user know they have chosen their origin
      **/
     public void originSetToast(){
-        String message = "Origin has been changed!";
-        Toast.makeText(MapsRiderActivity.this,message,Toast.LENGTH_LONG).show();
+        Toast.makeText(MapsRiderActivity.this,"Origin has been changed!",Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -384,8 +376,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * and prompt them to make a request
      **/
     public void destinationSetToast(){
-        String message = "Click On Your Destination For Details";
-        Toast.makeText(MapsRiderActivity.this,message,Toast.LENGTH_LONG).show();
+        Toast.makeText(MapsRiderActivity.this,"Click On Your Destination For Details",Toast.LENGTH_LONG).show();
     }
 
 
@@ -415,13 +406,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * @param locationToMark is location to set marker on
      **/
     public void setMarker(LatLng locationToMark, String title){
-        guuberRiderMap.addMarker(new MarkerOptions()
-                .position(locationToMark)
-                .flat(false)
-                .title(title)
-                );
+        guuberRiderMap.addMarker(new MarkerOptions().position(locationToMark).flat(false).title(title));
     }
-
 
 
     /**
@@ -462,7 +448,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      **/
     public boolean isMapsEnabled() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             buildAlertMessageNoGps();
             return false;
@@ -485,10 +470,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         startActivityForResult(enableGpsIntent, PERMISSIONS_REQUEST_ENABLE_GPS);
                     }
                 });
-        final AlertDialog alert = builder.create();
-        alert.show();
+        final AlertDialog alert = builder.create();alert.show();
     }
-
 
 
     /**
@@ -548,6 +531,16 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
                 }
             }
+            case QR_REQ_CODE:{
+                // TODO for LEAH
+                if(resultCode == RESULT_OK){
+                    Toast.makeText(this, "Transaction processed",  Toast.LENGTH_SHORT).show();
+                    // Transaction went through, call some function for the next step of ride
+                }else{
+                    // Transaction failed, call some function to cancel the ride
+                    Toast.makeText(this, "Transaction failed",  Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 
@@ -555,21 +548,20 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     public void onInfoWindowClick(Marker marker) {
 
-        if (hasOpenRequest == false) {
+        if (rideInProgress == false && rideisPending == false) {
             final NumberPicker numberPicker = new NumberPicker(MapsRiderActivity.this);
             numberPicker.setMaxValue(100); numberPicker.setMinValue(0);
 
             final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
             builder
-                    .setTitle("This Trip Will Cost You: $" + getTripCost())
-                    .setCancelable(false)
+                    .setTitle("This Trip Will Cost You: $" + getTripCost()).setCancelable(false)
                     .setMessage("Choose A Tip Percentage").setView(numberPicker)
                     .setNegativeButton("Make a request", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
+                                    rideisPending = true; //ride is an open request
                                     setTip(numberPicker.getValue());
                                     makeRequest(marker);
-                                    hasOpenRequest = true;
                                     dialog.dismiss(); }
                             }
                     )
@@ -578,13 +570,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                             dialog.cancel(); }
                     });
             final AlertDialog alert = builder.create(); alert.show();
-
-        }else if (!rideIsOver){
-            //some condition to change title if the request if not pending
-            String title = "Request Pending";
+        }else if (rideisPending == true){
+            //no Dialog builder for while
             final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
             builder
-                .setTitle(title)
+                .setTitle("Ride Is Pending")
                     .setPositiveButton("Check For Offers", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -599,7 +589,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     .setNegativeButton("Cancel request", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                hasOpenRequest = false;
+                                rideisPending = false;
                                 guuberRiderMap.clear();
                                 User currUser = ((UserData)(getApplicationContext())).getUser();
                                 riderDBHelper.cancelRequest(currUser);
@@ -617,7 +607,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * @param marker
      */
     public void makeRequest(Marker marker){
-        Toast.makeText(this, "Request Pending! Click On Your Destination To Cancel", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Request Pending! Click On Your Destination To Check for Offers or  To Cancel", Toast.LENGTH_LONG).show();
         polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.polyLinesColors));
 
         Double originLatitude = getOrigin().latitude;String orLat = originLatitude.toString();
@@ -632,6 +622,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         riderDBHelper.makeReq(currUser, tip,testLocation,orLat,orLong,destLat,destLong,tripCost);
         android.util.Log.i(TAG, "REQUEST MADE");
+        rideisPending = true;
     }
 
     /**
@@ -734,43 +725,65 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         });
     }
 
+
+
     /**
      * Dialog Builder for when the driver has arrived
      */
     private void driverIsHereDialog(String ridersEmail){
-        android.util.Log.i(TAG, "RIDERS EMAIL IS SET TO");
-        final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
-        builder
-                .setTitle("Your Driver Has Arrived!! SICKKK!!! ")
-                .setCancelable(false)
-                .setNegativeButton("Rate Driver", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                /***TINASHE****/
-                                android.util.Log.i(TAG,"Rate Driver Button Clicked");
-                                //Tinashe I don't know how you're going to call profile sorry here's some skeleton
-                                //final Intent rateDriverIntent = new Intent(MapsRiderActivity.this, DriverProfile.class);
-                                //startActivity(rateDriverIntent);
+        polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripInProgressPolyLinesColors));
+        //android.util.Log.i(TAG, "RIDERS EMAIL IS SET TO");
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripOverPolyLinesColors));
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
+                builder
+                        .setTitle("Your Driver Has Arrived!! that was pretty fast... ")
+                        .setCancelable(false)
+                        .setNegativeButton("Rate Driver", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        /***TINASHE****/
+                                        android.util.Log.i(TAG, "Rate Driver Button Clicked");
+                                        //Tinashe I don't know how you're going to call profile sorry here's some skeleton
+                                        //final Intent rateDriverIntent = new Intent(MapsRiderActivity.this, DriverProfile.class);
+                                        //startActivity(rateDriverIntent);
+                                    }
+                                }
+                        )
+                        .setPositiveButton("Pay Driver", new DialogInterface.OnClickListener() {
+                            public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                                android.util.Log.i(TAG,"Pay Driver Button Clicked");
+                                final Intent payDriverIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
+
+                                // Get total fee
+                                String amount = String.valueOf(getTripCost() + getTip());
+
+                                // Send email and fee to intent by a comma separated string
+                                payDriverIntent.putExtra("INFO_TAG", ridersEmail +"," + amount);
+
+                                // Show the generated qr
+                                startActivityForResult(payDriverIntent, 2);
+
+                                // Check whether or not driver is actually paid so user can start using app**/
+                                rideIsOver = true;
+                                rideisPending = false;
+                                rideInProgress = false;
+                                guuberRiderMap.clear();
+
+                                /**some condition to check whether or not driver is actually paid so user can start using app**/
+                                /**if driver is waiting for payment dont reset rideIsPending/ rideInProgress**/
+                                rideIsOver = true;
+                                rideisPending = false;
+                                rideInProgress = false;
+                                guuberRiderMap.clear();
                             }
-                        }
-                )
-                .setPositiveButton("Pay Driver", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                       /**MATT**/
-
-                        android.util.Log.i(TAG,"Pay Driver Button Clicked");
-                        final Intent payDriverIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
-                        payDriverIntent.putExtra("TRIP_COST", getTripCost());
-                        payDriverIntent.putExtra("TIP", getTip());
-                        payDriverIntent.putExtra("RIDERS_EMAIL", ridersEmail);
-                        startActivity(payDriverIntent);
-
-                        /**some condition to check whether or not driver is actually paid so user can start using app**/
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
-
+                        });
+                final AlertDialog alert = builder.create();
+                alert.show();
+            }},8000);
+        
     }
 
 
