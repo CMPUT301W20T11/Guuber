@@ -155,10 +155,13 @@ public class GuuDbHelperTest {
         Thread.sleep(1000);
         dbHelper.updatePosRating("k@gmail.com");
         Thread.sleep(1000);
+        dbHelper.updateNegRating("k@gmail.com");
+        Thread.sleep(1000);
 
         assertEquals("IWantDie", user.getUsername());
         assertEquals("696969", user.getPhoneNumber());
         assertEquals(2, user.getPosRating());
+        assertEquals(1, user.getNegRating());
         dbHelper.deleteUser("k@gmail.com");
     }
     @Test

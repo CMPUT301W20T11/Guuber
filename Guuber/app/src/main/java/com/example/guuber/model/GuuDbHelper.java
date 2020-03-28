@@ -68,10 +68,10 @@ public class GuuDbHelper {
                             documentSnapshot.get("username").toString(),
                             (int)(long) documentSnapshot.get("rider"),
                             (int)(long) documentSnapshot.get("posRating"),
-                            (int)(long) documentSnapshot.get("negRating"),
+                            (int)(long) documentSnapshot.get("negRating")
 
-                            documentSnapshot.getDouble("balance"),
-                            (ArrayList<Double>) documentSnapshot.get("transactions")
+                            //,documentSnapshot.getDouble("balance"),
+                            //(ArrayList<Double>) documentSnapshot.get("transactions")
                     );
                 }
                 else{
@@ -97,7 +97,7 @@ public class GuuDbHelper {
      * @param transactions - list of transactions(changes to their balance) that the user incurred
      *
      * */
-    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating, Double balance, ArrayList<Double> transactions){
+    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating){
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
         this.user.setFirstName(first);
@@ -109,8 +109,8 @@ public class GuuDbHelper {
         this.user.setPosRating(posRating);
         this.user.setNegRating(negRating);
 
-//        this.user.setBalance(balance);
-//        this.user.setTransHistory(transactions);
+        //this.user.setBalance(balance);
+        // this.user.setTransHistory(transactions);
     }
     /**
      * Gets the information under the person's email from the database
