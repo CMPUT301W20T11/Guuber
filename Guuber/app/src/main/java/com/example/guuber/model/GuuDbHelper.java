@@ -32,7 +32,7 @@ public class GuuDbHelper {
 
 
 
-    public static Wallet wall;
+    //public static Wallet wall;
     //private static CollectionReference wallet;
     //public static Map<String,Object> Wallet = new HashMap<>();
     //public static ArrayList<Map<String, String>> walletList = new ArrayList<Map<String, String>>();
@@ -66,7 +66,10 @@ public class GuuDbHelper {
                             documentSnapshot.get("username").toString(),
                             (int)(long) documentSnapshot.get("rider"),
                             (int)(long) documentSnapshot.get("posRating"),
-                            (int)(long) documentSnapshot.get("negRating")
+                            (int)(long) documentSnapshot.get("negRating"),
+
+                            documentSnapshot.getDouble("balance"),
+                            (ArrayList<Double>) documentSnapshot.get("transactions")
                     );
                 }
                 else{
@@ -88,8 +91,11 @@ public class GuuDbHelper {
      * @param posRating - number of ratings that are positive
      * @param negRating - number of ratings that are negative
      *
+     * @param balance - Amount in users wallet
+     * @param transactions - list of transactions(changes to their balance) that the user incurred
+     *
      * */
-    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating){
+    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating, Double balance, ArrayList<Double> transactions){
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
         this.user.setFirstName(first);
@@ -101,7 +107,8 @@ public class GuuDbHelper {
         this.user.setPosRating(posRating);
         this.user.setNegRating(negRating);
 
-
+        this.user.setBalance(balance);
+        this.user.setTransHistory(transactions);
     }
     /**
      * Gets the information under the person's email from the database
@@ -132,6 +139,9 @@ public class GuuDbHelper {
 
         user.put("posRating", newUser.getPosRating());
         user.put("negRating", newUser.getNegRating());
+
+        user.put("balance", newUser.getBalance());
+        user.put("transactions", newUser.getTransHistory());
 
 
 
@@ -203,6 +213,16 @@ public class GuuDbHelper {
         users.document(email).update("negRating", FieldValue.increment(1));
     }
 
+
+    /**
+     * Updates users balance (also updates transactions by appending amount to be added to balance to the transactions list)
+     * @param email - the email of the user
+     */
+    public void updateBalance(String email, Double amount)
+    {
+        users.document(email).update("balance", FieldValue.increment(amount));
+        users.document(email).update("transactions", FieldValue.arrayUnion(amount)); // currently treats array as a kind of key value pair so transactions with the same amount will not be appended, I am trying to fix this...
+    }
 
 
     /**
