@@ -94,6 +94,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private LatLng origin, destination;
     private String coordsToChange;
     private Double tripCost, tip;
+    private Polyline polyline;
+    private boolean hasOpenRequest = false;
 
     /*******NEW MAPS INTEGRATION**/
     private boolean isLocationPermissionGranted = false;
@@ -279,21 +281,25 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         guuberRiderMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng arg0) {
-                if (getChangingCoordinate() == "Origin") {
-                    setMarker(arg0, "Origin");
-                    setOrigin(arg0);
-                    originSetToast();
-                } else if (getChangingCoordinate() == "Destination") {
-                    setMarker(arg0, "Destination");
-                    setDestination(arg0);
-                    destinationSetToast();
-                }
+                if (hasOpenRequest == false) {
+                    if (getChangingCoordinate() == "Origin") {
+                        setMarker(arg0, "Origin");
+                        setOrigin(arg0);
+                        originSetToast();
+                    } else if (getChangingCoordinate() == "Destination") {
+                        setMarker(arg0, "Destination");
+                        setDestination(arg0);
+                        destinationSetToast();
+                    }
 
                     guuberRiderMap.clear();
                     setMarker(getOrigin(), "Origin");
                     setMarker(getDestination(), "Destination");
                     calculateDirections();
+                } else {
+                    cancelRequestFirstToast();
                 }
+            }
 
         });
 
@@ -548,35 +554,53 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        //LayoutInflater inflater = MapsRiderActivity.this.getLayoutInflater();
 
-        final NumberPicker numberPicker = new NumberPicker(MapsRiderActivity.this);
-        numberPicker.setMaxValue(100);
-        numberPicker.setMinValue(0);
+        if (hasOpenRequest == false) {
+            final NumberPicker numberPicker = new NumberPicker(MapsRiderActivity.this);
+            numberPicker.setMaxValue(100);
+            numberPicker.setMinValue(0);
 
 
-        final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
-        builder
-                .setTitle("This Trip Will Cost You: $" + getTripCost())
-                .setMessage("Choose A Tip Percentage")
-                .setView(numberPicker)
-                .setCancelable(true)
-                .setNegativeButton("Make a request", new DialogInterface.OnClickListener() {
+            final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
+            builder
+                    .setTitle("This Trip Will Cost You: $" + getTripCost())
+                    .setMessage("Choose A Tip Percentage")
+                    .setView(numberPicker)
+                    .setCancelable(true)
+                    .setNegativeButton("Make a request", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    setTip(numberPicker.getValue());
+                                    makeRequest(marker);
+                                    hasOpenRequest = true;
+                                    dialog.dismiss();
+                                }
+                            }
+                    )
+                    .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            dialog.cancel();
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+        }else{
+            final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
+            builder
+                .setTitle("Request Pending")
+                .setNegativeButton("Cancel request", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                setTip(numberPicker.getValue());
-                                makeRequest(marker);
+                                hasOpenRequest = false;
+                                guuberRiderMap.clear();
+                                User currUser = ((UserData)(getApplicationContext())).getUser();
+                                riderDBHelper.cancelRequest(currUser);
                                 dialog.dismiss();
                             }
-                        }
-                )
-                .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        dialog.cancel();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
+                        });
+                final AlertDialog alert = builder.create();
+                alert.show();
+            }
     }
 
     /**
@@ -586,6 +610,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * @param marker
      */
     public void makeRequest(Marker marker){
+        Toast.makeText(this, "Request Pending! Click On Your Destination To Cancel", Toast.LENGTH_LONG).show();
+        polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.polyLinesColors));
+
         Double originLatitude = getOrigin().latitude;
         String orLat = originLatitude.toString();
 
@@ -597,20 +624,26 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         Double destinationLongitude = marker.getPosition().longitude;
         String destLong = destinationLongitude.toString();
-        //android.util.Log.i(TAG, "origin latitude = "+ originLatitude.toString());
-        //android.util.Log.i(TAG, "origin longitude = "+ originLongitude.toString());
-        //android.util.Log.i(TAG, "destination latitude = "+ destinationLatitude.toString());
-        //android.util.Log.i(TAG, "destination longitude = "+destinationLongitude.toString());
 
 
         User currUser = ((UserData)(getApplicationContext())).getUser();
         Double testip = getTip();
         String tripCost = getTripCost().toString();
         String testLocation = "pick me up here";
+
         riderDBHelper.makeReq(currUser,testip,testLocation,orLat,orLong,destLat,destLong,tripCost);
         android.util.Log.i(TAG, "REQUEST MADE00000000000");
 
     }
+
+    /**
+     * if rider tries to build
+     * another request when they already have one
+     * open
+     */
+    private void cancelRequestFirstToast(){
+        Toast.makeText(this, "Cancel current request to make a new one", Toast.LENGTH_LONG).show();
+    };
 
 
     private void calculateDirections() {
@@ -695,7 +728,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                                 latLng.lng
                         ));
                     }
-                    Polyline polyline = guuberRiderMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
+                    polyline = guuberRiderMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
                     polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.clickedPolyLinesColors));
                     polyline.setClickable(true);
 

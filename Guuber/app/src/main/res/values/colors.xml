@@ -3,6 +3,6 @@
     <color name="colorPrimary">#212121</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#80cbc4</color>
-    <color name="polyLinesColors">#B5261B</color>
     <color name="clickedPolyLinesColors">#03A9F4</color>
+    <color name="polyLinesColors">#DC2A1D</color>
 </resources>
