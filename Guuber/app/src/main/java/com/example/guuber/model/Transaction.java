@@ -19,6 +19,13 @@ public class Transaction {
     private String message;
 
     /**
+     * No arg constructor for fire store
+     */
+    public Transaction() {
+        // Intentionally left empty
+    }
+
+    /**
      * Transaction between wallets
      * @param amount - Transaction amount
      * @param id - Transaction id
@@ -59,11 +66,11 @@ public class Transaction {
     }
 
     /**
-     * Set the date of transaction by parsing a date object
-     * @param date - Date in the form of a date object
+     * Set the date of transaction
+     * @param date - Date of transaction
      */
-    public void setDate(Date date) {
-        this.date = dFormat.format(date);
+    public void setDate(String date) {
+        this.date = date;
     }
 
     /**

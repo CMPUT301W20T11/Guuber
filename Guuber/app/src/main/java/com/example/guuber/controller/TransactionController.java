@@ -34,7 +34,7 @@ public class TransactionController {
 
         // Generate the transaction messages
         String tMessage1 = "Deposit from " + email2;
-        String tMessage2 = "Transfer to" + email1;
+        String tMessage2 = "Transfer to " + email1;
 
         // Generate a common transaction ID
         String tID = createID();
