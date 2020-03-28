@@ -99,6 +99,15 @@ public class User{
         this.negRating = negRating;
     }
 
+    /**
+     * adjusts the user rating based on external user's review
+     * @param bool
+     */
+    public void adjustRating(Boolean bool){
+        if (bool){this.posRating = this.posRating + 1;}
+        else{this.negRating = this.negRating - 1;}
+    }
+
 
     /**
      *  Set rider status

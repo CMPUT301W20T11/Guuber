@@ -26,12 +26,16 @@ public class RiderProfileActivity extends AppCompatActivity {
     TextView emailField;
     TextView usernameField;
     TextView phoneNumberField;
+    TextView posRateDisplay;
+    TextView negRateDisplay;
     Button deleteButton;
     ImageView likeButton;
     ImageView dislikeButton;
     ImageView profileImg;
     User userInfo;
     Boolean editable;
+    Integer posRate;
+    Integer negRate;
 
     private static final String TAG = "RiderProfileActivity";
     @Override
@@ -52,10 +56,30 @@ public class RiderProfileActivity extends AppCompatActivity {
         likeButton = findViewById(R.id.likeButtonRdIn);
         dislikeButton = findViewById(R.id.dislikeButtonRdIn);
         profileImg = findViewById(R.id.imageViewRdIn);
+        posRateDisplay = findViewById(R.id.posRate);
+        negRateDisplay = findViewById(R.id.negRate);
 
         phoneNumber = userInfo.getPhoneNumber();
         username = userInfo.getUsername();
         email = userInfo.getEmail();
+        posRate = userInfo.getPosRating();
+        negRate = userInfo.getNegRating();
+
+        //like and dislike buttons onclick listeners to rate drivers and riders from their profile view
+
+        likeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!editable){userInfo.adjustRating(true);}
+            }
+        });
+
+        dislikeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!editable){userInfo.adjustRating(true);}
+            }
+        });
 
         /**
          * allows for editing userdata
@@ -112,12 +136,16 @@ public class RiderProfileActivity extends AppCompatActivity {
         likeButton.setImageResource(R.drawable.smile);
         dislikeButton.setImageResource(R.drawable.frowny);
         profileImg.setImageResource(R.drawable.profilepic);
+        negRateDisplay.setText(negRate.toString()+"%");
+        posRateDisplay.setText(posRate.toString()+"%");
 
         deleteButton = findViewById(R.id.deleteAccButtonRdIn);
+        if (!editable){deleteButton.setVisibility(View.INVISIBLE);}
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                new DeleteAccountFragment().show(getSupportFragmentManager(), "Delete Account");
+                if(editable){
+                    new DeleteAccountFragment().show(getSupportFragmentManager(), "Delete Account");}
             }
         });
     }
