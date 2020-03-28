@@ -238,11 +238,11 @@ public class GuuDbHelperTest {
         assertEquals(null,availOffer);
         Thread.sleep(1000);
         dbHelper.offerRide(mockUser3(),mockUser2());
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         availOffer = dbHelper.seeOffer(mockUser2());
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         assertEquals("cabbageplant@gmail.com",availOffer);
-        dbHelper.declineOffer(mockUser2());
+        dbHelper.declineOffer(mockUser2(),mockUser3());
         Thread.sleep(1000);
         String offerStatus;
                 offerStatus = dbHelper.checkOfferStatus(mockUser3());

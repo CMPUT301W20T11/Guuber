@@ -448,18 +448,22 @@ public class GuuDbHelper {
         });
         return offerer;
     }
-    public void declineOffer(User rider){
-
+    public void declineOffer(User rider,User driver){
+//        setProfile(rider.getEmail());
+//        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                offerer = documentSnapshot.get("rideOfferFrom").toString();
+//                profile.update("rideOfferFrom",FieldValue.delete());
+//
+//            }
+//        });
+//        setProfile(offerer);
+//        profile.update("offerTo",FieldValue.delete());
+//        profile.update("offerStatus","declined");
         setProfile(rider.getEmail());
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                offerer = documentSnapshot.get("rideOfferFrom").toString();
-                profile.update("rideOfferFrom",FieldValue.delete());
-
-            }
-        });
-        setProfile(offerer);
+        profile.update("rideOfferFrom",FieldValue.delete());
+        setProfile(driver.getEmail());
         profile.update("offerTo",FieldValue.delete());
         profile.update("offerStatus","declined");
     }
@@ -499,6 +503,7 @@ public class GuuDbHelper {
     public void reqAccepted(User rider, User driver) throws InterruptedException {
 
         setProfile(rider.getEmail());
+        profile.update("rideOfferFrom",FieldValue.delete());
         profile.update("reqDriver",driver.getEmail());
         Map<String,Object> reqDetails = getRiderRequest(rider);
         Thread.sleep(1000);
