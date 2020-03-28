@@ -101,15 +101,15 @@ public class GuuDbHelper {
         this.user.setPhoneNumber(phone);
         this.user.setFirstName(first);
         this.user.setLastName(last);
-        this.user.setUid(uid);
+//        this.user.setUid(uid);
         this.user.setUsername(uname);
         this.user.setRider(rider);
 
         this.user.setPosRating(posRating);
         this.user.setNegRating(negRating);
 
-        this.user.setBalance(balance);
-        this.user.setTransHistory(transactions);
+//        this.user.setBalance(balance);
+//        this.user.setTransHistory(transactions);
     }
     /**
      * Gets the information under the person's email from the database
@@ -135,14 +135,14 @@ public class GuuDbHelper {
         user.put("email",newUser.getEmail());
         user.put("username",newUser.getUsername());
         user.put("phoneNumber",newUser.getPhoneNumber());
-        user.put("uid",newUser.getUid());
+//        user.put("uid",newUser.getUid());
         user.put("rider",newUser.getRider());
 
         user.put("posRating", newUser.getPosRating());
         user.put("negRating", newUser.getNegRating());
 
-        user.put("balance", newUser.getBalance());
-        user.put("transactions", newUser.getTransHistory());
+//        user.put("balance", newUser.getBalance());
+//        user.put("transactions", newUser.getTransHistory());
 
 
 
@@ -418,6 +418,16 @@ public class GuuDbHelper {
         if(!reqList.contains(reqDetails)) {
             this.reqList.add(reqDetails);
         }
+    }
+
+    public void offerRide(User driver,User rider){
+        setProfile(rider.getEmail());
+        profile.update("rideOffer",driver.getEmail());
+        
+    }
+
+    public void checkOffers(User Rider){
+
     }
 
     /**
