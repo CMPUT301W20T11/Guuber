@@ -16,19 +16,28 @@ public class Transaction {
     private String date;
     private double amount;
     private String id;
+    private String message;
+
+    /**
+     * No arg constructor for fire store
+     */
+    public Transaction() {
+        // Intentionally left empty
+    }
 
     /**
      * Transaction between wallets
      * @param amount - Transaction amount
      * @param id - Transaction id
      */
-    public Transaction(double amount, String id) {
+    public Transaction(double amount, String id, String message) {
         Date datetime = new Date();
         this.time = tFormat.format(datetime);
         this.date = dFormat.format(datetime);
 
         this.amount = amount;
         this.id = id;
+        this.message = message;
     }
 
 
@@ -44,8 +53,8 @@ public class Transaction {
      * Set the time of transaction by parsing a date object
      * @param time - Time in the form of a date object
      */
-    public void setTime(Date time) {
-        this.time = tFormat.format(time);
+    public void setTime(String time) {
+        this.time = time;
     }
 
     /**
@@ -57,11 +66,11 @@ public class Transaction {
     }
 
     /**
-     * Set the date of transaction by parsing a date object
-     * @param date - Date in the form of a date object
+     * Set the date of transaction
+     * @param date - Date of transaction
      */
-    public void setDate(Date date) {
-        this.date = dFormat.format(date);
+    public void setDate(String date) {
+        this.date = date;
     }
 
     /**
@@ -94,5 +103,21 @@ public class Transaction {
      */
     public void setId(String id) {
         this.id = id;
+    }
+
+    /**
+     * Get transaction message
+     * @return - Transaction string
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * Set transaction message
+     * @param message - Transaction message string
+     */
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

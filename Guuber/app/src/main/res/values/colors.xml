@@ -5,4 +5,6 @@
     <color name="colorAccent">#80cbc4</color>
     <color name="clickedPolyLinesColors">#03A9F4</color>
     <color name="polyLinesColors">#DC2A1D</color>
+    <color name = "TripInProgressPolyLinesColors">#29C32F</color>
+    <color name = "TripOverPolyLinesColors">#5E5A59</color>
 </resources>

@@ -21,8 +21,11 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.example.guuber.model.User;
+import com.example.guuber.model.Wallet;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.ArrayList;
 
 
 public class RegisterFragment extends DialogFragment {
@@ -44,7 +47,6 @@ public class RegisterFragment extends DialogFragment {
 	private EditText fname;
 	private EditText lname;
 	private EditText phoneN;
-	private Switch isRiderSwitch;
 	private Integer isRider = 1;
 
 
@@ -93,7 +95,7 @@ public class RegisterFragment extends DialogFragment {
 		fname = view.findViewById(R.id.fname_et);
 		lname = view.findViewById(R.id.lname_et);
 		phoneN = view.findViewById(R.id.phone_et);
-		isRiderSwitch = view.findViewById(R.id.driver_switch);
+		Switch isRiderSwitch = view.findViewById(R.id.driver_switch);
 		isRiderSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				if (isChecked) {
@@ -136,7 +138,13 @@ public class RegisterFragment extends DialogFragment {
 							String lnameS = lname.getText().toString();
 							String phoneNS = phoneN.getText().toString();
 							String userNameS = userName.getText().toString();
-							User user = new User(phoneNS, emailS,fnameS,lnameS,uid, userNameS, 0, 0);
+
+							/*******************************************************************/
+							/********the below line has errors. making a temp change to run*******/
+							//User user = new User(phoneNS, emailS,fnameS,lnameS,uid, userNameS, 0, 0);
+							User user = new User(phoneNS, emailS,fnameS,lnameS, userNameS,0, 0);
+							/*****************************END CHANGES****************************/
+
 							// Check if user is rider or driver
 							if (isRider == 0) {
 								user.setRider(0);
@@ -144,6 +152,7 @@ public class RegisterFragment extends DialogFragment {
 							// Query the username to ensure its unique before adding to database TODO
 
 							uRef.document(user.getEmail()).set(user);
+
 							listener.onOkPressed();
 
 

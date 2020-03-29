@@ -4,6 +4,8 @@ import androidx.fragment.app.DialogFragment;
 
 import com.example.guuber.MapsDriverActivity;
 
+import java.util.ArrayList;
+
 /**
  * Base app user class
  */
@@ -36,18 +38,16 @@ public class User{
      * @param lastName - User last name
      *
      */
-    public User(String phoneNumber, String email, String firstName, String lastName, String uid, String uname, int posRating, int negRating) {
+    public User(String phoneNumber, String email, String firstName, String lastName, String uname, int posRating, int negRating) {
         this.phoneNumber = phoneNumber;
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.uid = uid;
         this.username = uname;
-        wallet = new Wallet();
+        this.wallet = new Wallet();
 
         this.posRating = posRating;
         this.negRating = negRating;
-
     }
 
     /**
@@ -207,13 +207,6 @@ public class User{
         this.lastName = lastName;
     }
 
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
 
     public String getUsername() {
         return username;
@@ -221,10 +214,6 @@ public class User{
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public void deleteSelf(){
-        //deleteUser(this.email);
     }
 
     /**
