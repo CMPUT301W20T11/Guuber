@@ -17,6 +17,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class GuuDbHelper {
 
 
 
+
     //public static Wallet wall;
     //private static CollectionReference wallet;
     //public static Map<String,Object> Wallet = new HashMap<>();
@@ -51,7 +53,10 @@ public class GuuDbHelper {
         this.users = this.db.collection("Users");
         this.requests = this.db.collection("requests");
         this.user = new User();
+
     }
+
+
 
     /**
      * Helper function for getUser
@@ -162,6 +167,8 @@ public class GuuDbHelper {
                 }
             }
         });
+
+
     }
     /**
      * Helper function for checkEmail
@@ -170,6 +177,7 @@ public class GuuDbHelper {
     public void createUser(Map<String,Object> info,User newUser){
         users.document(newUser.getEmail()).set(info);
     }
+
     /**
      * Helper function
      * set the profile of a user
@@ -177,7 +185,9 @@ public class GuuDbHelper {
      */
     public void setProfile(String email){
         this.profile = users.document(email);
+
     }
+
     /**
      * Deletes the user from the database
      * @param email - email of the user
@@ -186,6 +196,7 @@ public class GuuDbHelper {
         setProfile(email);
         profile.delete();
     }
+
     /**
      * Updates the username of the user
      * @param email - the user that want to update their name
@@ -265,7 +276,6 @@ public class GuuDbHelper {
 
         this.requests.document(rider.getEmail()).set(details);
 
-
     }
 
     /**
@@ -274,6 +284,7 @@ public class GuuDbHelper {
      */
     public void cancelRequest(User rider) {
         setProfile(rider.getEmail());
+
         profile.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -309,7 +320,6 @@ public class GuuDbHelper {
                             profile.update(delete);
                             requests.document(rider.getEmail()).delete();
                             reqList.remove(reqInfo);
-
 
 
                         }
@@ -493,10 +503,12 @@ public class GuuDbHelper {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 offerer = documentSnapshot.get("rideOfferFrom").toString();
+                setProfile(offerer);
+                profile.update("offerStatus","accepted");
             }
         });
-        setProfile(offerer);
-        profile.update("offerStatus","accepted");
+        /**setProfile(offerer);
+        profile.update("offerStatus","accepted");**/
     }
 
     /**
@@ -518,15 +530,20 @@ public class GuuDbHelper {
                     offerStat = documentSnapshot.get("offerStatus").toString();
                 } else{
                     offerStat = "none"; }
+                if(offerStat != null){
+                    if(offerStat.equals("declined")){
+                        profile.update("offerStatus",FieldValue.delete());
+                    }
+                }
             }
         });
 
-        Thread.sleep(2000);
+        /**Thread.sleep(2000);
         if(offerStat != null){
             if(offerStat.equals("declined")){
                 profile.update("offerStatus",FieldValue.delete());
             }
-        }
+        }**/
         return offerStat;
     }
 

@@ -107,6 +107,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -588,12 +590,13 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     public void onInfoWindowClick(Marker marker) {
 
+
         calculateDirectionsToPickup(marker); //draw drivers route to pickup
-        try {
+        /**try {
             calculateDirectionsBetweenPickupandDropOff(marker); //not working right meow >:(
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }**/
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
 
         if(offerSent == false) {
@@ -771,19 +774,18 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     public void offerRide(Marker marker){
         calculateDirectionsToPickup(marker);
 
-
         offerSent = true;
         guuberDriverMap.clear();
         LatLng currReqMarker = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
         String currReqRiderEmail = marker.getTitle();
         setMarker(currReqMarker,currReqRiderEmail);
 
-        User currDriver = ((UserData)(getApplicationContext())).getUser();
+        /**User currDriver = ((UserData)(getApplicationContext())).getUser();
         User riderToOfferTo = driverDBHelper.getUser(currReqRiderEmail);
 
         android.util.Log.i("CURR DRIVER EMAIL",  currDriver.getEmail());
         android.util.Log.i("CURR DRIVER EMAIL",  riderToOfferTo.getEmail());
-        driverDBHelper.offerRide(currDriver,riderToOfferTo);
+        driverDBHelper.offerRide(currDriver,riderToOfferTo);**/
 
 
     }
