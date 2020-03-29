@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,6 +30,7 @@ public class WalletActivity extends AppCompatActivity implements TransactionFrag
     // Activity objects
     private Wallet wallet;
     private ListView transactionListView;
+    private TextView balanceTV;
 
     // Db instance of user
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -46,6 +48,7 @@ public class WalletActivity extends AppCompatActivity implements TransactionFrag
 
         uEmail = ((UserData) (getApplicationContext())).getUser().getEmail();
         transactionListView = findViewById(R.id.trans_lv);
+        balanceTV = findViewById(R.id.balance_tv);
 
         // Display the back button if action bar is enabled
         if(getSupportActionBar() != null) {
@@ -60,6 +63,9 @@ public class WalletActivity extends AppCompatActivity implements TransactionFrag
             wallet = documentSnapshot.toObject(User.class).getWallet();
             TransactionAdapter transactionAdapter = new TransactionAdapter(WalletActivity.this, wallet.getTransactions());
             transactionListView.setAdapter(transactionAdapter);
+
+            String balance = "Balance: " + wallet.getBalance() + " QrB";
+            balanceTV.setText(balance);
         });
     }
 
