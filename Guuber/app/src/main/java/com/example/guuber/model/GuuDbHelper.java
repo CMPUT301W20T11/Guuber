@@ -423,6 +423,11 @@ public class GuuDbHelper {
         }
     }
 
+    /**
+     * Driver can offer a rider a ride but pending on riders approval
+     * @param driver - the driver offering a rider
+     * @param rider - the driver offering the ride to
+     */
     public void offerRide(User driver,User rider){
         setProfile(driver.getEmail());
         profile.update("offerStatus","pending");
@@ -432,6 +437,11 @@ public class GuuDbHelper {
 
     }
 
+    /**
+     * lets the rider see if they have am offer for a ride
+     * @param rider - the rider who may have someone offering a rider to them
+     * @return - the email of the driver who is offering them a ride in a string
+     */
     public String seeOffer(User rider) throws InterruptedException {
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -451,28 +461,30 @@ public class GuuDbHelper {
         return offerer;
     }
 
+    /**
+     * Helper function for seeOffer
+     * sets the offerer email
+     */
     public void setOfferer(String driver){
         offerer = driver;
     }
+
+    /**
+     * Let the rider decline the offer from the driver
+     * @param rider - the person who declines the offer
+     * @param driver - the person who's offer is declined
+     */
     public void declineOffer(User rider,User driver){
-//        setProfile(rider.getEmail());
-//        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//            @Override
-//            public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                offerer = documentSnapshot.get("rideOfferFrom").toString();
-//                profile.update("rideOfferFrom",FieldValue.delete());
-//
-//            }
-//        });
-//        setProfile(offerer);
-//        profile.update("offerTo",FieldValue.delete());
-//        profile.update("offerStatus","declined");
         setProfile(rider.getEmail());
         profile.update("rideOfferFrom",FieldValue.delete());
         setProfile(driver.getEmail());
         profile.update("offerTo",FieldValue.delete());
         profile.update("offerStatus","declined");
     }
+    /**
+     * the rider accepting the offer they recieved
+     * @param rider - the rider who accept the offer
+     */
     public void acceptOffer(User rider){
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -485,6 +497,14 @@ public class GuuDbHelper {
         profile.update("offerStatus","accepted");
     }
 
+    /**
+     * Allows the driver to see the status of their offer to the rider
+     * @driver - the driver who offer a ride for a rider
+     * @return - the status of the offer either being:
+     *              pending: waiting for response
+     *              accepted: the offer has been accepted
+     *              declined: the rider declined the offer
+     */
     public String checkOfferStatus(User driver) throws InterruptedException {
         setProfile(driver.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
