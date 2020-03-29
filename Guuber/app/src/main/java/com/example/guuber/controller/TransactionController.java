@@ -103,7 +103,7 @@ public class TransactionController {
 
         // Attempt withdrawal
         try{
-            wallet1.deposit(amount);
+            wallet1.withdraw(amount);
         }catch (IllegalArgumentException e){
             return false;
         }
