@@ -522,10 +522,6 @@ public class GuuDbHelper {
         });
 
         Thread.sleep(2000);
-
-        String offerStatus = offerStat.toString();
-        android.util.Log.i("OFFER STAT = ", offerStatus);
-
         if(offerStat != null){
             if(offerStat.equals("declined")){
                 profile.update("offerStatus",FieldValue.delete());

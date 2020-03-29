@@ -100,6 +100,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private boolean rideInProgress = false;
     private boolean rideIsOver = false;
 
+
     /*******NEW MAPS INTEGRATION**/
     private boolean isLocationPermissionGranted = false;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
@@ -586,11 +587,12 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            if (potentialOfferer == null){
+
+                            if (potentialOfferer != null){
+                                willYouAcceptThisOfferDialog(potentialOfferer);
+                            }else{
                                 noOffersYetToast();
                                 dialog.dismiss();
-                            }else{
-                                willYouAcceptThisOfferDialog(potentialOfferer);
                             }
 
                         }
@@ -607,7 +609,34 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         });
                 final AlertDialog alert = builder.create();
                 alert.show();
-            }
+            }else if (rideInProgress == true) {
+                final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
+                builder
+                    .setTitle("Driver Is On Way")
+                    .setPositiveButton("Check If Driver Has Arrived", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            /***TO DO***/
+                            android.util.Log.i(TAG, "DRIVER IS ON THE WAY");
+                            /**if the driver has arrived  then riderIsOver = true;***/
+                        }
+                    })
+                    .setNegativeButton("Cancel request", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            rideisPending = false;
+                            rideInProgress = false;
+                            guuberRiderMap.clear();
+                            User currUser = ((UserData) (getApplicationContext())).getUser();
+                            riderDBHelper.cancelRequest(currUser);
+                            dialog.dismiss();
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+
+
+        }
     }
 
     /**
@@ -630,12 +659,12 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         android.util.Log.i("RIDER CLICKED ACCEPTED", "ACCEPTED");
                         User currUser = ((UserData)(getApplicationContext())).getUser();
                         riderDBHelper.acceptOffer(currUser);
+                        yourDriverIsOnTheWayToast();
                         dialog.dismiss(); }
                 }).setNeutralButton("View Driver Profile", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         /*****TINASHE*****/
                         //show the driver who is offering (potential offerers) profile
-                        android.util.Log.i("RIDER CLICKED ON PF", "PF CLICK");
                         dialog.dismiss(); }
                 }).setNegativeButton("Decline", new DialogInterface.OnClickListener() {
             @Override
@@ -647,8 +676,12 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     }
 
 
-
-
+    /**
+     * let the rider know the driver has been notified and they are on the way**
+     */
+    private void yourDriverIsOnTheWayToast(){
+        Toast.makeText(this,"Your Driver is on The Way!", Toast.LENGTH_SHORT);
+    }
 
 
     /**

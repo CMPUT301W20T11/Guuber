@@ -87,6 +87,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private LatLng search;
     private LatLng driverLocation;
     private boolean offerSent;
+    private boolean offerAccepted;
+    private boolean routeInProgress;
 
     /*******NEW MAPS INTEGRATION**/
     private boolean isLocationPermissionGranted = false;
@@ -621,7 +623,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     });
             final AlertDialog alert = builder.create();
             alert.show();
-        }else{
+        }else if (offerAccepted == false){
             builder
                     .setMessage("Offer Has Been Sent")
                     .setPositiveButton("Check Status", new DialogInterface.OnClickListener() {
@@ -637,16 +639,65 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                             if (statusCheck != null){
                                 android.util.Log.i(TAG, "STATUS CHECK WAS NOT NULL");
                                 android.util.Log.i(TAG, statusCheck);
+                                if (statusCheck.equals("accepted")){
+                                    android.util.Log.i(TAG, statusCheck);
+                                    dialog.dismiss();
+                                    offerAccepted(marker.getTitle(), marker);
+                                }else if (statusCheck.equals("declined")){
+                                    offerDeclined();
+                                }else{
+                                    stillPendingToast();
+                                }
                             }else{
                                 android.util.Log.i(TAG, "STATUS CHECK WAS NULL");
                             }
                         }
                     });
-            final AlertDialog alert = builder.create();
-            alert.show();
-
+            final AlertDialog alert = builder.create();alert.show();
+        }else{
+            builder
+                    .setMessage("Route In Progress")
+                    .setPositiveButton("Let The Rider Know You have Arrived", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            android.util.Log.i(TAG, "DRIVER HAS ARRIVED");
+                        }
+                    });
+            final AlertDialog alert = builder.create();alert.show();
         }
+    }
 
+    private void offerAccepted(String riderEmail, Marker marker){
+        android.util.Log.i(TAG, "IN OFFER  ACCEPTED");
+        offerSent = false;
+        offerAccepted = true;
+        routeInProgress = true;
+        Toast.makeText(MapsDriverActivity.this, "Your Offer Was Accepted. Click on the Riders Pickup Location to Let them know when you have arrived", Toast.LENGTH_SHORT).show();
+        guuberDriverMap.clear();
+        LatLng pickupPoint = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
+        setMarker(pickupPoint,riderEmail);
+        calculateDirectionsToPickup(marker);
+
+        User currUser = ((UserData)(getApplicationContext())).getUser();
+        User riderForRoute = driverDBHelper.getUser(riderEmail);
+        try {
+            driverDBHelper.reqAccepted(riderForRoute, currUser);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void offerDeclined(){
+        Toast.makeText(this, "Your Offer Was Declined. Press Search to Continue Browsing Requests", Toast.LENGTH_SHORT).show();
+        guuberDriverMap.clear();
+        drawOpenRequests();
+    }
+
+    /**
+     * let the driver know that the rider has yet to see or make a decision
+     */
+    private void stillPendingToast(){
+        Toast.makeText(this,"Your Offer Is Still Pending", Toast.LENGTH_SHORT);
     }
 
 
@@ -794,10 +845,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     }
 
                     polyline = guuberDriverMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
-                    if (offerSent == true){
-                        polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.polyLinesColors));
-                    }else {
+                    if (offerAccepted == false && offerSent == false){
                         polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.clickedPolyLinesColors));
+                    } else if (offerSent == true) {
+                        polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.polyLinesColors));
+                    } else if (offerAccepted == true) {
+                        polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.TripInProgressPolyLinesColors));
                     }
 
                 }
