@@ -17,9 +17,12 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class GuuDbHelper {
     private static FirebaseFirestore db;
@@ -30,6 +33,9 @@ public class GuuDbHelper {
     public static Map<String,Object> Request = new HashMap<>();
     public static Vehicle car = new Vehicle();
     public static ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
+    public static String offerer;
+    public static String offerStat = "none";
+
 
 
 
@@ -47,7 +53,10 @@ public class GuuDbHelper {
         this.users = this.db.collection("Users");
         this.requests = this.db.collection("requests");
         this.user = new User();
+
     }
+
+
 
     /**
      * Helper function for getUser
@@ -63,14 +72,13 @@ public class GuuDbHelper {
                     setUser(documentSnapshot.get("phoneNumber").toString(),documentSnapshot.get("email").toString(),
                             documentSnapshot.get("firstName").toString(),
                             documentSnapshot.get("lastName").toString(),
-                            documentSnapshot.get("uid").toString(),
                             documentSnapshot.get("username").toString(),
                             (int)(long) documentSnapshot.get("rider"),
                             (int)(long) documentSnapshot.get("posRating"),
-                            (int)(long) documentSnapshot.get("negRating"),
+                            (int)(long) documentSnapshot.get("negRating")
 
-                            documentSnapshot.getDouble("balance"),
-                            (ArrayList<Double>) documentSnapshot.get("transactions")
+                            //,documentSnapshot.getDouble("balance"),
+                            //(ArrayList<Double>) documentSnapshot.get("transactions")
                     );
                 }
                 else{
@@ -96,20 +104,19 @@ public class GuuDbHelper {
      * @param transactions - list of transactions(changes to their balance) that the user incurred
      *
      * */
-    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating, Double balance, ArrayList<Double> transactions){
+    public void setUser(String phone,String email,String first,String last,String uname,Integer rider, Integer posRating, Integer negRating){
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
         this.user.setFirstName(first);
         this.user.setLastName(last);
-//        this.user.setUid(uid);
         this.user.setUsername(uname);
         this.user.setRider(rider);
 
         this.user.setPosRating(posRating);
         this.user.setNegRating(negRating);
 
-//        this.user.setBalance(balance);
-//        this.user.setTransHistory(transactions);
+        //this.user.setBalance(balance);
+        // this.user.setTransHistory(transactions);
     }
     /**
      * Gets the information under the person's email from the database
@@ -117,7 +124,26 @@ public class GuuDbHelper {
      * @return - the user under the email inputted
      * */
     public User getUser(String email ){
-        findUser(email);
+//        findUser(email);
+        users.document(email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot doc = task.getResult();
+                    if(doc.exists()){
+                        user.setEmail(email);
+                        user.setPhoneNumber(doc.get("phoneNumber").toString());
+                        user.setFirstName(doc.get("firstName").toString());
+                        user.setLastName(doc.get("lastName").toString());
+                        user.setUsername(doc.get("username").toString());
+                        user.setRider((int)(long) doc.get("rider"));
+
+                        user.setPosRating((int)(long) doc.get("posRating"));
+                        user.setNegRating((int)(long) doc.get("negRating"));
+                    }
+                }
+            }
+        });
         setProfile(email);
         return user;
     }
@@ -158,6 +184,8 @@ public class GuuDbHelper {
                 }
             }
         });
+
+
     }
     /**
      * Helper function for checkEmail
@@ -166,6 +194,7 @@ public class GuuDbHelper {
     public void createUser(Map<String,Object> info,User newUser){
         users.document(newUser.getEmail()).set(info);
     }
+
     /**
      * Helper function
      * set the profile of a user
@@ -173,7 +202,9 @@ public class GuuDbHelper {
      */
     public void setProfile(String email){
         this.profile = users.document(email);
+
     }
+
     /**
      * Deletes the user from the database
      * @param email - email of the user
@@ -182,6 +213,7 @@ public class GuuDbHelper {
         setProfile(email);
         profile.delete();
     }
+
     /**
      * Updates the username of the user
      * @param email - the user that want to update their name
@@ -261,7 +293,6 @@ public class GuuDbHelper {
 
         this.requests.document(rider.getEmail()).set(details);
 
-
     }
 
     /**
@@ -270,6 +301,7 @@ public class GuuDbHelper {
      */
     public void cancelRequest(User rider) {
         setProfile(rider.getEmail());
+
         profile.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
@@ -305,7 +337,6 @@ public class GuuDbHelper {
                             profile.update(delete);
                             requests.document(rider.getEmail()).delete();
                             reqList.remove(reqInfo);
-
 
 
                         }
@@ -344,8 +375,10 @@ public class GuuDbHelper {
      * @param rider - the user who made the request
      * @return - the details of the request in as a Map<String,Object> format </String,Object>
      */
-    public Map<String,Object> getRiderRequest(User rider){
+    public Map<String,Object> getRiderRequest(User rider) throws InterruptedException {
+
         setProfile(rider.getEmail());
+        TimeUnit.SECONDS.sleep(5);
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -420,15 +453,117 @@ public class GuuDbHelper {
         }
     }
 
+    /**
+     * Driver can offer a rider a ride but pending on riders approval
+     * @param driver - the driver offering a rider
+     * @param rider - the driver offering the ride to
+     */
     public void offerRide(User driver,User rider){
+        setProfile(driver.getEmail());
+        profile.update("offerStatus","pending");
+        profile.update("offerTo",rider.getEmail());
         setProfile(rider.getEmail());
-        profile.update("rideOffer",driver.getEmail());
-        
+        profile.update("rideOfferFrom",driver.getEmail());
     }
 
-    public void checkOffers(User Rider){
-
+    /**
+     * lets the rider see if they have am offer for a ride
+     * @param rider - the rider who may have someone offering a rider to them
+     * @return - the email of the driver who is offering them a ride in a string
+     */
+    public String seeOffer(User rider) throws InterruptedException {
+        setProfile(rider.getEmail());
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.exists()){
+                    if(documentSnapshot.get("rideOfferFrom")!= null){
+                        setOfferer(documentSnapshot.get("rideOfferFrom").toString());
+                    }
+                    else{
+                        offerer = null;
+                    }
+                }
+            }
+        });
+        Thread.sleep(1000);
+        return offerer;
     }
+
+    /**
+     * Helper function for seeOffer
+     * sets the offerer email
+     */
+    public void setOfferer(String driver){
+        offerer = driver;
+    }
+
+    /**
+     * Let the rider decline the offer from the driver
+     * @param rider - the person who declines the offer
+     * @param driver - the person who's offer is declined
+     */
+    public void declineOffer(User rider,User driver){
+        setProfile(rider.getEmail());
+        profile.update("rideOfferFrom",FieldValue.delete());
+        setProfile(driver.getEmail());
+        profile.update("offerTo",FieldValue.delete());
+        profile.update("offerStatus","declined");
+    }
+    /**
+     * the rider accepting the offer they recieved
+     * @param rider - the rider who accept the offer
+     */
+    public void acceptOffer(User rider){
+        setProfile(rider.getEmail());
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                offerer = documentSnapshot.get("rideOfferFrom").toString();
+                setProfile(offerer);
+                profile.update("offerStatus","accepted");
+            }
+        });
+        /**setProfile(offerer);
+        profile.update("offerStatus","accepted");**/
+    }
+
+    /**
+     * Allows the driver to see the status of their offer to the rider
+     * @driver - the driver who offer a ride for a rider
+     * @return - the status of the offer either being:
+     *              pending: waiting for response
+     *              accepted: the offer has been accepted
+     *              declined: the rider declined the offer
+     *              none: the driver did not offer a ride to anyone
+     */
+    public String checkOfferStatus(User driver) throws InterruptedException {
+        setProfile(driver.getEmail());
+
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if(documentSnapshot.get("offerStatus") != null){
+                    offerStat = documentSnapshot.get("offerStatus").toString();
+                } else{
+                    offerStat = "none"; }
+                if(offerStat != null){
+                    if(offerStat.equals("declined")){
+                        profile.update("offerStatus",FieldValue.delete());
+                    }
+                }
+            }
+        });
+
+        /**Thread.sleep(2000);
+        if(offerStat != null){
+            if(offerStat.equals("declined")){
+                profile.update("offerStatus",FieldValue.delete());
+            }
+        }**/
+        return offerStat;
+    }
+
 
     /**
      * Stores details between driver and rider when a request is accepted
@@ -436,13 +571,17 @@ public class GuuDbHelper {
      * @param driver - the driver who takes the request
      */
     public void reqAccepted(User rider, User driver) throws InterruptedException {
+
         setProfile(rider.getEmail());
+        profile.update("rideOfferFrom",FieldValue.delete());
         profile.update("reqDriver",driver.getEmail());
         Map<String,Object> reqDetails = getRiderRequest(rider);
         Thread.sleep(1000);
         reqList.remove(reqDetails);
         requests.document(rider.getEmail()).delete();
         setProfile(driver.getEmail());
+        profile.update("offerTo",FieldValue.delete());
+        profile.update("offerStatus",FieldValue.delete());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
     }
