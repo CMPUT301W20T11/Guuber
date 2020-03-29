@@ -124,7 +124,26 @@ public class GuuDbHelper {
      * @return - the user under the email inputted
      * */
     public User getUser(String email ){
-        findUser(email);
+//        findUser(email);
+        users.document(email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot doc = task.getResult();
+                    if(doc.exists()){
+                        user.setEmail(email);
+                        user.setPhoneNumber(doc.get("phoneNumber").toString());
+                        user.setFirstName(doc.get("firstName").toString());
+                        user.setLastName(doc.get("lastName").toString());
+                        user.setUsername(doc.get("username").toString());
+                        user.setRider((int)(long) doc.get("rider"));
+
+                        user.setPosRating((int)(long) doc.get("posRating"));
+                        user.setNegRating((int)(long) doc.get("negRating"));
+                    }
+                }
+            }
+        });
         setProfile(email);
         return user;
     }
