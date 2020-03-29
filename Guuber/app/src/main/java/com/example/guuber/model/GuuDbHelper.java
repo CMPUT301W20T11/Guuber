@@ -52,7 +52,6 @@ public class GuuDbHelper {
         this.users = this.db.collection("Users");
         this.requests = this.db.collection("requests");
         this.user = new User();
-
     }
 
 
@@ -68,10 +67,10 @@ public class GuuDbHelper {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
                     Log.d("user", "found user");
-                    setUser(documentSnapshot.get("phoneNumber").toString(), documentSnapshot.get("email").toString(),
+                    setUser(documentSnapshot.get("phoneNumber").toString(),
+                            documentSnapshot.get("email").toString(),
                             documentSnapshot.get("firstName").toString(),
                             documentSnapshot.get("lastName").toString(),
-                            documentSnapshot.get("uid").toString(),
                             documentSnapshot.get("username").toString(),
                             (int) (long) documentSnapshot.get("rider"),
                             (int) (long) documentSnapshot.get("posRating"),
@@ -79,17 +78,16 @@ public class GuuDbHelper {
 
                             //,documentSnapshot.getDouble("balance"),
                             //(ArrayList<Double>) documentSnapshot.get("transactions")
-
                     );
-                    /***LEAH ADDED LINE HERE***/
-                    setProfile(email);
-                } else {
+                }
+                else {
                     Log.d("user", "user does not exist");
                 }
             }
         });
-
     }
+
+
 
     /**
      * Helper function
@@ -105,21 +103,21 @@ public class GuuDbHelper {
      * @param negRating    - number of ratings that are negative
      * @param balance      - Amount in users wallet
      * @param transactions - list of transactions(changes to their balance) that the user incurred
+
      */
-    public void setUser(String phone, String email, String first, String last, String uid, String uname, Integer rider, Integer posRating, Integer negRating) {
-        this.user.setEmail(email);
-        this.user.setPhoneNumber(phone);
-        this.user.setFirstName(first);
-        this.user.setLastName(last);
-//        this.user.setUid(uid);
-        this.user.setUsername(uname);
-        this.user.setRider(rider);
+    public void setUser(String phone, String email, String first, String last, String uname, Integer rider, Integer posRating, Integer negRating) {
+            this.user.setEmail(email);
+            this.user.setPhoneNumber(phone);
+            this.user.setFirstName(first);
+            this.user.setLastName(last);
+            this.user.setUsername(uname);
+            this.user.setRider(rider);
 
-        this.user.setPosRating(posRating);
-        this.user.setNegRating(negRating);
+            this.user.setPosRating(posRating);
+            this.user.setNegRating(negRating);
 
-        //this.user.setBalance(balance);
-        // this.user.setTransHistory(transactions);
+            //this.user.setBalance(balance);
+            //this.user.setTransHistory(transactions);
     }
 
     /**
@@ -128,11 +126,13 @@ public class GuuDbHelper {
      * @param email - the user's email
      * @return - the user under the email inputted
      */
-    public synchronized User getUser(String email) throws InterruptedException {
+
+    public synchronized User getUser (String email) throws InterruptedException {
         findUser(email);
         //setProfile(email)
         return user;
     }
+
 
 
 
@@ -190,7 +190,6 @@ public class GuuDbHelper {
      */
     public synchronized void setProfile(String email){
         this.profile = users.document(email);
-
     }
 
     /**
@@ -543,12 +542,7 @@ public class GuuDbHelper {
             }
         });
 
-        /**Thread.sleep(2000);
-        if(offerStat != null){
-            if(offerStat.equals("declined")){
-                profile.update("offerStatus",FieldValue.delete());
-            }
-        }**/
+
         return offerStat;
     }
 
@@ -631,8 +625,6 @@ public class GuuDbHelper {
         this.car.setReg(driver);
 
     }
-
-
 
 
     

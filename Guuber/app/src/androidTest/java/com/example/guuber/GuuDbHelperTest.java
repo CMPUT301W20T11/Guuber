@@ -100,7 +100,7 @@ public class GuuDbHelperTest {
         obtain = dbHelper.getUser("m@gmail.com");
         Thread.sleep(1000);
 
-        assertEquals(obtain.getEmail(), mockUser.getEmail());
+        assertEquals(mockUser.getEmail(), obtain.getEmail());
         dbHelper.deleteUser("m@gmail.com");
         Thread.sleep(5000);
 
@@ -111,9 +111,9 @@ public class GuuDbHelperTest {
     public void LoginUserTest() throws InterruptedException{
         User obtain = dbHelper.getUser("kluc1@ualberta.ca");
         Thread.sleep(2000);
-        assertEquals("Kelly",obtain.getFirstName());
+        assertEquals("Hi",obtain.getFirstName());
         assertEquals("kluc1@ualberta.ca",obtain.getEmail());
-        assertEquals((Integer) 1, obtain.getRider());
+        assertEquals((Integer) 0, obtain.getRider());
         User user = dbHelper.getUser("kluc1@ualberta.ca");
         Thread.sleep(1000);
         dbHelper.makeReq(user, (double) 20,"A pit","1620","1620","1080","1080","80");
@@ -175,7 +175,7 @@ public class GuuDbHelperTest {
         Map<String,Object> reqDetail;
         reqDetail = dbHelper.getRiderRequest(mockUser());
         Thread.sleep(1000);
-        assertEquals((long) 60,reqDetail.get("reqTip"));
+        assertEquals((double) 60.0  ,reqDetail.get("reqTip"));
         assertEquals("Kingdom of Corona",reqDetail.get("reqLocation"));
         assertEquals("0000",reqDetail.get("oriLat"));
         assertEquals("0000",reqDetail.get("oriLng"));

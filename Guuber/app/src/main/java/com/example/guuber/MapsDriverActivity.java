@@ -678,7 +678,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         android.util.Log.i("Rider to Offer To: ",  riderToOfferTo.toString());
 
         String theRidersEmail = marker.getTitle();
-        riderToOfferTo.setEmail(theRidersEmail);
+        riderToOfferTo.setEmail(theRidersEmail); //<-----one thing that is fixing the crash
         android.util.Log.i("The Riders Email", riderToOfferTo.getEmail());
 
 
