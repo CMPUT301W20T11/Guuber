@@ -623,7 +623,17 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     .setPositiveButton("Check Status", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            android.util.Log.i(TAG, "in checking status driver");
+
+                            User currdriver = ((UserData)(getApplicationContext())).getUser();
+                            String email = currdriver.getEmail();
+                            android.util.Log.i("DRIVER EMAIL", email);
+
+                            try {
+                                String statusCheck = driverDBHelper.checkOfferStatus(currdriver);
+                                android.util.Log.i("TAG", statusCheck);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     });
             final AlertDialog alert = builder.create();

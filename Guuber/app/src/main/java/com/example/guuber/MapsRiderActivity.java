@@ -580,7 +580,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         public void onClick(DialogInterface dialog, int which) {
                             /*****temporary call saying trip is over until we have offer Request going*****/
                             User currUser = ((UserData)(getApplicationContext())).getUser();
-                            String potentialOfferer = riderDBHelper.seeOffer(currUser);
+                            String potentialOfferer = null;
+                            try {
+                                potentialOfferer = riderDBHelper.seeOffer(currUser);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
                             if (potentialOfferer == null){
                                 noOffersYetToast();
                                 dialog.dismiss();
@@ -588,10 +594,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                                 willYouAcceptThisOfferDialog(potentialOfferer);
                             }
 
-                            /**rideIsOver = true;
-                            String email = currUser.getEmail();
-                            driverIsHereDialog(email);
-                            dialog.dismiss();**/
                         }
                     })
                     .setNegativeButton("Cancel request", new DialogInterface.OnClickListener() {
@@ -622,11 +624,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     public void willYouAcceptThisOfferDialog(String potentialOfferer) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
         builder
-                .setTitle("Rider Offer From: " + potentialOfferer).setCancelable(false)
+                .setTitle("Offer From: " + potentialOfferer).setCancelable(false)
                 .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         android.util.Log.i("RIDER CLICKED ACCEPTED", "ACCEPTED");
+                        User currUser = ((UserData)(getApplicationContext())).getUser();
+                        riderDBHelper.acceptOffer(currUser);
                         dialog.dismiss(); }
                 }).setNeutralButton("View Driver Profile", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
