@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class GuuDbHelper {
     private static FirebaseFirestore db;
@@ -347,9 +348,10 @@ public class GuuDbHelper {
      * @param rider - the user who made the request
      * @return - the details of the request in as a Map<String,Object> format </String,Object>
      */
-    public Map<String,Object> getRiderRequest(User rider){
+    public Map<String,Object> getRiderRequest(User rider) throws InterruptedException {
 
         setProfile(rider.getEmail());
+        TimeUnit.SECONDS.sleep(5);
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
