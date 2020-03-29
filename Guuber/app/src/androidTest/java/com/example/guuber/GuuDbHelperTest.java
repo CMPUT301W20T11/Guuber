@@ -155,10 +155,13 @@ public class GuuDbHelperTest {
         Thread.sleep(1000);
         dbHelper.updatePosRating("k@gmail.com");
         Thread.sleep(1000);
+        dbHelper.updateNegRating("k@gmail.com");
+        Thread.sleep(1000);
 
         assertEquals("IWantDie", user.getUsername());
         assertEquals("696969", user.getPhoneNumber());
         assertEquals(2, user.getPosRating());
+        assertEquals(1, user.getNegRating());
         dbHelper.deleteUser("k@gmail.com");
     }
     @Test
@@ -229,29 +232,38 @@ public class GuuDbHelperTest {
     }
     @Test
     public void RequestComTest() throws InterruptedException{
+        String availOffer = dbHelper.checkOfferStatus(mockUser3());
+        assertEquals("none",availOffer);
+        Thread.sleep(1000);
         dbHelper.makeReq(mockUser2(),(double)10,"Tomorrow Land","69.312031230","72.01230345","30.12031204","50.12312415","20");
         Thread.sleep(1000);
-        String availOffer = dbHelper.seeOffer(mockUser2());
+        availOffer = dbHelper.seeOffer(mockUser2());
         assertEquals(null,availOffer);
         Thread.sleep(1000);
         dbHelper.offerRide(mockUser3(),mockUser2());
         Thread.sleep(1000);
         availOffer = dbHelper.seeOffer(mockUser2());
-        Thread.sleep(2000);
         assertEquals("cabbageplant@gmail.com",availOffer);
-        dbHelper.declineOffer(mockUser2());
+        dbHelper.declineOffer(mockUser2(),mockUser3());
         Thread.sleep(1000);
-        String offerStatus = dbHelper.checkOfferStatus(mockUser3());
+        String offerStatus;
+                offerStatus = dbHelper.checkOfferStatus(mockUser3());
         Thread.sleep(1000);
         assertEquals("declined",offerStatus);
         dbHelper.offerRide(mockUser3(),mockUser2());
         Thread.sleep(1000);
+        offerStatus = dbHelper.checkOfferStatus(mockUser3());
+        Thread.sleep(1000);
+        assertEquals("pending",offerStatus);
         dbHelper.acceptOffer(mockUser2());
         Thread.sleep(1000);
         offerStatus = dbHelper.checkOfferStatus(mockUser3());
         Thread.sleep(1000);
         assertEquals("accepted",offerStatus);
-
+        dbHelper.reqAccepted(mockUser2(),mockUser3());
+        Thread.sleep(1000);
+        dbHelper.cancelRequest(mockUser2());
+        Thread.sleep(1000);
         }
     @Test
     public void VehicleRegisterTest() throws InterruptedException{
