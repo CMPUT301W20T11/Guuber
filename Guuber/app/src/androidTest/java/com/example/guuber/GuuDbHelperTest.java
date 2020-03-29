@@ -232,9 +232,12 @@ public class GuuDbHelperTest {
     }
     @Test
     public void RequestComTest() throws InterruptedException{
+        String availOffer = dbHelper.checkOfferStatus(mockUser3());
+        assertEquals("none",availOffer);
+        Thread.sleep(1000);
         dbHelper.makeReq(mockUser2(),(double)10,"Tomorrow Land","69.312031230","72.01230345","30.12031204","50.12312415","20");
         Thread.sleep(1000);
-        String availOffer = dbHelper.seeOffer(mockUser2());
+        availOffer = dbHelper.seeOffer(mockUser2());
         assertEquals(null,availOffer);
         Thread.sleep(1000);
         dbHelper.offerRide(mockUser3(),mockUser2());

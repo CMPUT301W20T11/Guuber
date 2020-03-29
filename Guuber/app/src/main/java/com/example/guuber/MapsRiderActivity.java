@@ -580,7 +580,12 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         public void onClick(DialogInterface dialog, int which) {
                             /*****temporary call saying trip is over until we have offer Request going*****/
                             User currUser = ((UserData)(getApplicationContext())).getUser();
-                            String potentialOfferer = riderDBHelper.seeOffer(currUser);
+                            String potentialOfferer = null;
+                            try {
+                                potentialOfferer = riderDBHelper.seeOffer(currUser);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             if (potentialOfferer == null){
                                 noOffersYetToast();
                                 dialog.dismiss();

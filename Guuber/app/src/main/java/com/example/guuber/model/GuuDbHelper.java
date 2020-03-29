@@ -504,19 +504,29 @@ public class GuuDbHelper {
      *              pending: waiting for response
      *              accepted: the offer has been accepted
      *              declined: the rider declined the offer
+     *              none: the driver did not offer a ride to anyone
      */
     public String checkOfferStatus(User driver) throws InterruptedException {
         setProfile(driver.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                offerStat = documentSnapshot.get("offerStatus").toString();
+                if(documentSnapshot.get("offerStatus") != null){
+                    offerStat = documentSnapshot.get("offerStatus").toString();
+                }
+                else{
+                    offerStat = "none";
+                }
+
             }
         });
         Thread.sleep(1000);
-        if(offerStat.equals("declined")){
-            profile.update("offerStatus",FieldValue.delete());
+        if(offerStat != null){
+            if(offerStat.equals("declined")){
+                profile.update("offerStatus",FieldValue.delete());
+            }
         }
+
         return offerStat;
     }
 
