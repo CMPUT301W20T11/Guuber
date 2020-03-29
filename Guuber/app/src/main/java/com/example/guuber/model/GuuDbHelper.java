@@ -348,6 +348,7 @@ public class GuuDbHelper {
      * @return - the details of the request in as a Map<String,Object> format </String,Object>
      */
     public Map<String,Object> getRiderRequest(User rider){
+
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -434,7 +435,6 @@ public class GuuDbHelper {
         profile.update("offerTo",rider.getEmail());
         setProfile(rider.getEmail());
         profile.update("rideOfferFrom",driver.getEmail());
-
     }
 
     /**

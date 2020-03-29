@@ -86,6 +86,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private EditText geoLocationSearch;
     private LatLng search;
     private LatLng driverLocation;
+    private boolean offerSent;
 
     /*******NEW MAPS INTEGRATION**/
     private boolean isLocationPermissionGranted = false;
@@ -93,6 +94,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 12;
     private static final String TAG = "MapsDriverActivity";
     private GeoApiContext geoApiContext = null;
+    private Polyline polyline;
     /*********************/
 
     // Activity result codes
@@ -124,25 +126,28 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }, 3000);
 
 
-
         /**when driver clicks search button,
          * zoom in on area to view open requests*/
         driverSearchButton = findViewById(R.id.driver_search_button);
         driverSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (getSearch() != null) {
-                    LatLng parse = getSearch();
-                    drawOpenRequests();
+                if (offerSent == false) {
+                    if (getSearch() != null) {
+                        LatLng parse = getSearch();
+                        drawOpenRequests();
 
-                    /**move the camera to searching location**/
-                    CameraPosition cameraPosition = new CameraPosition.Builder()
-                            .target(parse)
-                            .zoom(11)
-                            .build();
-                    guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-                } else {
-                    invalidSearchToast();
+                        /**move the camera to searching location**/
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(parse)
+                                .zoom(11)
+                                .build();
+                        guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    } else {
+                        invalidSearchToast();
+                    }
+                }else{
+                    youveSentAnOfferToast();
                 }
             }
         });
@@ -303,7 +308,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             }
 
 
-
         }
 
     }
@@ -314,10 +318,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * switch case to pull values from the request object
      */
     public void drawOpenRequests() {
-        Double offeredTip = null, destinationLat= null, destinationLong=null, originLat=null, originLong=null;
-        String requestedLocationName=null, email=null;
+        Double offeredTip = null, destinationLat = null, destinationLong = null, originLat = null, originLong = null;
+        String email = null;
 
-        ArrayList<Map<String,Object>> openRequestList = driverDBHelper.getReqList();
+        ArrayList<Map<String, Object>> openRequestList = driverDBHelper.getReqList();
         android.util.Log.i(TAG, "OPEN REQUEST LIST RAW" + openRequestList.toString());
 
         for (Map<String, Object> map : openRequestList) {
@@ -326,30 +330,26 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 String key = entry.getKey();
                 Object value = entry.getValue();
 
-                switch(key){
+                switch (key) {
                     case "reqTip":
                         offeredTip = Double.parseDouble(value.toString());
-                        android.util.Log.i(TAG, "Type of reqTip: " +  offeredTip.toString());
-                        break;
-                    case "reqLocation":
-                        requestedLocationName =  value.toString();
-                        android.util.Log.i(TAG, "Type of reLocation: " +  requestedLocationName);
+                        android.util.Log.i(TAG, "Type of reqTip: " + offeredTip.toString());
                         break;
                     case "desLat":
-                        destinationLat =  Double.parseDouble(value.toString());
-                        android.util.Log.i(TAG, "Type of desLat: " +  destinationLat.toString());
+                        destinationLat = Double.parseDouble(value.toString());
+                        android.util.Log.i(TAG, "Type of desLat: " + destinationLat.toString());
                     case "oriLat":
-                        originLat =  Double.parseDouble(value.toString());
-                        android.util.Log.i(TAG, "Type of oriLat : " +  originLat.toString());
+                        originLat = Double.parseDouble(value.toString());
+                        android.util.Log.i(TAG, "Type of oriLat : " + originLat.toString());
                     case "desLng":
-                        destinationLong =  Double.parseDouble(value.toString());
-                        android.util.Log.i(TAG, "Type of desLng  : " +  destinationLong.toString());
+                        destinationLong = Double.parseDouble(value.toString());
+                        android.util.Log.i(TAG, "Type of desLng  : " + destinationLong.toString());
                     case "oriLng":
-                        originLong =  Double.parseDouble(value.toString());
-                        android.util.Log.i(TAG, "Type of desLng  : " +  originLong.toString());
-                    case "email" :
+                        originLong = Double.parseDouble(value.toString());
+                        android.util.Log.i(TAG, "Type of desLng  : " + originLong.toString());
+                    case "email":
                         email = value.toString();
-                        android.util.Log.i(TAG, "Type of email : " +  email);
+                        android.util.Log.i(TAG, "Type of email : " + email);
                 }
             }
             draw(originLat, originLong, destinationLat, destinationLong, email);
@@ -357,28 +357,38 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     }
 
-    public void draw(Double originLat, Double originLong, Double destinationLat, Double destinationLong, String email){
-        if (originLat == null || originLong==null || email ==null || destinationLat ==null || destinationLong == null){
+    public void draw(Double originLat, Double originLong, Double destinationLat, Double destinationLong, String email) {
+        if (originLat == null || originLong == null || email == null || destinationLat == null || destinationLong == null) {
             noOpenRequestToast();
-        }else{
+        } else {
             LatLng requestStart = new LatLng(originLat, originLong);
+            LatLng requestEnd = new LatLng(destinationLat, destinationLong);
             setMarker(requestStart, email);
+            //setMarker(requestEnd, email);
 
         }
     }
 
+    /**
+     * letting driver know there are no open requests
+     */
+    private void noOpenRequestToast() {
+        Toast.makeText(MapsDriverActivity.this, "No Open Requests! Try clicking search again", Toast.LENGTH_LONG).show();
+    }
 
-
-    private void noOpenRequestToast(){
-        String toastStr = "No Open Requests! Try clicking search again";
-        Toast.makeText(MapsDriverActivity.this, toastStr, Toast.LENGTH_LONG).show();
+    /**
+     * letting driver know they have already made an offer
+     * they must be denied or be accepted and complete the trip before sending another offer
+     */
+    private void youveSentAnOfferToast(){
+        Toast.makeText(MapsDriverActivity.this, "Please wait for Rider response before making another offer", Toast.LENGTH_LONG).show();
     }
 
     /**
      * set a marker given LATLNG information
      * @param locationToMark is location to set marker on
      **/
-    public void setMarker(LatLng locationToMark, String title){
+    public void setMarker(LatLng locationToMark, String title) {
         guuberDriverMap.addMarker(new MarkerOptions()
                 .position(locationToMark)
                 .flat(false)
@@ -389,16 +399,17 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * set the driver location
      * (is necessarily set upon map render
+     *
      * @param location is the drivers current location
      **/
-    public void setDriverLocation(LatLng location){
+    public void setDriverLocation(LatLng location) {
         this.driverLocation = location;
     }
 
     /**
      * @return driver current location
      */
-    public LatLng getDriverLocation(){
+    public LatLng getDriverLocation() {
         return driverLocation;
     }
 
@@ -406,6 +417,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * get the LatLng object from
      * where the driver has set their search to
+     *
      * @return LatLng object to navigate to
      */
     public LatLng getSearch() {
@@ -416,6 +428,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * ser the LatLng object from
      * where the driver has set their search to
+     *
      * @param search object to navigate to
      */
     public void setSearch(LatLng search) {
@@ -434,6 +447,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     /**
      * indicates current location button has been clicked...
+     *
      * @return false all other times besides onMyLocationButtonClick event
      **/
     @Override
@@ -444,8 +458,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     /**
      * displays the details of your location upon click
+     *
      * @param mylocation is a Location object representing your devices
-     * real time location
+     *                   real time location
      **/
     @Override
     public void onMyLocationClick(@NonNull Location mylocation) {
@@ -453,9 +468,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
-
     /**
      * CHECKS IF LOCATION SERVICES HAVE BEEN ENABLED
+     *
      * @return true if they have, false if they havent
      */
     private boolean checkMapServices() {
@@ -498,11 +513,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     }
 
 
-
     /**
      * iF USER PERMISSION HAS ALREADY BEEN ACCEPTED IT WILL NOT PROMPT THE USER
      * AND SET BOOLEAN  TO TRUE
      * ELSE IT WILL RETURN FALSE
+     *
      * @return true if user has granted permission, false if user has not
      */
     private boolean checkUserPermission() {
@@ -518,7 +533,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             return false;
         }
     }
-
 
 
     /**
@@ -571,85 +585,140 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onInfoWindowClick(Marker marker) {
+
+        calculateDirectionsToPickup(marker); //draw drivers route to pickup
+        calculateDirectionsBetweenPickupandDropOff(marker); //not working right meow >:(
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
-        builder
-                .setMessage("What would you like to do?")
-                .setPositiveButton("View This Riders Profile", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        /**********TINASHE********/
-                        //view the rider of this requests profile
-                        //marker.getTitle() is equal to email
-                        //user = whateverdatabasename.getUser(marker.title())
-                    }
-                })
-                .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                })
-                .setNegativeButton("Offer Them a Ride", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        offerRide(marker);
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
+
+        if(offerSent == false) {
+            builder
+                    .setMessage("What would you like to do?").setCancelable(false)
+                    .setPositiveButton("View This Riders Profile", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            /**********TINASHE********/
+                            //view the rider of this requests profile
+                            //marker.getTitle() is equal to email
+                            //user = whateverdatabasename.getUser(marker.title())
+                        }
+                    })
+                    .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            guuberDriverMap.clear();
+                            drawOpenRequests();
+                            dialog.cancel();
+                        }
+                    })
+                    .setNegativeButton("Offer Them a Ride", new DialogInterface.OnClickListener() {
+                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                            offerRide(marker);
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+        }else{
+            builder
+                    .setMessage("Offer Has Been Sent")
+                    .setPositiveButton("Check Status", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            android.util.Log.i(TAG, "in checking status driver");
+                        }
+                    });
+            final AlertDialog alert = builder.create();
+            alert.show();
+
+        }
+
     }
 
 
     /**
-     * @ TODO: 3/27/2020
      * @param marker
+     * @ TODO: 3/27/2020
      */
-    private void calculateDirectionsBetweenPickupandDropOff(Marker marker){
+    private void calculateDirectionsBetweenPickupandDropOff(Marker marker) {
         android.util.Log.i(TAG, marker.getTitle());
-        User findUser = driverDBHelper.getUser(marker.getTitle());
-        /**********
-        Map<String,Object> previewingMap = driverDBHelper.getRiderRequest(findUser);
+        User clickedUser = driverDBHelper.getUser(marker.getTitle());
+        clickedUser.setEmail(marker.getTitle());
+        android.util.Log.i(TAG, "got the user");
 
-        Log.d(TAG, "calculateDirections: calculating directions.");
+        Map<String, Object> drawingRidersRoute = driverDBHelper.getRiderRequest(clickedUser);
+        android.util.Log.i(TAG, drawingRidersRoute.toString());
 
-        /**to the clicked markers destination**
+        /**Double destinationLat = null, destinationLong = null, originLat = null, originLong = null;
+
+        for (Map.Entry<String, Object> entry : drawingRidersRoute.entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+
+            switch (key) {
+                case "desLat":
+                    destinationLat = Double.parseDouble(value.toString());
+                    android.util.Log.i(TAG, "got the dest");
+                case "oriLat":
+                    originLat = Double.parseDouble(value.toString());
+                    android.util.Log.i(TAG, "got the start");
+                case "desLng":
+                    destinationLong = Double.parseDouble(value.toString());
+                    android.util.Log.i(TAG, "got the dest");
+                case "oriLng":
+                    originLong = Double.parseDouble(value.toString());
+                    android.util.Log.i(TAG, "got the start");
+            }
+        }
+
+        /**from riders set destination**
+        LatLng dropoff = new LatLng(destinationLat, destinationLong);
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
-                marker.getPosition().latitude,
-                marker.getPosition().longitude
+                dropoff.latitude, dropoff.longitude
         );
         DirectionsApiRequest driverDirections = new DirectionsApiRequest(geoApiContext);
 
-        /**from the drivers current position*
-        LatLng currDriverLocation = getDriverLocation();
+        /**from the riders set Origin*
+        LatLng pickup = new LatLng(originLat, originLong);
         driverDirections.origin(
                 new com.google.maps.model.LatLng(
-                        currDriverLocation.latitude,
-                        currDriverLocation.longitude
+                        pickup.latitude, pickup.longitude
                 )
         );
-        Log.d(TAG, "calculateDirections: destination: " + destination.toString());
+
         driverDirections.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
             @Override
             public void onResult(DirectionsResult result) {
                 addPolylinesToMap(result);
             }
-
             @Override
             public void onFailure(Throwable e) {
                 Log.e(TAG, "calculateDirections: Failed to get directions: " + e.getMessage());
-
             }
-        });***********/
-
-
+        });**/
     }
 
 
+
     /**
-     * @// TODO: 3/25/2020
-     *
+     * Offer a ride to the Rider and be accepted or denied
      */
     public void offerRide(Marker marker){
-        //need to notify the rider somehow that they have an offer
+        calculateDirectionsToPickup(marker);
+
+
+        offerSent = true;
+        guuberDriverMap.clear();
+        LatLng currReqMarker = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
+        String currReqRiderEmail = marker.getTitle();
+        setMarker(currReqMarker,currReqRiderEmail);
+
+        User currDriver = ((UserData)(getApplicationContext())).getUser();
+        User riderToOfferTo = driverDBHelper.getUser(currReqRiderEmail);
+
+        android.util.Log.i("CURR DRIVER EMAIL",  currDriver.getEmail());
+        android.util.Log.i("CURR DRIVER EMAIL",  riderToOfferTo.getEmail());
+        driverDBHelper.offerRide(currDriver,riderToOfferTo);
+
+
     }
 
 
@@ -708,8 +777,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         ));
                     }
 
-                    Polyline polyline = guuberDriverMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
-                    polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.clickedPolyLinesColors));
+                    polyline = guuberDriverMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
+                    if (offerSent == true){
+                        polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.polyLinesColors));
+                    }else {
+                        polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.clickedPolyLinesColors));
+                    }
 
                 }
             }
