@@ -586,10 +586,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-<<<<<<< HEAD
-
-=======
->>>>>>> 705dec8caf2556639268441c8ffe04a194cb7b21
                             if (potentialOfferer == null){
                                 noOffersYetToast();
                                 dialog.dismiss();
