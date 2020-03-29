@@ -458,7 +458,7 @@ public class GuuDbHelper {
      * @param rider - the rider who may have someone offering a rider to them
      * @return - the email of the driver who is offering them a ride in a string
      */
-    public String seeOffer(User rider) throws InterruptedException {
+    public synchronized String seeOffer(User rider) throws InterruptedException {
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -542,7 +542,6 @@ public class GuuDbHelper {
             }
         });
 
-
         return offerStat;
     }
 
@@ -552,13 +551,12 @@ public class GuuDbHelper {
      * @param rider - the rider with the request and accepts driver
      * @param driver - the driver who takes the request
      */
-    public void reqAccepted(User rider, User driver) throws InterruptedException {
+    public synchronized void reqAccepted(User rider, User driver) throws InterruptedException {
 
         setProfile(rider.getEmail());
         profile.update("rideOfferFrom",FieldValue.delete());
         profile.update("reqDriver",driver.getEmail());
         Map<String,Object> reqDetails = getRiderRequest(rider);
-        Thread.sleep(1000);
         reqList.remove(reqDetails);
         requests.document(rider.getEmail()).delete();
         setProfile(driver.getEmail());

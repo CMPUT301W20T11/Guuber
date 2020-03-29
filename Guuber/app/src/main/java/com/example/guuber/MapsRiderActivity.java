@@ -656,9 +656,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 .setPositiveButton("Accept", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        android.util.Log.i("RIDER CLICKED ACCEPTED", "ACCEPTED");
+                        rideInProgress = true;
+                        rideisPending = false;
+                        polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripInProgressPolyLinesColors));
                         User currUser = ((UserData)(getApplicationContext())).getUser();
-                        riderDBHelper.acceptOffer(currUser);
+                        riderDBHelper.acceptOffer(currUser); //<----if this causing crash
                         yourDriverIsOnTheWayToast();
                         dialog.dismiss(); }
                 }).setNeutralButton("View Driver Profile", new DialogInterface.OnClickListener() {
@@ -680,7 +682,14 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * let the rider know the driver has been notified and they are on the way**
      */
     private void yourDriverIsOnTheWayToast(){
-        Toast.makeText(this,"Your Driver is on The Way!", Toast.LENGTH_SHORT);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                String toastStr ="Your Driver is on The Way!";
+                Toast.makeText(MapsRiderActivity.this, toastStr, Toast.LENGTH_LONG).show();
+            }
+        }, 600);
+
     }
 
 

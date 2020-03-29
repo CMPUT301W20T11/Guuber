@@ -628,12 +628,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
-                                    dialog.dismiss();
                                 }else if (statusCheck.equals("declined")){
                                     offerAccepted = false;
                                     offerDeclined();
                                     dialog.dismiss();
-                                }else{
+                                }else if (statusCheck.equals("pending") || statusCheck.equals("none")){
                                     stillPendingToast();
                                     dialog.dismiss();
                                 }
@@ -688,17 +687,27 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     }
 
     /**
-     * CRASH
+     * Crash on first try?
+     * re draws the current route as green to indicate its in process
+     * lets the driver know the route is in progress
      * @param riderEmail
      * @param marker
      */
     private void offerAccepted(String riderEmail, Marker marker) throws InterruptedException {
-        android.util.Log.i(TAG, "IN OFFER  ACCEPTED");
-        Toast.makeText(MapsDriverActivity.this, "Your Offer Was Accepted. Click on the Riders Pickup Location to Let them know when you have arrived", Toast.LENGTH_SHORT).show();
+        routeInProgress = true;
         guuberDriverMap.clear();
+
         LatLng pickupPoint = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
         setMarker(pickupPoint,riderEmail);
         calculateDirectionsToPickup(marker);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                String toastStr = "Your Offer Was Accepted. Click on the Riders Pickup Location to Let them know when you have arrived";
+                Toast.makeText(MapsDriverActivity.this, toastStr, Toast.LENGTH_LONG).show();
+            }
+        }, 500);
 
 
         User currUser = ((UserData)(getApplicationContext())).getUser();
@@ -724,7 +733,13 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * let the driver know that the rider has yet to see or make a decision
      */
     private void stillPendingToast(){
-        Toast.makeText(MapsDriverActivity.this,"Your Offer Is Still Pending", Toast.LENGTH_SHORT);
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                String toastStr = "Your Offer is Still Pending!";
+                Toast.makeText(MapsDriverActivity.this, toastStr, Toast.LENGTH_LONG).show();
+            }
+        }, 500);
     }
 
 
@@ -855,10 +870,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     polyline = guuberDriverMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
                     if (offerAccepted == false && offerSent == false){
                         polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.clickedPolyLinesColors));
+                    } else if (routeInProgress == true) {
+                        polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.TripInProgressPolyLinesColors));
                     } else if (offerSent == true) {
                         polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.polyLinesColors));
-                    } else if (offerAccepted == true) {
-                        polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.TripInProgressPolyLinesColors));
                     }
 
                 }
