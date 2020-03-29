@@ -72,7 +72,6 @@ public class GuuDbHelper {
                     setUser(documentSnapshot.get("phoneNumber").toString(),documentSnapshot.get("email").toString(),
                             documentSnapshot.get("firstName").toString(),
                             documentSnapshot.get("lastName").toString(),
-                            documentSnapshot.get("uid").toString(),
                             documentSnapshot.get("username").toString(),
                             (int)(long) documentSnapshot.get("rider"),
                             (int)(long) documentSnapshot.get("posRating"),
@@ -105,12 +104,11 @@ public class GuuDbHelper {
      * @param transactions - list of transactions(changes to their balance) that the user incurred
      *
      * */
-    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating){
+    public void setUser(String phone,String email,String first,String last,String uname,Integer rider, Integer posRating, Integer negRating){
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
         this.user.setFirstName(first);
         this.user.setLastName(last);
-//        this.user.setUid(uid);
         this.user.setUsername(uname);
         this.user.setRider(rider);
 
