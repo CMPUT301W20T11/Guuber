@@ -30,13 +30,11 @@ public class GuuDbHelper {
     private static CollectionReference users;
     private static DocumentReference profile;
     public static User user;
-    public static Map<String,Object> Request = new HashMap<>();
+    public static Map<String, Object> Request = new HashMap<>();
     public static Vehicle car = new Vehicle();
-    public static ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
+    public static ArrayList<Map<String, Object>> reqList = new ArrayList<Map<String, Object>>();
     public static String offerer;
     public static String offerStat = "none";
-
-
 
 
     //public static Wallet wall;
@@ -46,9 +44,10 @@ public class GuuDbHelper {
 
     /**
      * on create
+     *
      * @param db - the instance of a FirebaseFirestone
      */
-    public GuuDbHelper(FirebaseFirestore db){
+    public GuuDbHelper(FirebaseFirestore db) {
         this.db = db.getInstance();
         this.users = this.db.collection("Users");
         this.requests = this.db.collection("requests");
@@ -57,55 +56,57 @@ public class GuuDbHelper {
     }
 
 
-
     /**
      * Helper function for getUser
      * Finds if the document of the email
+     *
      * @param email - the email of the document to find
-     * */
-    public void findUser(String email){
+     */
+    public synchronized void findUser(String email) throws InterruptedException {
         users.document(email).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists()){
-                    Log.d("user","found user");
-                    setUser(documentSnapshot.get("phoneNumber").toString(),documentSnapshot.get("email").toString(),
+                if (documentSnapshot.exists()) {
+                    Log.d("user", "found user");
+                    setUser(documentSnapshot.get("phoneNumber").toString(), documentSnapshot.get("email").toString(),
                             documentSnapshot.get("firstName").toString(),
                             documentSnapshot.get("lastName").toString(),
                             documentSnapshot.get("uid").toString(),
                             documentSnapshot.get("username").toString(),
-                            (int)(long) documentSnapshot.get("rider"),
-                            (int)(long) documentSnapshot.get("posRating"),
-                            (int)(long) documentSnapshot.get("negRating")
+                            (int) (long) documentSnapshot.get("rider"),
+                            (int) (long) documentSnapshot.get("posRating"),
+                            (int) (long) documentSnapshot.get("negRating")
 
                             //,documentSnapshot.getDouble("balance"),
                             //(ArrayList<Double>) documentSnapshot.get("transactions")
+
                     );
-                }
-                else{
-                    Log.d("user","user does not exist");
+                    /***LEAH ADDED LINE HERE***/
+                    setProfile(email);
+                } else {
+                    Log.d("user", "user does not exist");
                 }
             }
         });
+
     }
 
     /**
      * Helper function
      * set the user info for getUser
-     * @param phone - user's phonenumber
-     * @param email - user's email
-     * @param first - user's first name
-     * @param last  - user's last name
-     * @param uname  - user's username
-     * @param rider - whether if the user is a rider of driver
-     * @param posRating - number of ratings that are positive
-     * @param negRating - number of ratings that are negative
      *
-     * @param balance - Amount in users wallet
+     * @param phone        - user's phonenumber
+     * @param email        - user's email
+     * @param first        - user's first name
+     * @param last         - user's last name
+     * @param uname        - user's username
+     * @param rider        - whether if the user is a rider of driver
+     * @param posRating    - number of ratings that are positive
+     * @param negRating    - number of ratings that are negative
+     * @param balance      - Amount in users wallet
      * @param transactions - list of transactions(changes to their balance) that the user incurred
-     *
-     * */
-    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating){
+     */
+    public void setUser(String phone, String email, String first, String last, String uid, String uname, Integer rider, Integer posRating, Integer negRating) {
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
         this.user.setFirstName(first);
@@ -120,16 +121,20 @@ public class GuuDbHelper {
         //this.user.setBalance(balance);
         // this.user.setTransHistory(transactions);
     }
+
     /**
      * Gets the information under the person's email from the database
+     *
      * @param email - the user's email
      * @return - the user under the email inputted
-     * */
-    public User getUser(String email ){
+     */
+    public synchronized User getUser(String email) throws InterruptedException {
         findUser(email);
-        setProfile(email);
+        //setProfile(email)
         return user;
     }
+
+
 
     //NOTE: function should not be used since the users are already created through loginActivity
     /**
@@ -183,7 +188,7 @@ public class GuuDbHelper {
      * set the profile of a user
      * @param email - email of the user
      */
-    public void setProfile(String email){
+    public synchronized void setProfile(String email){
         this.profile = users.document(email);
 
     }
@@ -441,7 +446,7 @@ public class GuuDbHelper {
      * @param driver - the driver offering a rider
      * @param rider - the driver offering the ride to
      */
-    public void offerRide(User driver,User rider){
+    public synchronized void offerRide(User driver,User rider){
         setProfile(driver.getEmail());
         profile.update("offerStatus","pending");
         profile.update("offerTo",rider.getEmail());
@@ -507,8 +512,8 @@ public class GuuDbHelper {
                 profile.update("offerStatus","accepted");
             }
         });
-        /**setProfile(offerer);
-        profile.update("offerStatus","accepted");**/
+        setProfile(offerer);
+        profile.update("offerStatus","accepted");
     }
 
     /**
