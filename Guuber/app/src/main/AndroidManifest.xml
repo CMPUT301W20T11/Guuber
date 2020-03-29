@@ -21,6 +21,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
+        <activity android:name=".TransactionFragment"></activity>
         <activity android:name=".WalletActivity" />
         <activity android:name=".scanQrActivity" />
         <activity android:name=".QrActivity" />
