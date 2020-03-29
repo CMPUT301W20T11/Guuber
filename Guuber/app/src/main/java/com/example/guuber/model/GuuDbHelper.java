@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class GuuDbHelper {
     private static FirebaseFirestore db;
@@ -431,22 +432,27 @@ public class GuuDbHelper {
 
     }
 
-    public String seeOffer(User rider){
+    public String seeOffer(User rider) throws InterruptedException {
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.get("rideOfferFrom") != null){
-                    Log.d("Rider:checking offer","found an offer");
-                    offerer = documentSnapshot.get("rideOfferFrom").toString();
-                }
-                else{
-                    Log.d("Rider:checking offer","cannot find an offer");
-                    offerer = null;
+                if(documentSnapshot.exists()){
+                    if(documentSnapshot.get("rideOfferFrom")!= null){
+                        setOfferer(documentSnapshot.get("rideOfferFrom").toString());
+                    }
+                    else{
+                        offerer = null;
+                    }
                 }
             }
         });
+        Thread.sleep(1000);
         return offerer;
+    }
+
+    public void setOfferer(String driver){
+        offerer = driver;
     }
     public void declineOffer(User rider,User driver){
 //        setProfile(rider.getEmail());
