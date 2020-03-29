@@ -32,7 +32,7 @@ public class GuuDbHelper {
     public static Vehicle car = new Vehicle();
     public static ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
     public static String offerer;
-    public static String offerStat;
+    public static String offerStat = "none";
 
 
 
@@ -523,7 +523,7 @@ public class GuuDbHelper {
             }
         });
 
-        Thread.sleep(1000);
+        Thread.sleep(2000);
 
         String offerStatus = offerStat.toString();
         android.util.Log.i("OFFER STAT = ", offerStatus);
