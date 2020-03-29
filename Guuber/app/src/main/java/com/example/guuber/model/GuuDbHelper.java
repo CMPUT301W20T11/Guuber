@@ -1,10 +1,12 @@
 package com.example.guuber.model;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -266,7 +268,7 @@ public class GuuDbHelper {
      * @param tripCost - the cost of the trip
      */
 
-    public void makeReq(User rider, Double tip, String location, String oriLat, String oriLng, String desLat, String desLng, String tripCost){
+    public void makeReq(User rider, Double tip, String location, String oriLat, String oriLng, String desLat, String desLng, String tripCostb){
         setProfile(rider.getEmail());
         Map<String,Object> details = new HashMap<>();
         details.put("reqTip",tip);
@@ -276,6 +278,9 @@ public class GuuDbHelper {
         details.put("desLat",desLat);
         details.put("desLng",desLng);
         details.put("tripCost",tripCost);
+
+        //details.put("driverArrive", driverArrive = false);
+
         this.profile.update(details);
 
         this.requests.document(rider.getEmail()).set(details);
@@ -565,6 +570,48 @@ public class GuuDbHelper {
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
     }
+
+    /**
+     * Checks if driver has arrived to riders requested location
+     * returns true if driverLocation == riderLocation
+     *
+     * @param rider - the rider with the request and accepts driver
+     *
+     * @param currentLat - the current Latitude of the driver
+     * @param currentLng - the current Longitude of the driver
+     *
+     */
+    public Boolean driverArrive(User rider, String currentLat, String currentLng)
+    {
+        setProfile(rider.getEmail());
+        DocumentReference ref = db.collection("requests").document(rider.getEmail());
+
+        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot document = task.getResult();
+                String Lat = (String) document.getString("oriLat");
+                String Lng = (String) document.getString("oriLng");
+
+            }
+        });
+
+
+        if (Lat == currentLat && Lng == currentLng)
+        {
+            return true; // driver has arrived to riders location
+        }
+        else
+        {
+            return false; // driver is not at rider location
+        }
+
+        //Map<String,Object> location;
+        //Map<String,Object> location = profile.collection("requests").document(rider.getEmail()).;
+        //String Lat = location.get("oriLat"));
+        //String Lng = location.get("oriLng"));
+    }
+
 
     /**
      * Adds or updates the current vehicle to the users profile
