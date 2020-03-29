@@ -512,29 +512,19 @@ public class GuuDbHelper {
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-
                 if(documentSnapshot.get("offerStatus") != null){
                     offerStat = documentSnapshot.get("offerStatus").toString();
-                }
-                else{
-                    offerStat = "none";
-                }
-
+                } else{
+                    offerStat = "none"; }
             }
         });
 
         Thread.sleep(1000);
-
-        String offerStatus = offerStat.toString();
-        android.util.Log.i("OFFER STAT = ", offerStatus);
-
         if(offerStat != null){
             if(offerStat.equals("declined")){
                 profile.update("offerStatus",FieldValue.delete());
             }
-
         }
-
         return offerStat;
     }
 
