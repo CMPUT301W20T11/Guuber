@@ -2,6 +2,8 @@ package com.example.guuber.model;
 
 import androidx.fragment.app.DialogFragment;
 
+import com.example.guuber.MapsDriverActivity;
+
 /**
  * Base app user class
  */
@@ -219,6 +221,10 @@ public class User{
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public void deleteSelf(){
+        //deleteUser(this.email);
     }
 
     /**

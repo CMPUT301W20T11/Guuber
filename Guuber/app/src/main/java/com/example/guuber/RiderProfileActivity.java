@@ -163,7 +163,6 @@ public class RiderProfileActivity extends AppCompatActivity {
     }
 
     public void updateData(String field, String value){
-
         if (field.equals("email")){
             userInfo.setEmail(value);
         }
