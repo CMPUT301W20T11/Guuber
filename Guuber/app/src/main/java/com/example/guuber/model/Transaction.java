@@ -53,8 +53,8 @@ public class Transaction {
      * Set the time of transaction by parsing a date object
      * @param time - Time in the form of a date object
      */
-    public void setTime(Date time) {
-        this.time = tFormat.format(time);
+    public void setTime(String time) {
+        this.time = time;
     }
 
     /**

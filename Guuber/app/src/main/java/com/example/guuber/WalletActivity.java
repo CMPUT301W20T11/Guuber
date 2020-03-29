@@ -1,30 +1,20 @@
 package com.example.guuber;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.example.guuber.adapter.TransactionAdapter;
-import com.example.guuber.model.Transaction;
-import com.example.guuber.model.Wallet;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
+import com.example.guuber.adapter.TransactionAdapter;
+import com.example.guuber.controller.TransactionController;
+import com.example.guuber.model.User;
+import com.example.guuber.model.Wallet;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * This class contains the activity the rider and/or driver
@@ -32,17 +22,20 @@ import java.util.ArrayList;
  * in their menu
  * it enables their ability to view their wallet and balance details
  */
-public class WalletActivity extends AppCompatActivity {
-    private static final String TAG = "Query error";
-
+public class WalletActivity extends AppCompatActivity implements TransactionFragment.OnFragmentInteractionListener {
     // Get the user email from the user singleton, used as db key
     private String uEmail;
 
     // Activity objects
-    Wallet wallet;
-    ListView transactionListView;
-    ArrayList<Transaction> transactionArrayList;
-    ArrayAdapter<Transaction> transactionArrayAdapter;
+    private Wallet wallet;
+    private ListView transactionListView;
+
+    // Db instance of user
+    private FirebaseFirestore db = FirebaseFirestore.getInstance();
+    private CollectionReference uRef = db.collection("Users");
+
+    // Menu item selection
+    int id;
 
 
 
@@ -52,24 +45,22 @@ public class WalletActivity extends AppCompatActivity {
         setContentView(R.layout.activity_wallet);
 
         uEmail = ((UserData) (getApplicationContext())).getUser().getEmail();
-
         transactionListView = findViewById(R.id.trans_lv);
-
-        // TODO: This is just a test
-        Wallet tWallet = new Wallet();
-        Transaction tTransaction = new Transaction(20, "1", "Message");
-        ArrayList<Transaction> aLT = new ArrayList<Transaction>();
-        aLT.add(tTransaction);
-        tWallet.setTransactions(aLT);
-        wallet = tWallet;
-
-        TransactionAdapter transactionAdapter = new TransactionAdapter(this, wallet.getTransactions());
-        transactionListView.setAdapter(transactionAdapter);
 
         // Display the back button if action bar is enabled
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        uRef.document(uEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
+            wallet = documentSnapshot.toObject(User.class).getWallet();
+            TransactionAdapter transactionAdapter = new TransactionAdapter(WalletActivity.this, wallet.getTransactions());
+            transactionListView.setAdapter(transactionAdapter);
+        });
     }
 
     @Override
@@ -80,16 +71,56 @@ public class WalletActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        int id = item.getItemId();
+        id = item.getItemId();
 
         switch (id){
             case R.id.withdraw:
-                Toast.makeText(this, "withdraw clicked", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "withdraw clicked", Toast.LENGTH_SHORT).show();
+                TransactionFragment transactionFragment1 = TransactionFragment.newInstance();
+                transactionFragment1.show(getSupportFragmentManager(), "Withdraw");
                 break;
             case R.id.deposit:
-                Toast.makeText(this, "deposit clicked", Toast.LENGTH_LONG).show();
+                Toast.makeText(this, "deposit clicked", Toast.LENGTH_SHORT).show();
+                TransactionFragment transactionFragment2 = TransactionFragment.newInstance();
+                transactionFragment2.show(getSupportFragmentManager(), "Deposit");
+                break;
+            case android.R.id.home:
+                this.finish();
                 break;
         }
         return true;
+    }
+
+    // Transaction fragment cancel button onClick listener implementation
+    @Override
+    public void onCancelPressed(){
+        Toast.makeText(this, "Transaction cancelled", Toast.LENGTH_SHORT).show();
+    }
+
+    // Transaction fragment ok button onClick listener implementation
+    @Override
+    public void onOkPressed(Double amount) {
+        switch (id) {
+            case R.id.withdraw:
+                uRef.document(uEmail).get().addOnSuccessListener(documentSnapshot -> {
+                    User user = documentSnapshot.toObject(User.class);
+                    if(TransactionController.processWithdrawal(user, amount)) {
+                        uRef.document(uEmail).set(user);
+                    }else{
+                        Toast.makeText(WalletActivity.this, "Insufficient funds", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+            case R.id.deposit:
+                uRef.document(uEmail).get().addOnSuccessListener(documentSnapshot -> {
+                    User user = documentSnapshot.toObject(User.class);
+                    if(TransactionController.processDeposit(user, amount)) {
+                        uRef.document(uEmail).set(user);
+                    }else{
+                        Toast.makeText(WalletActivity.this, "Deposit failed", Toast.LENGTH_SHORT).show();
+                    }
+                });
+                break;
+        }
     }
 }

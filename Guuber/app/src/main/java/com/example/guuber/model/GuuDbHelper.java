@@ -72,7 +72,6 @@ public class GuuDbHelper {
                     setUser(documentSnapshot.get("phoneNumber").toString(),documentSnapshot.get("email").toString(),
                             documentSnapshot.get("firstName").toString(),
                             documentSnapshot.get("lastName").toString(),
-                            documentSnapshot.get("uid").toString(),
                             documentSnapshot.get("username").toString(),
                             (int)(long) documentSnapshot.get("rider"),
                             (int)(long) documentSnapshot.get("posRating"),
@@ -105,12 +104,11 @@ public class GuuDbHelper {
      * @param transactions - list of transactions(changes to their balance) that the user incurred
      *
      * */
-    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating){
+    public void setUser(String phone,String email,String first,String last,String uname,Integer rider, Integer posRating, Integer negRating){
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
         this.user.setFirstName(first);
         this.user.setLastName(last);
-//        this.user.setUid(uid);
         this.user.setUsername(uname);
         this.user.setRider(rider);
 
@@ -126,7 +124,26 @@ public class GuuDbHelper {
      * @return - the user under the email inputted
      * */
     public User getUser(String email ){
-        findUser(email);
+//        findUser(email);
+        users.document(email).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot doc = task.getResult();
+                    if(doc.exists()){
+                        user.setEmail(email);
+                        user.setPhoneNumber(doc.get("phoneNumber").toString());
+                        user.setFirstName(doc.get("firstName").toString());
+                        user.setLastName(doc.get("lastName").toString());
+                        user.setUsername(doc.get("username").toString());
+                        user.setRider((int)(long) doc.get("rider"));
+
+                        user.setPosRating((int)(long) doc.get("posRating"));
+                        user.setNegRating((int)(long) doc.get("negRating"));
+                    }
+                }
+            }
+        });
         setProfile(email);
         return user;
     }
