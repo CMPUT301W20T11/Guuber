@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class GuuDbHelper {
     private static FirebaseFirestore db;
@@ -31,6 +32,7 @@ public class GuuDbHelper {
     public static Vehicle car = new Vehicle();
     public static ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
     public static String offerer;
+    public static String offerStat;
 
 
 
@@ -68,10 +70,10 @@ public class GuuDbHelper {
                             documentSnapshot.get("username").toString(),
                             (int)(long) documentSnapshot.get("rider"),
                             (int)(long) documentSnapshot.get("posRating"),
-                            (int)(long) documentSnapshot.get("negRating"),
+                            (int)(long) documentSnapshot.get("negRating")
 
-                            documentSnapshot.getDouble("balance"),
-                            (ArrayList<Double>) documentSnapshot.get("transactions")
+                            //,documentSnapshot.getDouble("balance"),
+                            //(ArrayList<Double>) documentSnapshot.get("transactions")
                     );
                 }
                 else{
@@ -97,7 +99,7 @@ public class GuuDbHelper {
      * @param transactions - list of transactions(changes to their balance) that the user incurred
      *
      * */
-    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating, Double balance, ArrayList<Double> transactions){
+    public void setUser(String phone,String email,String first,String last,String uid,String uname,Integer rider, Integer posRating, Integer negRating){
         this.user.setEmail(email);
         this.user.setPhoneNumber(phone);
         this.user.setFirstName(first);
@@ -109,8 +111,8 @@ public class GuuDbHelper {
         this.user.setPosRating(posRating);
         this.user.setNegRating(negRating);
 
-//        this.user.setBalance(balance);
-//        this.user.setTransHistory(transactions);
+        //this.user.setBalance(balance);
+        // this.user.setTransHistory(transactions);
     }
     /**
      * Gets the information under the person's email from the database
@@ -430,39 +432,48 @@ public class GuuDbHelper {
         profile.update("rideOfferFrom",driver.getEmail());
     }
 
-    public String seeOffer(User rider){
+    public String seeOffer(User rider) throws InterruptedException {
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.get("rideOfferFrom") != null){
-                    Log.d("Rider:checking offer","found an offer");
-                    offerer = documentSnapshot.get("rideOfferFrom").toString();
-                }
-                else{
-                    Log.d("Rider:checking offer","cannot find an offer");
-                    offerer = null;
+                if(documentSnapshot.exists()){
+                    if(documentSnapshot.get("rideOfferFrom")!= null){
+                        setOfferer(documentSnapshot.get("rideOfferFrom").toString());
+                    }
+                    else{
+                        offerer = null;
+                    }
                 }
             }
         });
+        Thread.sleep(1000);
         return offerer;
     }
-    public void declineOffer(User rider){
 
+    public void setOfferer(String driver){
+        offerer = driver;
+    }
+    public void declineOffer(User rider,User driver){
+//        setProfile(rider.getEmail());
+//        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                offerer = documentSnapshot.get("rideOfferFrom").toString();
+//                profile.update("rideOfferFrom",FieldValue.delete());
+//
+//            }
+//        });
+//        setProfile(offerer);
+//        profile.update("offerTo",FieldValue.delete());
+//        profile.update("offerStatus","declined");
         setProfile(rider.getEmail());
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                offerer = documentSnapshot.get("rideOfferFrom").toString();
-            }
-        });
         profile.update("rideOfferFrom",FieldValue.delete());
-        setProfile(offerer);
+        setProfile(driver.getEmail());
         profile.update("offerTo",FieldValue.delete());
         profile.update("offerStatus","declined");
     }
     public void acceptOffer(User rider){
-        final String[] driver = new String[1];
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -474,23 +485,19 @@ public class GuuDbHelper {
         profile.update("offerStatus","accepted");
     }
 
-    public String checkOfferStatus(User driver){
-        final String[] status = new String[1];
+    public String checkOfferStatus(User driver) throws InterruptedException {
         setProfile(driver.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.get("offerStatus").toString().equals("declined")){
-                    status[0] = "declined";
-
-                }
-                else if (documentSnapshot.get("offerStatus").toString().equals("accepted")){
-                    status[0] = "accepted";
-                }
+                offerStat = documentSnapshot.get("offerStatus").toString();
             }
         });
-        profile.update("offerStatus",FieldValue.delete());
-        return status[0];
+        Thread.sleep(1000);
+        if(offerStat.equals("declined")){
+            profile.update("offerStatus",FieldValue.delete());
+        }
+        return offerStat;
     }
 
 
@@ -502,6 +509,7 @@ public class GuuDbHelper {
     public void reqAccepted(User rider, User driver) throws InterruptedException {
 
         setProfile(rider.getEmail());
+        profile.update("rideOfferFrom",FieldValue.delete());
         profile.update("reqDriver",driver.getEmail());
         Map<String,Object> reqDetails = getRiderRequest(rider);
         Thread.sleep(1000);
@@ -509,6 +517,7 @@ public class GuuDbHelper {
         requests.document(rider.getEmail()).delete();
         setProfile(driver.getEmail());
         profile.update("offerTo",FieldValue.delete());
+        profile.update("offerStatus",FieldValue.delete());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
     }
