@@ -587,7 +587,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     public void onInfoWindowClick(Marker marker) {
 
         calculateDirectionsToPickup(marker); //draw drivers route to pickup
-        calculateDirectionsBetweenPickupandDropOff(marker); //not working right meow >:(
+        try {
+            calculateDirectionsBetweenPickupandDropOff(marker); //not working right meow >:(
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
 
         if(offerSent == false) {
@@ -648,16 +652,16 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     /**
      * @param marker
-     * @ TODO: 3/27/2020
+     * @ TODO: 3/28/2020
      */
-    private void calculateDirectionsBetweenPickupandDropOff(Marker marker) {
+    private void calculateDirectionsBetweenPickupandDropOff(Marker marker) throws InterruptedException {
         android.util.Log.i(TAG, marker.getTitle());
         User clickedUser = driverDBHelper.getUser(marker.getTitle());
         clickedUser.setEmail(marker.getTitle());
         android.util.Log.i(TAG, "got the user");
 
-        Map<String, Object> drawingRidersRoute = driverDBHelper.getRiderRequest(clickedUser);
-        android.util.Log.i(TAG, drawingRidersRoute.toString());
+        //Map<String, Object> drawingRidersRoute = driverDBHelper.getRiderRequest(clickedUser);
+        //android.util.Log.i(TAG, drawingRidersRoute.toString());
 
         /**Double destinationLat = null, destinationLong = null, originLat = null, originLong = null;
 
