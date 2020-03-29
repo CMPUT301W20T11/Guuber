@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class GuuDbHelper {
     private static FirebaseFirestore db;
@@ -32,7 +33,7 @@ public class GuuDbHelper {
     public static Vehicle car = new Vehicle();
     public static ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
     public static String offerer;
-    public static String offerStat;
+    public static String offerStat = "none";
 
 
 
@@ -347,9 +348,10 @@ public class GuuDbHelper {
      * @param rider - the user who made the request
      * @return - the details of the request in as a Map<String,Object> format </String,Object>
      */
-    public Map<String,Object> getRiderRequest(User rider){
+    public Map<String,Object> getRiderRequest(User rider) throws InterruptedException {
 
         setProfile(rider.getEmail());
+        TimeUnit.SECONDS.sleep(5);
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -519,7 +521,15 @@ public class GuuDbHelper {
             }
         });
 
+<<<<<<< HEAD
         Thread.sleep(1000);
+=======
+        Thread.sleep(2000);
+
+        String offerStatus = offerStat.toString();
+        android.util.Log.i("OFFER STAT = ", offerStatus);
+
+>>>>>>> 6d2069c53f5a75972b039657ebbc310287ab52d7
         if(offerStat != null){
             if(offerStat.equals("declined")){
                 profile.update("offerStatus",FieldValue.delete());
