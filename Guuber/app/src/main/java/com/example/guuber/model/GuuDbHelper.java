@@ -662,8 +662,10 @@ public class GuuDbHelper {
 
         if (rrLat == ddLat && rrLng == ddLng) {
             return true; // driver has arrived to riders location
-        } else {
-            return false; // driver is not at rider location }
+        }
+        else {
+            return false; // driver is not at rider location
+        }
 
             //Map<String,Object> location;
             //Map<String,Object> location = profile.collection("requests").document(rider.getEmail()).;
