@@ -175,10 +175,10 @@ public class GuuDbHelperTest {
 
         Boolean mike = dbHelper.driverArrive(user, "0000", "0000");
         Thread.sleep(1000);
-        if (mike == true)
-        {
-            System.out.println("works");
-        }
+        //if (mike == true)
+        //{
+        //    System.out.println("works");
+        //}
 
 
         Map<String,Object> reqDetail;
