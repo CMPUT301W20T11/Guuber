@@ -608,14 +608,11 @@ public class GuuDbHelper {
      * @param currentLng - the current Longitude of the driver
      *
      */
-    public synchronized  Boolean driverArrive(User rider, User driver) {
+    public synchronized  Boolean driverArrive(User rider, Double dLat, Double dLng) {
         // rider coordinates
         final Double[] rLat = new Double[1];
         final Double[] rLng = new Double[1];
 
-        //driver coordinates
-        final Double[] dLat = new Double[1];
-        final Double[] dLng = new Double[1];
 
         setProfile(rider.getEmail());
         DocumentReference riderRef = db.collection("Users").document(rider.getEmail());
@@ -631,19 +628,6 @@ public class GuuDbHelper {
         });
 
 
-        setProfile(driver.getEmail());
-        DocumentReference driverRef = db.collection("Users").document(driver.getEmail());
-        driverRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot document = task.getResult();
-                assert document != null;
-                dLat[0] = (Double) document.getDouble("oriLat");
-                dLng[0] = (Double) document.getDouble("oriLng");
-
-            }
-        });
-
         /** Convert Coordinates to doubles
          If one of the coordinates is a word or anything except numbers this function cannot work and returns a false
         try{
@@ -657,8 +641,8 @@ public class GuuDbHelper {
         String rrLat = df.format(rLat[0]);
         String rrLng = df.format(rLng[0]);
 
-        String ddLat = df.format(dLat[0]);
-        String ddLng = df.format(dLng[0]);
+        String ddLat = df.format(dLat);
+        String ddLng = df.format(dLng);
 
         if (rrLat == ddLat && rrLng == ddLng) {
             return true; // driver has arrived to riders location
