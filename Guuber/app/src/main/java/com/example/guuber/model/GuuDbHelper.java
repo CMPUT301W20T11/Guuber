@@ -655,8 +655,8 @@ public class GuuDbHelper {
             //Map<String,Object> location = profile.collection("requests").document(rider.getEmail()).;
             //String Lat = location.get("oriLat"));
             //String Lng = location.get("oriLng"));
-        
-    }
+        }
+    
 
     /**
      * Adds or updates the current vehicle to the users profile
