@@ -36,6 +36,10 @@ public class GuuDbHelper {
     public static String offerer;
     public static String offerStat = "none";
 
+    public static String arrivee;
+    public static String arriver;
+    public static String arrivalStatus = "none";
+
 
     //public static Wallet wall;
     //private static CollectionReference wallet;
@@ -266,6 +270,7 @@ public class GuuDbHelper {
      * @param desLat - Latitudinal coordinate of the destination
      * @param desLng - Latitudinal coordinate of the destination
      * @param tripCost - the cost of the trip
+     *  >WORKS
      */
     public synchronized void makeReq(User rider, Double tip, double oriLat, double oriLng, double desLat, double desLng, String tripCost){
         setProfile(rider.getEmail());
@@ -285,6 +290,7 @@ public class GuuDbHelper {
     /**
      * Cancels the user's request
      * @param rider - rider who want to cancel their request
+     *  >WORKS
      */
     public synchronized void cancelRequest(User rider) {
         setProfile(rider.getEmail());
@@ -357,7 +363,6 @@ public class GuuDbHelper {
      * @return - the details of the request in as a Map<String,Object> format </String,Object>
      */
     public synchronized Map<String,Object> getRiderRequest(User rider) throws InterruptedException {
-
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -479,7 +484,6 @@ public class GuuDbHelper {
     /**
      * Let the rider decline the offer from the driver
      * @param rider - the person who declines the offer
-     * @param driver - the person who's offer is declined
      */
     public synchronized void declineOffer(User rider){
         setProfile(rider.getEmail());
@@ -504,13 +508,63 @@ public class GuuDbHelper {
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
+                arrivee = rider.getEmail();
+                setProfile(arrivee);
+                profile.update("arrived","false"); //rider now has a field
+
                 offerer = documentSnapshot.get("rideOfferFrom").toString();
                 setProfile(offerer);
                 profile.update("offerStatus","accepted");
+                profile.update("arrived","false"); //driver now has a field
             }
         });
-        setProfile(offerer);
-        profile.update("offerStatus","accepted");
+        //setProfile(offerer); causing crash
+        //profile.update("arrived","false");
+        //profile.update("offerStatus","accepted");
+    }
+
+
+    /**
+     * function to set the status of the arrival. Driver sets to true upon arrival
+     * @param email is the drivers email
+     * WORKS >
+     */
+    public synchronized void setArrival(String email){
+        setProfile(email);
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                arriver = email;
+                setProfile(arriver);
+                profile.update("arrived","true");
+
+                arrivee = documentSnapshot.get("offerTo").toString();
+                setProfile(arrivee);
+                profile.update("arrived","true"); //driver now has a field
+            }
+        });
+    }
+
+
+    /**
+     * function to get the status of the arrival
+     * @param email is the riders email
+     *  WORKS >
+     */
+    public synchronized String getArrival(String email){
+        setProfile(email);
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                arrivalStatus = documentSnapshot.get("arrived").toString();
+                if (arrivalStatus.equals("true")){
+                    android.util.Log.i("ARRIVAL STATUS =", "true");
+                }else if (arrivalStatus.equals("false")){
+                    android.util.Log.i("ARRIVAL STATUS =", "false");
+                }
+            }
+        });
+        return arrivalStatus;
     }
 
     /**
@@ -543,6 +597,10 @@ public class GuuDbHelper {
     }
 
 
+
+
+
+
     /**
      * Stores details between driver and rider when a request is accepted
      * @param rider - the rider with the request and accepts driver
@@ -551,13 +609,14 @@ public class GuuDbHelper {
     public synchronized void reqAccepted(User rider, User driver) throws InterruptedException {
 
         setProfile(rider.getEmail());
+
         profile.update("rideOfferFrom",FieldValue.delete());
         profile.update("reqDriver",driver.getEmail());
         Map<String,Object> reqDetails = getRiderRequest(rider);
         reqList.remove(reqDetails);
         requests.document(rider.getEmail()).delete();
+
         setProfile(driver.getEmail());
-        profile.update("offerTo",FieldValue.delete());
         profile.update("offerStatus",FieldValue.delete());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 

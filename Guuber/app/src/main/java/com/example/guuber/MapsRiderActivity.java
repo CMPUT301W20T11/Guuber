@@ -89,6 +89,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int  WALLET = 3;
     private static final int  QR = 4;
     private static final int QR_REQ_CODE = 3;
+    private static final int SIGNOUT = 5;
+
+    // for signing out of app
+    private static final int RC_SIGN_OUT = 1000;
 
     private GoogleMap guuberRiderMap;
     private Button changeOriginButton, changeDestinationButton;
@@ -112,6 +116,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     /***********the database******/
     private FirebaseFirestore riderMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper riderDBHelper = new GuuDbHelper(riderMapsDB);
+
+    /**TINASHE YOU MIGHT NEED THIS**/
+    String potentialOfferer = null;
 
 
 
@@ -180,6 +187,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 }else if (position == QR){
                     /**generate a QR code**/
                     makeQR();
+                    riderSpinner.setSelection(MENU);
+                }else if (position == SIGNOUT) {
+                    /**start the scanQR activity**/
+                    signOut();
                     riderSpinner.setSelection(MENU);
                 }
             }
@@ -308,7 +319,15 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         qrProfileIntent.putExtra("INFO_TAG", info);
         startActivityForResult(qrProfileIntent, QR_REQ_CODE);
     }
-
+    /**
+     * Sign out a user and return to the login activity
+     **/
+    public void signOut() {
+        Intent signOutConfirm  = new Intent(MapsRiderActivity.this, LoginActivity.class);
+        signOutConfirm.putExtra("SignOut", "TRUE");
+        setResult(RC_SIGN_OUT, signOutConfirm);
+        finish();
+    }
     /**********************************END SPINNER METHODS*****************************************/
 
      /**
@@ -637,7 +656,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     .setPositiveButton("Check For Offers", (dialog, which) -> {
                         /*****temporary call saying trip is over until we have offer Request going*****/
                         User currUser = ((UserData)(getApplicationContext())).getUser();
-                        String potentialOfferer = null; // <-- fixed a crash. Initialize just in case db has not updated yet.
+                        potentialOfferer = null; // <-- fixed a crash. Initialize just in case db has not updated yet.
                         try {
                             potentialOfferer = riderDBHelper.seeOffer(currUser); //required to surround with try catch
                         } catch (InterruptedException e) {
@@ -663,13 +682,26 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             }else if (rideInProgress == true) {
                 builder
                     .setTitle("Driver Is On Way")
+                        .setNeutralButton("View Driver Profile", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                /*****TINASHE*****/
+                                android.util.Log.i("CLICKED ON = ", "View Driver Profile");
+
+                            }
+                        })
                     .setPositiveButton("Check If Driver Has Arrived", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            /***TO DO***/
-                            android.util.Log.i(TAG, "DRIVER IS ON THE WAY");
-                            /**call method to pay the driver**/
-                            /**if the driver has arrived  then riderIsOver = true;***/
+                            User currRider = ((UserData) (getApplicationContext())).getUser();
+                            String arrivalStat  = riderDBHelper.getArrival(currRider.getEmail());
+                            if (arrivalStat.equals("true")) {
+                                driverIsHereDialog(currRider.getEmail(),potentialOfferer);
+                                dialog.dismiss();
+                            }else {
+                                driverHasNotArrivedYetToast();
+                                dialog.dismiss();
+                            }
                         }
                     })
                     .setNegativeButton("Cancel request", (dialog, which) -> {
@@ -682,6 +714,12 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     });
             final AlertDialog alert = builder.create();  alert.show();
         }
+    }
+
+    private void driverHasNotArrivedYetToast(){
+        new Handler().postDelayed(() -> {
+            Toast.makeText(MapsRiderActivity.this, "Your driver has not arrived yet", Toast.LENGTH_LONG).show();
+        }, 400);
     }
 
 
@@ -892,7 +930,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripOverPolyLinesColors));
                 final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
                 builder
-                        .setTitle("Your Driver Has Arrived!! that was pretty fast... ")
+                        .setTitle("Your Driver Has Arrived!! That was pretty fast... ")
                         .setCancelable(false)
                         .setNegativeButton("Rate Driver", new DialogInterface.OnClickListener() {
                                     @Override

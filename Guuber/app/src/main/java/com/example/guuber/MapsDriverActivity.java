@@ -77,7 +77,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private static final int MYPROFILE = 2;
     private static final int WALLET = 3;
     private static final int SCANQR = 4;
+    private static final int SIGNOUT = 5;
 
+    // for signing out of app
+    private static final int RC_SIGN_OUT = 1000;
 
     private GoogleMap guuberDriverMap;
     private Spinner driverSpinner;
@@ -177,6 +180,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     /**start the scanQR activity**/
                     scanQR();
                     driverSpinner.setSelection(MENU);
+                }else if (position == SIGNOUT) {
+                    /**start the scanQR activity**/
+                    signOut();
+                    driverSpinner.setSelection(MENU);
                 }
             }
 
@@ -253,6 +260,15 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         final Intent scanQrProfileIntent = new Intent(MapsDriverActivity.this, scanQrActivity.class);
         startActivityForResult(scanQrProfileIntent, QR_SCAN_CODE);
     }
+    /**
+     * Sign out a user and return to the login activity
+     **/
+    public void signOut() {
+        Intent signOutConfirm  = new Intent(MapsDriverActivity.this, LoginActivity.class);
+        signOutConfirm.putExtra("SignOut", "TRUE");
+        setResult(RC_SIGN_OUT, signOutConfirm);
+        finish();
+    }
 
     /****************************************END SPINNER METHODS***********************************************/
 
@@ -304,6 +320,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             Location location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
 
 
+
             if (location != null) {
                 /**create a new LatLng location object for the user current location**/
                 LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -314,6 +331,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }else{
                 location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
+                LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                setMarker(currLocation," Your Location");
                 android.util.Log.i("DRIVER LOCATION = ", null);
             }
         }
@@ -686,6 +705,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                                     }
                                 }else if (statusCheck.equals("declined")){
                                     offerAccepted = false;
+                                    offerSent = false;
                                     offerDeclined();
                                     dialog.dismiss();
                                 }else if (statusCheck.equals("pending") || statusCheck.equals("none")){
@@ -701,10 +721,19 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }else if (routeInProgress == true){
             builder
                     .setMessage("Route In Progress")
+                    .setNeutralButton("View Rider Profile", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            /*****TINASHE TO DO*******/
+                            android.util.Log.i("CLICKED ON:", "VIEW RIDER PROFILE");
+                        }
+                    })
                     .setPositiveButton("Let The Rider Know You have Arrived", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            android.util.Log.i(TAG, "DRIVER HAS ARRIVED"); //TO DO AFTER CRASHES ARE FIXED
+                            User currdriver = ((UserData)(getApplicationContext())).getUser();
+                            String myEmail = currdriver.getEmail();
+                            driverDBHelper.setArrival(myEmail);
                         }
                     });
             final AlertDialog alert = builder.create();alert.show();
@@ -726,10 +755,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
 
         User currDriver = ((UserData)(getApplicationContext())).getUser();
-        android.util.Log.i("CURR DRIVER EMAIL",  currDriver.getEmail()); //works fine
+        android.util.Log.i("CURR DRIVER EMAIL",  currDriver.getEmail());
 
 
-        User riderToOfferTo = driverDBHelper.getUser(currReqRiderEmail); //<------ FIRST crash. even though rider email is correct
+        User riderToOfferTo = driverDBHelper.getUser(currReqRiderEmail);
         android.util.Log.i("Rider to Offer To: ",  riderToOfferTo.toString());
 
         String theRidersEmail = marker.getTitle();
