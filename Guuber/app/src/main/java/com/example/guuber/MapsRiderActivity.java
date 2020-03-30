@@ -98,7 +98,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private Polyline polyline;
     private boolean rideisPending = false;
     private boolean rideInProgress = false;
-    private boolean rideIsOver = false;
+    private boolean paymentFailed = false;
 
 
     /*******NEW MAPS INTEGRATION**/
@@ -264,9 +264,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     /**********************************END SPINNER METHODS*****************************************/
 
-
-
-
      /**
      * Manipulates the map once available.
      * If Google Play services is not installed on the device, the user will be prompted to install
@@ -307,7 +304,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     setMarker(getOrigin(), "Origin");
                     setMarker(getDestination(), "Destination");
                     calculateDirections(); //automatically calculates directions and draws a route
-                } else {
+                } else if (paymentFailed == true) {
+                    payDriverFirstToast();
+                }else{
                     cancelRequestFirstToast();
                 }
             }
@@ -488,39 +487,29 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     /**
      * iF USER PERMISSION HAS ALREADY BEEN ACCEPTED IT WILL NOT PROMPT THE USER
-     * AND SET BOOLEAN  TO TRUE
-     * ELSE IT WILL RETURN FALSE
      * @return true if user has granted permission, false if user has not
      */
     private boolean checkUserPermission() {
-        if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(this.getApplicationContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             isLocationPermissionGranted = true;
             return true;
         } else {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-                    PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION}, PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
             return false;
         }
     }
 
 
-
     /**
-     * SETTING A BOOLEAN TO TRUE IF
-     * ON ACTIVITY REQUEST PERMISSION FINISH
-     * USER HAS ENABLED LOCATION SERVICES
-     * RUNS RIGHT AFTER PERMISSION RESULT
+     * SETTING A BOOLEAN TO TRUE IF ON ACTIVITY REQUEST PERMISSION FINISH
+     * USER HAS ENABLED LOCATION SERVICES RUNS RIGHT AFTER PERMISSION RESULT
      */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         isLocationPermissionGranted = false;
         switch (requestCode) {
             case PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: {
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     isLocationPermissionGranted = true;
                 }
             }
@@ -529,8 +518,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
     /**
-     * GET THE RESULT OF THE REQUEST PERMISSION EVENT
-     * KEEP CHECKING PERMISSION UNTIL GRANTED
+     * GET THE RESULT OF THE REQUEST PERMISSION EVENT KEEP CHECKING PERMISSION UNTIL GRANTED
      **/
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -540,88 +528,92 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             case PERMISSIONS_REQUEST_ENABLE_GPS: {
                 if (isLocationPermissionGranted == false) {
                     checkUserPermission();
-
                 }
             }
             case QR_REQ_CODE:{
                 android.util.Log.i(TAG,"IN QR REC COE ON ACTIVITY FINISH");
                 if(resultCode == RESULT_OK){
                     Toast.makeText(this, "Transaction processed",  Toast.LENGTH_SHORT).show();
-                    // Transaction went through, call some function for the next step of ride
+                    guuberRiderMap.clear();
+                    //tell database request is gone
+                    rideInProgress = false;
+                    rideisPending = false;
                 }else{
-                    // Transaction failed, call some function to cancel the ride
-                    Toast.makeText(this, "Transaction failed",  Toast.LENGTH_SHORT).show();
+                    paymentFailed = true;
+                    Toast.makeText(this, "Transaction failed. Please Pay Your Driver",  Toast.LENGTH_SHORT).show();
                 }
             }
         }
     }
 
+    /**
+     * letting the user know they must pay the driver before using the map (application) again
+     */
+    private void payDriverFirstToast(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MapsRiderActivity.this, "You Have Yet To Pay Your Driver! Click Menu --> GenerateQR", Toast.LENGTH_LONG).show();
+            }
+        }, 500);
+    }
 
+
+    /**
+     * Determines what to do on Info Window click. This is dependant on what stage of the ride sequence the rider is in
+     * @param marker either marker (origin, destination) the user has set
+     */
     @Override
     public void onInfoWindowClick(Marker marker) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
 
         if (rideInProgress == false && rideisPending == false) {
             final NumberPicker numberPicker = new NumberPicker(MapsRiderActivity.this);
             numberPicker.setMaxValue(100); numberPicker.setMinValue(0);
-
-            final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
             builder
-                    .setTitle("This Trip Will Cost You: $" + getTripCost()).setCancelable(false)
-                    .setMessage("Choose A Tip Percentage").setView(numberPicker)
-                    .setNegativeButton("Make a request", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    rideisPending = true; //ride is an open request
-                                    setTip(numberPicker.getValue());
-                                    makeRequest(marker);
-                                    dialog.dismiss(); }
-                            }
-                    )
-                    .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
-                        public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                            dialog.cancel(); }
-                    });
+                    .setTitle("This Trip Will Cost You: $" + getTripCost())
+                    .setCancelable(false)
+                    .setMessage("Choose A Tip Percentage")
+                    .setView(numberPicker)
+                    .setNegativeButton("Make a request", (dialog, which) -> {
+                        rideisPending = true; //ride is an open request
+                        setTip(numberPicker.getValue()); //set the tip percentage
+                        makeRequest(marker); //make the request
+                        dialog.dismiss();
+                    }
+                    ).setNeutralButton("Exit", (dialog, id) -> dialog.cancel());
             final AlertDialog alert = builder.create(); alert.show();
+
         }else if (rideisPending == true){
-            //no Dialog builder for while
-            final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
             builder
                 .setTitle("Ride Is Pending")
-                    .setPositiveButton("Check For Offers", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            /*****temporary call saying trip is over until we have offer Request going*****/
-                            User currUser = ((UserData)(getApplicationContext())).getUser();
-                            String potentialOfferer = null;
-                            try {
-                                potentialOfferer = riderDBHelper.seeOffer(currUser);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+                    .setPositiveButton("Check For Offers", (dialog, which) -> {
+                        /*****temporary call saying trip is over until we have offer Request going*****/
+                        User currUser = ((UserData)(getApplicationContext())).getUser();
+                        String potentialOfferer = null; // <-- fixed a crash. Initialize just in case db has not updated yet.
+                        try {
+                            potentialOfferer = riderDBHelper.seeOffer(currUser); //required to surround with try catch
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
-                            if (potentialOfferer != null){
-                                willYouAcceptThisOfferDialog(potentialOfferer);
-                            }else{
-                                noOffersYetToast();
-                                dialog.dismiss();
-                            }
-
+                        if (potentialOfferer != null){
+                            willYouAcceptThisOfferDialog(potentialOfferer);
+                        }else{
+                            noOffersYetToast();
+                            dialog.dismiss();
                         }
                     })
-                    .setNegativeButton("Cancel request", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                rideisPending = false;
-                                guuberRiderMap.clear();
-                                User currUser = ((UserData)(getApplicationContext())).getUser();
-                                riderDBHelper.cancelRequest(currUser);
-                                dialog.dismiss();
-                            }
-                        });
-                final AlertDialog alert = builder.create();
-                alert.show();
+                    .setNegativeButton("Cancel request", (dialog, which) -> {
+                        User currUser = ((UserData)(getApplicationContext())).getUser();
+                        rideisPending = false;
+                        riderDBHelper.cancelRequest(currUser);
+                        guuberRiderMap.clear();
+                        dialog.dismiss();
+                    });
+                final AlertDialog alert = builder.create(); alert.show();
+
             }else if (rideInProgress == true) {
-                final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
                 builder
                     .setTitle("Driver Is On Way")
                     .setPositiveButton("Check If Driver Has Arrived", new DialogInterface.OnClickListener() {
@@ -629,26 +621,23 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         public void onClick(DialogInterface dialog, int which) {
                             /***TO DO***/
                             android.util.Log.i(TAG, "DRIVER IS ON THE WAY");
+                            /**call method to pay the driver**/
                             /**if the driver has arrived  then riderIsOver = true;***/
                         }
                     })
-                    .setNegativeButton("Cancel request", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            rideisPending = false;
-                            rideInProgress = false;
-                            guuberRiderMap.clear();
-                            User currUser = ((UserData) (getApplicationContext())).getUser();
-                            riderDBHelper.cancelRequest(currUser);
-                            dialog.dismiss();
-                        }
+                    .setNegativeButton("Cancel request", (dialog, which) -> {
+                        rideisPending = false;
+                        rideInProgress = false;
+                        guuberRiderMap.clear();
+                        User currUser = ((UserData) (getApplicationContext())).getUser();
+                        riderDBHelper.cancelRequest(currUser);
+                        dialog.dismiss();
                     });
-            final AlertDialog alert = builder.create();
-            alert.show();
-
-
+            final AlertDialog alert = builder.create();  alert.show();
         }
     }
+
+
 
     /**
      * letting the user know their is no takers yet for their request
@@ -674,26 +663,22 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         riderDBHelper.acceptOffer(currUser); //<----if this causing crash
                         yourDriverIsOnTheWayToast();
                         dialog.dismiss(); }
-                }).setNeutralButton("View Driver Profile", new DialogInterface.OnClickListener() {
-                    public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                        /*****TINASHE*****/
-                        //User user = driverDBHelper.getUser(marker.getTitle());
+                }).setNeutralButton("View Driver Profile", (dialog, id) -> {
+                    /*****TINASHE*****/
+                    //User user = driverDBHelper.getUser(marker.getTitle());
 
-                        User user = null;
-                        try {
-                            user = riderDBHelper.getUser(potentialOfferer);
-                            viewDriverProfile(user);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        //show the driver who is offering (potential offerers) profile
-                        dialog.dismiss(); }
-                }).setNegativeButton("Decline", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                android.util.Log.i("RIDER CLICKED ACCEPTED", "ACCEPTED");
-                dialog.dismiss(); }
-            });
+                    User user = null;
+                    try {
+                        user = riderDBHelper.getUser(potentialOfferer);
+                        viewDriverProfile(user);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //show the driver who is offering (potential offerers) profile
+                    dialog.dismiss();
+                }).setNegativeButton("Decline", (dialog, which) -> {
+                    Log.i("RIDER CLICKED ACCEPTED", "ACCEPTED");
+                    dialog.dismiss(); });
         final AlertDialog alert = builder.create(); alert.show();
     }
 
@@ -702,14 +687,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * let the rider know the driver has been notified and they are on the way**
      */
     private void yourDriverIsOnTheWayToast(){
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                String toastStr ="Your Driver is on The Way!";
-                Toast.makeText(MapsRiderActivity.this, toastStr, Toast.LENGTH_LONG).show();
-            }
+        new Handler().postDelayed(() -> {
+            String toastStr ="Your Driver is on The Way!";
+            Toast.makeText(MapsRiderActivity.this, toastStr, Toast.LENGTH_LONG).show();
         }, 600);
-
     }
 
 
@@ -720,7 +701,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      */
     public void makeRequest(Marker marker){
         Toast.makeText(this, "Request Pending! Click On Your Destination To Check for Offers or  To Cancel", Toast.LENGTH_LONG).show();
-        polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.polyLinesColors));
+        polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripIsPendingPolyLinesColors));
 
         Double originLatitude = getOrigin().latitude;
         Double originLongitude = getOrigin().longitude;
@@ -830,7 +811,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         ));
                     }
                     polyline = guuberRiderMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
-                    polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.clickedPolyLinesColors));
+                    polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.drawPolyLinesColors));
                 }
             }
         });
@@ -843,7 +824,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      */
     private void driverIsHereDialog(String ridersEmail, String driversEmail){
         polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripInProgressPolyLinesColors));
-        //android.util.Log.i(TAG, "RIDERS EMAIL IS SET TO");
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -885,24 +866,15 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                                 // Show the generated qr
                                 startActivityForResult(payDriverIntent, 2);
 
-                                // Check whether or not driver is actually paid so user can start using app**/
-                                rideIsOver = true;
+
                                 rideisPending = false;
                                 rideInProgress = false;
                                 guuberRiderMap.clear();
 
-                                /**some condition to check whether or not driver is actually paid so user can start using app**/
-                                /**if driver is waiting for payment dont reset rideIsPending/ rideInProgress**/
-                                rideIsOver = true;
-                                rideisPending = false;
-                                rideInProgress = false;
-                                guuberRiderMap.clear();
                             }
                         });
-                final AlertDialog alert = builder.create();
-                alert.show();
+                final AlertDialog alert = builder.create(); alert.show();
             }},8000);
-        
     }
 
 
