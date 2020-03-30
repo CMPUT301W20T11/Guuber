@@ -865,6 +865,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
         /**from the drivers current position**/
         LatLng currDriverLocation = getDriverLocation();
+        setDriverLocation(currDriverLocation);
         driverDirections.origin(
                 new com.google.maps.model.LatLng(
                         currDriverLocation.latitude,
