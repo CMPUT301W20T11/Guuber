@@ -561,7 +561,7 @@ public class GuuDbHelper {
      * @param currentLng - the current Longitude of the driver
      *
      */
-    public synchronized  Boolean driverArrive(User rider, Double currentLat, Double currentLng) {
+    public synchronized  Boolean driverArrive(User rider, String currentLat, String currentLng) {
         final String[] Lat = new String[1];
         final String[] Lng = new String[1];
         setProfile(rider.getEmail());
