@@ -114,6 +114,9 @@ public class GuuDbHelper {
             //this.user.setTransHistory(transactions);
     }
 
+    public synchronized void setCurrUser(String email){
+        this.user.setEmail(email);
+    }
 
     /**
      * Gets the information under the person's email from the database

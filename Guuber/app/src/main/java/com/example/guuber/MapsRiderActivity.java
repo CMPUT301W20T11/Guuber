@@ -210,6 +210,52 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 checkUserPermission();
             }
         }
+
+
+        /**if (rideInProgress || rideisPending) {
+            calculateDirections();
+        }**/
+        Double offeredTip = null, destinationLat = null, destinationLong = null, originLat = null, originLong = null, tripCost = null;
+        String email = null;
+
+        User currUser = ((UserData)(getApplicationContext())).getUser(); //current rider
+
+        ArrayList<Map<String, Object>> openRequestList = riderDBHelper.getReqList(); //needs to be called twice to draw open requests. fine fore now
+        android.util.Log.i(TAG, "OPEN REQUEST LIST RAW" + openRequestList.toString()); //might be empty upon on Resume
+
+        for (Map<String, Object> map : openRequestList) {
+            for (Map.Entry<String, Object> entry : map.entrySet()) {
+
+                String key = entry.getKey();
+                Object value = entry.getValue();
+
+                switch (key) {
+                    case "email":
+                        email = value.toString();
+                        if (email != currUser.getEmail()) {
+                            break;
+                        }
+                    case "tripCost":
+                        tripCost = Double.parseDouble(value.toString());
+                    case "reqTip":
+                        offeredTip = Double.parseDouble(value.toString());
+                    case "desLat":
+                        destinationLat = Double.parseDouble(value.toString());
+                    case "oriLat":
+                        originLat = Double.parseDouble(value.toString());
+                    case "desLng":
+                        destinationLong = Double.parseDouble(value.toString());
+                    case "oriLng":
+                        originLong = Double.parseDouble(value.toString());
+                }
+                LatLng start = new LatLng(originLat,originLong);
+                LatLng end = new LatLng(destinationLat,destinationLong);
+                setDestination(end);
+                setOrigin(start);
+                calculateDirections();
+            }
+        }
+
     }
 
     /**********************************SPINNER METHODS*****************************************/
