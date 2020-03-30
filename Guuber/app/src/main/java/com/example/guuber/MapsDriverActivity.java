@@ -763,7 +763,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      */
     private void calculateDirectionsBetweenPickupandDropOff(Marker marker) throws InterruptedException {
         android.util.Log.i(TAG, marker.getTitle());
-        
+
         User clickedUser = driverDBHelper.getUser(marker.getTitle()); // <--- another crash
         clickedUser.setEmail(marker.getTitle());
         android.util.Log.i(TAG, "got the user");
