@@ -379,6 +379,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             setOpenRequestMarkers(requestStart, email, tripCost, offeredTip);
             LatLng requestEnd = new LatLng(destinationLat, destinationLong);
             setOpenRequestMarkers(requestEnd, email, tripCost, offeredTip);
+
+            calculateDirectionsBetweenPickupandDropOff(email, requestStart, requestEnd);
         }
     }
 
@@ -409,7 +411,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      **/
     public void setOpenRequestMarkers(LatLng locationToMark, String title, Double TripCost, Double offeredTip) {
         guuberDriverMap.addMarker(new MarkerOptions()
-                .position(locationToMark).flat(false).title(title).snippet("Trip Cost is: $" + TripCost + "Tip Offered is: $" + offeredTip)
+                .position(locationToMark).flat(false).title(title).snippet("Trip Cost: $" + TripCost + " Tip Offered: $" + offeredTip)
         );
     }
 
@@ -795,47 +797,20 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * SIXTH CRASH
      */
-    private void calculateDirectionsBetweenPickupandDropOff(Marker marker) throws InterruptedException {
-        android.util.Log.i(TAG, marker.getTitle());
+    private void calculateDirectionsBetweenPickupandDropOff(String email, LatLng pickup, LatLng dropOff) {
 
-        User clickedUser = driverDBHelper.getUser(marker.getTitle()); // <--- another crash
-        clickedUser.setEmail(marker.getTitle());
-        android.util.Log.i(TAG, "got the user");
+        android.util.Log.i("USERS EMAIL", email);
+        android.util.Log.i("USERS PICKUP", pickup.toString());
+        android.util.Log.i("USERS DROPOFF", dropOff.toString());
 
-        //Map<String, Object> drawingRidersRoute = driverDBHelper.getRiderRequest(clickedUser); <--- another crash
-        //android.util.Log.i(TAG, drawingRidersRoute.toString());
 
-        /**Double destinationLat = null, destinationLong = null, originLat = null, originLong = null;
-
-        for (Map.Entry<String, Object> entry : drawingRidersRoute.entrySet()) {
-            String key = entry.getKey();
-            Object value = entry.getValue();
-
-            switch (key) {
-                case "desLat":
-                    destinationLat = Double.parseDouble(value.toString());
-                    android.util.Log.i(TAG, "got the dest");
-                case "oriLat":
-                    originLat = Double.parseDouble(value.toString());
-                    android.util.Log.i(TAG, "got the start");
-                case "desLng":
-                    destinationLong = Double.parseDouble(value.toString());
-                    android.util.Log.i(TAG, "got the dest");
-                case "oriLng":
-                    originLong = Double.parseDouble(value.toString());
-                    android.util.Log.i(TAG, "got the start");
-            }
-        }
-
-        /**from riders set destination**
-        LatLng dropoff = new LatLng(destinationLat, destinationLong);
+        /**from riders set destination**/
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
-                dropoff.latitude, dropoff.longitude
+                dropOff.latitude, dropOff.longitude
         );
         DirectionsApiRequest driverDirections = new DirectionsApiRequest(geoApiContext);
 
-        /**from the riders set Origin*
-        LatLng pickup = new LatLng(originLat, originLong);
+        /**from the riders set Origin**/
         driverDirections.origin(
                 new com.google.maps.model.LatLng(
                         pickup.latitude, pickup.longitude
@@ -851,7 +826,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             public void onFailure(Throwable e) {
                 Log.e(TAG, "calculateDirections: Failed to get directions: " + e.getMessage());
             }
-        });**/
+        });
     }
 
 
