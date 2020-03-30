@@ -763,6 +763,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      */
     private void calculateDirectionsBetweenPickupandDropOff(Marker marker) throws InterruptedException {
         android.util.Log.i(TAG, marker.getTitle());
+        
         User clickedUser = driverDBHelper.getUser(marker.getTitle()); // <--- another crash
         clickedUser.setEmail(marker.getTitle());
         android.util.Log.i(TAG, "got the user");
@@ -884,11 +885,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
                     polyline = guuberDriverMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
                     if (offerAccepted == false && offerSent == false){
-                        polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.clickedPolyLinesColors));
+                        polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.drawPolyLinesColors));
                     } else if (routeInProgress == true) {
                         polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.TripInProgressPolyLinesColors));
                     } else if (offerSent == true) {
-                        polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.polyLinesColors));
+                        polyline.setColor(ContextCompat.getColor(MapsDriverActivity.this, R.color.TripIsPendingPolyLinesColors));
                     }
 
                 }
