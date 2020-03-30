@@ -231,6 +231,17 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         startActivity(riderProfileIntent);
     }
 
+    public void viewDriverProfile(User user) {
+        Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
+        driverProfileIntent.putExtra("caller", "external");
+        user.setNegRating(0);
+        user.setPosRating(0);
+        driverProfileIntent.putExtra("caller", "external");
+        driverProfileIntent.putExtra("driverProfile", user);
+        startActivity(driverProfileIntent);
+    }
+
+
     /**
      * Starts activity to display riders wallet information
      **/
@@ -670,6 +681,15 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 }).setNeutralButton("View Driver Profile", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                         /*****TINASHE*****/
+                        //User user = driverDBHelper.getUser(marker.getTitle());
+
+                        User user = null;
+                        try {
+                            user = riderDBHelper.getUser(potentialOfferer);
+                            viewDriverProfile(user);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                         //show the driver who is offering (potential offerers) profile
                         dialog.dismiss(); }
                 }).setNegativeButton("Decline", new DialogInterface.OnClickListener() {
@@ -825,7 +845,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     /**
      * Dialog Builder for when the driver has arrived
      */
-    private void driverIsHereDialog(String ridersEmail){
+    private void driverIsHereDialog(String ridersEmail, String driversEmail){
         polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripInProgressPolyLinesColors));
         //android.util.Log.i(TAG, "RIDERS EMAIL IS SET TO");
         new Handler().postDelayed(new Runnable() {
@@ -841,7 +861,15 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                                     public void onClick(DialogInterface dialog, int which) {
                                         /***TINASHE****/
                                         android.util.Log.i(TAG, "Rate Driver Button Clicked");
+
                                         //Tinashe I don't know how you're going to call profile sorry here's some skeleton
+                                        User user = null;
+                                        try {
+                                            user = riderDBHelper.getUser(driversEmail);
+                                            viewDriverProfile(user);
+                                        } catch (InterruptedException e) {
+                                            e.printStackTrace();
+                                        }
                                         //final Intent rateDriverIntent = new Intent(MapsRiderActivity.this, DriverProfile.class);
                                         //startActivity(rateDriverIntent);
                                     }

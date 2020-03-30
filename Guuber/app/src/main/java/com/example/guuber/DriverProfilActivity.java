@@ -8,9 +8,12 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
 import com.example.guuber.model.Vehicle;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
  * Code to display drivers information on their profile
@@ -39,6 +42,10 @@ public class DriverProfilActivity extends AppCompatActivity {
     User userInfo;
     Boolean editable;
 
+    /***********the database******/
+    private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
+    private GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,7 +55,9 @@ public class DriverProfilActivity extends AppCompatActivity {
 
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
-
+        if (!editable){
+            userInfo = (User) getIntent().getSerializableExtra("riderProfile");
+        }
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -74,14 +83,20 @@ public class DriverProfilActivity extends AppCompatActivity {
         likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!editable){userInfo.adjustRating(true);}
+                if (!editable){userInfo.adjustRating(true);
+                    Toast.makeText(DriverProfilActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
+                //likeButton.setClickable(false);
+                }
             }
         });
 
         dislikeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!editable){userInfo.adjustRating(true);}
+                if (!editable){userInfo.adjustRating(true);
+                    Toast.makeText(DriverProfilActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+                    //dislikeButton.setClickable(false);
+                }
             }
         });
 
@@ -148,7 +163,11 @@ public class DriverProfilActivity extends AppCompatActivity {
           @Override
           public void onClick(View v) {
               if (editable){
-                new DeleteAccountFragment().show(getSupportFragmentManager(), "Delete Account");}
+                DeleteAccountFragment deleteFragment = new DeleteAccountFragment();
+                Bundle callingActivity = new Bundle();
+                callingActivity.putString("callingActivity", "driver");
+                deleteFragment.setArguments(callingActivity);
+                deleteFragment.show(getSupportFragmentManager(), "Delete Account");}
         }
         });
     }
@@ -164,16 +183,23 @@ public class DriverProfilActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-    public void updateData(String field, String value){
+    public void updateData(String field, String value) {
 
-        if (field.equals("email")){
-            userInfo.setEmail(value);
-        }
-        else if (field.equals("phone number")){
+        if (field.equals("phone number")){
             userInfo.setPhoneNumber(value);
         }
         else if (field.equals("username")){
             userInfo.setUsername(value);
         }
+
+        try {
+            driverDBHelper.updateProfileAll(userInfo);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void deleteSelf(){
+        driverDBHelper.deleteUser(userInfo.getEmail());
     }
 }
