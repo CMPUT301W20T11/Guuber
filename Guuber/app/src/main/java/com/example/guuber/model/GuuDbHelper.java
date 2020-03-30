@@ -129,11 +129,8 @@ public class GuuDbHelper {
 
     public synchronized User getUser (String email) throws InterruptedException {
         findUser(email);
-        //setProfile(email)
         return user;
     }
-
-
 
 
     //NOTE: function should not be used since the users are already created through loginActivity
@@ -236,9 +233,6 @@ public class GuuDbHelper {
 
 
 
-
-
-
     /**
      * Updates users balance (also updates transactions by appending amount to be added to balance to the transactions list)
      * @param email - the email of the user
@@ -248,9 +242,6 @@ public class GuuDbHelper {
         users.document(email).update("balance", FieldValue.increment(amount));
         users.document(email).update("transactions", FieldValue.arrayUnion(amount)); // currently treats array as a kind of key value pair so transactions with the same amount will not be appended, I am trying to fix this...
     }
-
-
-
 
 
 
