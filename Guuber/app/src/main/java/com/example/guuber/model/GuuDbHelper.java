@@ -576,7 +576,7 @@ public class GuuDbHelper {
         final Double[] Lat = new Double[1];
         final Double[] Lng = new Double[1];
         setProfile(rider.getEmail());
-        DocumentReference ref = db.collection("requests").document(rider.getEmail());
+        DocumentReference ref = db.collection("Users").document(rider.getEmail());
 
         ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
