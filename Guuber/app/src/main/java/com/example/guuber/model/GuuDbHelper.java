@@ -656,7 +656,7 @@ public class GuuDbHelper {
             //String Lat = location.get("oriLat"));
             //String Lng = location.get("oriLng"));
         }
-    
+
 
     /**
      * Adds or updates the current vehicle to the users profile
