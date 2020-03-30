@@ -209,6 +209,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 checkUserPermission();
             }
         }
+        if (rideInProgress || rideisPending) {
+            calculateDirections();
+        }
     }
 
     /**********************************SPINNER METHODS*****************************************/
