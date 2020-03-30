@@ -593,7 +593,6 @@ public class GuuDbHelper {
                 DocumentSnapshot document = task.getResult();
                 String Lat = (String) document.getString("oriLat");
                 String Lng = (String) document.getString("oriLng");
-                //maybe use reqLocation since Lat and Lng are too specific and the driver will likely never hit it exactly...
 
             }
         });
