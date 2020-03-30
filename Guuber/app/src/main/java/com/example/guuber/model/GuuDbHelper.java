@@ -1,10 +1,12 @@
 package com.example.guuber.model;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
@@ -16,6 +18,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -249,7 +252,7 @@ public class GuuDbHelper {
      * Creates and stores the request into the database
      * @param rider - the person making the request
      * @param tip - the extra amount they are willing to pay
-     * @param location - the destination
+     * @param location - the pickup location
      * @param oriLat - Latitudinal coordinate of original place to be pickup
      * @param oriLng - Longitudinal coordinate of original place to be pickup
      * @param desLat - Latitudinal coordinate of the destination
@@ -267,6 +270,9 @@ public class GuuDbHelper {
         details.put("desLat",desLat);
         details.put("desLng",desLng);
         details.put("tripCost",tripCost);
+
+        //details.put("driverArrive", driverArrive = false);
+
         this.profile.update(details);
 
         this.requests.document(rider.getEmail()).set(details);
@@ -556,6 +562,61 @@ public class GuuDbHelper {
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
     }
+
+    /**
+     * Checks if driver has arrived to riders requested location
+     * returns true if driverLocation == riderLocation
+     *
+     * @param rider - the rider with the request and accepts driver
+     *
+     * @param currentLat - the current Latitude of the driver
+     * @param currentLng - the current Longitude of the driver
+     *
+     */
+    public Boolean driverArrive(User rider, String currentLat, String currentLng)
+    {
+        setProfile(rider.getEmail());
+        DocumentReference ref = db.collection("requests").document(rider.getEmail());
+
+        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot document = task.getResult();
+                String Lat = (String) document.getString("oriLat");
+                String Lng = (String) document.getString("oriLng");
+
+            }
+        });
+
+        // Convert Coordinates to doubles
+        Double newLat = new Double(Lat).doubleValue();
+        Double newLng = new Double(Lng).doubleValue();
+        Double newCurrentLat = new Double(currentLat).doubleValue();
+        Double newCurrentLng = new Double(currentLng).doubleValue();
+
+        // Cut off after 5th decimal, so when you compare the drivers coordinates to the users, they don't have to be EXACTLY on them
+        DecimalFormat df = new DecimalFormat("#.#####");
+        Double newerLat = df.format(newLat);
+        Double newerLng = df.format(newLng);
+
+        Double newerCurrentLat = df.format(dcurrentLat);
+        Double newerCurrentLng = df.format(dcurrentLng);
+
+        if (newerLat == newerCurrentLat && newerLng == newerCurrentLng)
+        {
+            return true; // driver has arrived to riders location
+        }
+        else
+        {
+            return false; // driver is not at rider location
+        }
+
+        //Map<String,Object> location;
+        //Map<String,Object> location = profile.collection("requests").document(rider.getEmail()).;
+        //String Lat = location.get("oriLat"));
+        //String Lng = location.get("oriLng"));
+    }
+
 
     /**
      * Adds or updates the current vehicle to the users profile

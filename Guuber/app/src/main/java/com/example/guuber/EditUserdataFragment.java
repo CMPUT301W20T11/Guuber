@@ -32,9 +32,9 @@ public class EditUserdataFragment extends DialogFragment {
         newText = view.findViewById(R.id.newText);
         confirmText = view.findViewById(R.id.confirmText);
 
-        confirmText.setText("Confirm new " + fields);
-        oldText.setText("Enter old " +fields +" here");
-        newText.setText("Enter new  " +fields +"  here");
+        confirmText.setHint("Confirm new " + fields);
+        oldText.setHint("Enter old " +fields +" here");
+        newText.setHint("Enter new  " +fields +"  here");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         return builder
                 .setView(view)

@@ -21,7 +21,6 @@ public class DriverProfilActivity extends AppCompatActivity {
     String email;
     String phoneNumber;
     String carReg;
-    String status;
     Integer posRate;
     Integer negRate;
 
@@ -29,7 +28,6 @@ public class DriverProfilActivity extends AppCompatActivity {
     TextView usernameField;
     TextView phoneNumberField;
     TextView vehicleRegField;
-    TextView statusField;
     TextView posRateDisplay;
     TextView negRateDisplay;
     ImageView likeButton;
@@ -60,7 +58,6 @@ public class DriverProfilActivity extends AppCompatActivity {
         phoneNumberField = findViewById(R.id.phoneTextDrIn);
         usernameField = findViewById(R.id.usernameTextDrIn);
         emailField = findViewById(R.id.emailTextDrIn);
-        statusField = findViewById(R.id.availabilityTextDrIn);
         likeButton = findViewById(R.id.likeButtonDrIn);
         dislikeButton = findViewById(R.id.dislikeButtonDrIn);
         profileImg = findViewById(R.id.imageViewDrIn);
@@ -139,7 +136,6 @@ public class DriverProfilActivity extends AppCompatActivity {
         phoneNumberField.setText(phoneNumber);
         usernameField.setText(username);
         emailField.setText(email);
-        statusField.setText(status);
         likeButton.setImageResource(R.drawable.smile);
         dislikeButton.setImageResource(R.drawable.frowny);
         profileImg.setImageResource(R.drawable.profilepic);

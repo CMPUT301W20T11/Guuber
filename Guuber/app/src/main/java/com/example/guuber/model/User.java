@@ -2,6 +2,8 @@ package com.example.guuber.model;
 
 import androidx.fragment.app.DialogFragment;
 
+import com.example.guuber.MapsDriverActivity;
+
 import java.util.ArrayList;
 
 /**
@@ -14,12 +16,12 @@ public class User{
     private String email;
     private String firstName;
     private String lastName;
+    private String uid;
     private String username;
     private Integer isRider = 1;
 
     private Integer posRating;
     private Integer negRating;
-
 
     /**
      * Empty constructor for firebase use
@@ -64,11 +66,7 @@ public class User{
 
         this.posRating = posRating;
         this.negRating = negRating;
-
     }
-
-
-
 
     // In case we need vehicle objects, may be deleted
 //    /**
