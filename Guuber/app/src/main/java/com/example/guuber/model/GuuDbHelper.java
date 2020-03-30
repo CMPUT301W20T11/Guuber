@@ -17,11 +17,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class GuuDbHelper {
@@ -102,18 +99,13 @@ public class GuuDbHelper {
      * @param posRating    - number of ratings that are positive
      * @param negRating    - number of ratings that are negative
      */
-     //* @param balance      - Amount in users wallet
-     //* @param transactions - list of transactions(changes to their balance) that the user incurred
-
-
-    public void setUser(String phone, String email, String first, String last, String uname, Integer rider, Integer posRating, Integer negRating) {
+    public synchronized void setUser(String phone, String email, String first, String last, String uname, Integer rider, Integer posRating, Integer negRating) {
             this.user.setEmail(email);
             this.user.setPhoneNumber(phone);
             this.user.setFirstName(first);
             this.user.setLastName(last);
             this.user.setUsername(uname);
             this.user.setRider(rider);
-
             this.user.setPosRating(posRating);
             this.user.setNegRating(negRating);
 
@@ -123,18 +115,14 @@ public class GuuDbHelper {
 
     /**
      * Gets the information under the person's email from the database
-     *
      * @param email - the user's email
      * @return - the user under the email inputted
      */
 
     public synchronized User getUser (String email) throws InterruptedException {
         findUser(email);
-        //setProfile(email)
         return user;
     }
-
-
 
 
     //NOTE: function should not be used since the users are already created through loginActivity
@@ -143,22 +131,20 @@ public class GuuDbHelper {
      * @param newUser - the user information
      *
      * */
-    public void checkEmail(User newUser){
+    public synchronized void checkEmail(User newUser){
         Map<String,Object> user = new HashMap<>();
         user.put("firstName",newUser.getFirstName());
         user.put("lastName",newUser.getLastName());
         user.put("email",newUser.getEmail());
         user.put("username",newUser.getUsername());
         user.put("phoneNumber",newUser.getPhoneNumber());
-//        user.put("uid",newUser.getUid());
+        //user.put("uid",newUser.getUid());
         user.put("rider",newUser.getRider());
 
         user.put("posRating", newUser.getPosRating());
         user.put("negRating", newUser.getNegRating());
-
-//        user.put("balance", newUser.getBalance());
-//        user.put("transactions", newUser.getTransHistory());
-
+        //user.put("balance", newUser.getBalance());
+        //user.put("transactions", newUser.getTransHistory());
 
 
         users.document(newUser.getEmail()).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -173,14 +159,13 @@ public class GuuDbHelper {
                 }
             }
         });
-
-
     }
+
     /**
      * Helper function for checkEmail
      * creates a document in the database with the user's info
      */
-    public void createUser(Map<String,Object> info,User newUser){
+    public synchronized void createUser(Map<String,Object> info,User newUser){
         users.document(newUser.getEmail()).set(info);
     }
 
@@ -197,10 +182,9 @@ public class GuuDbHelper {
      * Deletes the user from the database
      * @param email - email of the user
      * */
-    public void deleteUser(String email){
+    public synchronized void deleteUser(String email){
         setProfile(email);
         profile.delete();
-
     }
 
     /**
@@ -208,14 +192,15 @@ public class GuuDbHelper {
      * @param email - the user that want to update their name
      * @param name - the new name to display
      */
-    public void updateUsername(String email,String name){
+    public synchronized void updateUsername(String email,String name){
         users.document(email).update("username",name);
     }
+
     /**
      * Updates the phonenumber of the user
      * @param email - the user that wants to update their number
      * @param number - the new contact number*/
-    public void updatePhoneNumber(String email,String number){
+    public synchronized void updatePhoneNumber(String email,String number){
         users.document(email).update("phoneNumber",number);
     }
 
@@ -224,7 +209,7 @@ public class GuuDbHelper {
      * automatically increments the positive rating of the user
      * @param email - the email of the user
      */
-    public void updatePosRating(String email){
+    public synchronized void updatePosRating(String email){
         users.document(email).update("posRating", FieldValue.increment(1));
     }
 
@@ -232,7 +217,7 @@ public class GuuDbHelper {
      * automatically increments the negative rating of the user
      * @param email - the email of the user
      */
-    public void updateNegRating(String email){
+    public synchronized void updateNegRating(String email){
         users.document(email).update("negRating", FieldValue.increment(1));
     }
 
@@ -258,7 +243,7 @@ public class GuuDbHelper {
      * Updates users balance (also updates transactions by appending amount to be added to balance to the transactions list)
      * @param email - the email of the user
      */
-    public void updateBalance(String email, Double amount)
+    public synchronized void updateBalance(String email, Double amount)
     {
         users.document(email).update("balance", FieldValue.increment(amount));
         users.document(email).update("transactions", FieldValue.arrayUnion(amount)); // currently treats array as a kind of key value pair so transactions with the same amount will not be appended, I am trying to fix this...
@@ -266,42 +251,36 @@ public class GuuDbHelper {
 
 
 
-
-
-
     /**
      * Creates and stores the request into the database
      * @param rider - the person making the request
      * @param tip - the extra amount they are willing to pay
-     * @param location - the destination
      * @param oriLat - Latitudinal coordinate of original place to be pickup
      * @param oriLng - Longitudinal coordinate of original place to be pickup
      * @param desLat - Latitudinal coordinate of the destination
      * @param desLng - Latitudinal coordinate of the destination
      * @param tripCost - the cost of the trip
      */
-
-    public void makeReq(User rider, Double tip, String location, String oriLat, String oriLng, String desLat, String desLng, String tripCost){
+    public synchronized void makeReq(User rider, Double tip, double oriLat, double oriLng, double desLat, double desLng, String tripCost){
         setProfile(rider.getEmail());
         Map<String,Object> details = new HashMap<>();
         details.put("reqTip",tip);
-        details.put("reqLocation",location);
         details.put("oriLat",oriLat);
         details.put("oriLng",oriLng);
         details.put("desLat",desLat);
         details.put("desLng",desLng);
         details.put("tripCost",tripCost);
+
+        //details.put("driverArrive", driverArrive = false);
         this.profile.update(details);
-
         this.requests.document(rider.getEmail()).set(details);
-
     }
 
     /**
      * Cancels the user's request
      * @param rider - rider who want to cancel their request
      */
-    public void cancelRequest(User rider) {
+    public synchronized void cancelRequest(User rider) {
         setProfile(rider.getEmail());
 
         profile.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
@@ -312,7 +291,6 @@ public class GuuDbHelper {
                     if (doc.exists()) {
                         Map<String, Object> delete = new HashMap<>();
                         delete.put("reqTip", FieldValue.delete());
-                        delete.put("reqLocation", FieldValue.delete());
                         delete.put("oriLat", FieldValue.delete());
                         delete.put("oriLng", FieldValue.delete());
                         delete.put("desLat", FieldValue.delete());
@@ -329,7 +307,6 @@ public class GuuDbHelper {
                             setProfile(rider.getEmail());
                             Map<String,Object> reqInfo = new HashMap<>();
                             reqInfo.put("reqTip", doc.get("reqTip"));
-                            reqInfo.put("reqLocation",doc.get("reqLocation"));
                             reqInfo.put("oriLat",doc.get("oriLat"));
                             reqInfo.put("oriLng",doc.get("oriLng"));
                             reqInfo.put("desLat",doc.get("desLat"));
@@ -340,36 +317,32 @@ public class GuuDbHelper {
                             requests.document(rider.getEmail()).delete();
                             reqList.remove(reqInfo);
 
-
                         }
                     }
                 }
             }
         });
     }
+
     /**
      * Helper function for getRiderRequest
      * Sets the request info to be retrieved
      * @param email - the email of the person
      * @param tip - extra amount the person offers
-     * @param location - the destination
      * @param oriLat - Latitudinal coordinate of original place to be pickup
      * @param oriLng - Longitudinal coordinate of original place to be pickup
      * @param desLat - Latitudinal coordinate of the destination
      * @param desLng - Latitudinal coordinate of the destination
      * @param tripCost - the cost of the trip
      */
-    public void setRequest(String email, Object tip ,String location, String oriLat,String oriLng,String desLat,String desLng,String tripCost){
+    public synchronized void setRequest(String email, Object tip , Object oriLat, Object oriLng, Object desLat, Object desLng, String tripCost){
         this.Request.put("reqTip", tip);
-        this.Request.put("reqLocation",location);
         this.Request.put("oriLat",oriLat);
         this.Request.put("oriLng",oriLng);
         this.Request.put("desLat",desLat);
         this.Request.put("desLng",desLng);
         this.Request.put("email",email);
         this.Request.put("tripCost",tripCost);
-
-
     }
 
     /**
@@ -377,7 +350,7 @@ public class GuuDbHelper {
      * @param rider - the user who made the request
      * @return - the details of the request in as a Map<String,Object> format </String,Object>
      */
-    public Map<String,Object> getRiderRequest(User rider) throws InterruptedException {
+    public synchronized Map<String,Object> getRiderRequest(User rider) throws InterruptedException {
 
         setProfile(rider.getEmail());
         TimeUnit.SECONDS.sleep(5);
@@ -385,12 +358,10 @@ public class GuuDbHelper {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                setRequest(documentSnapshot.get("email").toString(), documentSnapshot.get("reqTip"),
-                       documentSnapshot.get("reqLocation").toString(),documentSnapshot.get("oriLat").toString(),
-                       documentSnapshot.get("oriLng").toString(),documentSnapshot.get("desLat").toString(),
-                       documentSnapshot.get("desLng").toString(),documentSnapshot.get("tripCost").toString());
+                       documentSnapshot.get("oriLat"), documentSnapshot.get("oriLng"), documentSnapshot.get("desLat"),
+                       documentSnapshot.get("desLng"), documentSnapshot.get("tripCost").toString());
             }
         });
-
         return Request;
     }
 
@@ -400,7 +371,7 @@ public class GuuDbHelper {
      * @param  driver - the driver with a request
      * @return - the details of the request in as a Map<String,Object> format </String,Object>
      * */
-    public Map<String,Object> getDriverActiveReq(User driver){
+    public synchronized Map<String,Object> getDriverActiveReq(User driver){
         setProfile(driver.getEmail());
        Task<QuerySnapshot> activeReq =  profile.collection("driveRequest").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
            @Override
@@ -408,16 +379,15 @@ public class GuuDbHelper {
                 if(task.isSuccessful()){
                     if(!task.getResult().isEmpty()) {
                         DocumentSnapshot activeReq = task.getResult().getDocuments().get(0);
-                        setRequest(activeReq.getId(), activeReq.get("reqTip").toString(), activeReq.get("reqLocation").toString(),
-                                activeReq.get("oriLat").toString(), activeReq.get("oriLng").toString(),
-                                activeReq.get("desLat").toString(), activeReq.get("desLng").toString(),
+                        setRequest(activeReq.getId(), activeReq.get("reqTip").toString(),
+                                activeReq.get("oriLat"), activeReq.get("oriLng"),
+                                activeReq.get("desLat"), activeReq.get("desLng"),
                                 activeReq.get("tripCost").toString());
                     }
                     else{
                         Request.clear();
                     }
                 }
-
            }
        });
        return Request;
@@ -427,7 +397,7 @@ public class GuuDbHelper {
      * Gets a list of current request that riders post
      * @return - an ArrayList<Map<String,Object>> </String,Object> of request that need a driver
      * */
-    public ArrayList<Map<String,Object>> getReqList(){
+    public synchronized ArrayList<Map<String,Object>> getReqList(){
         requests.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -448,7 +418,7 @@ public class GuuDbHelper {
      * Helper function
      * add the user email to the request detail
      */
-    public void updateReqList(String email,Map<String,Object> reqDetails){
+    public synchronized void updateReqList(String email,Map<String,Object> reqDetails){
         reqDetails.put("email", email);
         if(!reqList.contains(reqDetails)) {
             this.reqList.add(reqDetails);
@@ -496,7 +466,7 @@ public class GuuDbHelper {
      * Helper function for seeOffer
      * sets the offerer email
      */
-    public void setOfferer(String driver){
+    public synchronized void setOfferer(String driver){
         offerer = driver;
     }
 
@@ -505,7 +475,7 @@ public class GuuDbHelper {
      * @param rider - the person who declines the offer
      * @param driver - the person who's offer is declined
      */
-    public void declineOffer(User rider,User driver){
+    public synchronized void declineOffer(User rider,User driver){
         setProfile(rider.getEmail());
         profile.update("rideOfferFrom",FieldValue.delete());
         setProfile(driver.getEmail());
@@ -516,7 +486,7 @@ public class GuuDbHelper {
      * the rider accepting the offer they recieved
      * @param rider - the rider who accept the offer
      */
-    public void acceptOffer(User rider){
+    public synchronized void acceptOffer(User rider){
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -539,7 +509,7 @@ public class GuuDbHelper {
      *              declined: the rider declined the offer
      *              none: the driver did not offer a ride to anyone
      */
-    public String checkOfferStatus(User driver) throws InterruptedException {
+    public synchronized String checkOfferStatus(User driver) throws InterruptedException {
         setProfile(driver.getEmail());
 
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -582,11 +552,64 @@ public class GuuDbHelper {
     }
 
     /**
+     * Checks if driver has arrived to riders requested location
+     * returns true if driverLocation == riderLocation
+     *
+     * @param rider - the rider with the request and accepts driver
+     *
+     * @param currentLat - the current Latitude of the driver
+     * @param currentLng - the current Longitude of the driver
+     *
+     */
+    public synchronized  Boolean driverArrive(User rider, String currentLat, String currentLng) {
+        final String[] Lat = new String[1];
+        final String[] Lng = new String[1];
+        setProfile(rider.getEmail());
+        DocumentReference ref = db.collection("requests").document(rider.getEmail());
+
+        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                DocumentSnapshot document = task.getResult();
+                Lat[0] = (String) document.getString("oriLat");
+                Lng[0] = (String) document.getString("oriLng");
+
+            }
+        });
+
+        // Convert Coordinates to doubles
+        Double newLat = Double.parseDouble(Lat[0]);
+        Double newLng = Double.parseDouble(Lng[0]);
+        Double newCurrentLat = new Double(currentLat).doubleValue();
+        Double newCurrentLng = new Double(currentLng).doubleValue();
+
+        // Cut off after 5th decimal, so when you compare the drivers coordinates to the users, they don't have to be EXACTLY on them
+        /**DecimalFormat df = new DecimalFormat("#.#####");
+         Double newerLat = df.format(newLat);
+         Double newerLng = df.format(newLng);
+
+         Double newerCurrentLat = df.format(dcurrentLat);
+         Double newerCurrentLng = df.format(dcurrentLng); **/
+
+        if (newLat == newCurrentLat && newLng == newCurrentLng) {
+            return true; // driver has arrived to riders location
+        } else {
+            return false; // driver is not at rider location }
+
+            //Map<String,Object> location;
+            //Map<String,Object> location = profile.collection("requests").document(rider.getEmail()).;
+            //String Lat = location.get("oriLat"));
+            //String Lng = location.get("oriLng"));
+        }
+    }
+
+
+    /**
      * Adds or updates the current vehicle to the users profile
      * @param user - the user who has the registered car
      * @param car - the car to be register in the database
      */
-    public void addVehicle(User user, Vehicle car){
+    public synchronized void addVehicle(User user, Vehicle car){
         setProfile(user.getEmail());
         profile.update("vehMake",car.getMake());
         profile.update("vehModel",car.getModel());
@@ -598,7 +621,7 @@ public class GuuDbHelper {
      * @param driver - The person who own the vehicle
      * @return - the details of the vehicle the user owns
      */
-    public Vehicle getCarDetail(User driver){
+    public synchronized Vehicle getCarDetail(User driver){
         setProfile(driver.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -631,7 +654,7 @@ public class GuuDbHelper {
      * @param color - the color of the car
      * @param driver - the car that the driver is registered to
      */
-    public void setVehicle(String make,String model,String color,String driver){
+    public synchronized void setVehicle(String make,String model,String color,String driver){
         this.car.setMake(make);
         this.car.setModel(model);
         this.car.setColor(color);

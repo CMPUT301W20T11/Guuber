@@ -722,17 +722,16 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         Toast.makeText(this, "Request Pending! Click On Your Destination To Check for Offers or  To Cancel", Toast.LENGTH_LONG).show();
         polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.polyLinesColors));
 
-        Double originLatitude = getOrigin().latitude;String orLat = originLatitude.toString();
-        Double originLongitude = getOrigin().longitude;String orLong = originLongitude.toString();
-        Double destinationLatitude = marker.getPosition().latitude;String destLat = destinationLatitude.toString();
-        Double destinationLongitude = marker.getPosition().longitude;String destLong = destinationLongitude.toString();
+        Double originLatitude = getOrigin().latitude;
+        Double originLongitude = getOrigin().longitude;
+        Double destinationLatitude = marker.getPosition().latitude;
+        Double destinationLongitude = marker.getPosition().longitude;
 
         User currUser = ((UserData)(getApplicationContext())).getUser();
         Double tip = getTip();
         String tripCost = getTripCost().toString();
-        String testLocation = "pick me up here";
 
-        riderDBHelper.makeReq(currUser, tip,testLocation,orLat,orLong,destLat,destLong,tripCost);
+        riderDBHelper.makeReq(currUser, tip, originLatitude , originLongitude, destinationLatitude,destinationLongitude,tripCost);
         android.util.Log.i(TAG, "REQUEST MADE");
         rideisPending = true;
     }
