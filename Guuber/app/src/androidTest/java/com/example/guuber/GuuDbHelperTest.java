@@ -116,7 +116,7 @@ public class GuuDbHelperTest {
         assertEquals((Integer) 0, obtain.getRider());
         User user = dbHelper.getUser("kluc1@ualberta.ca");
         Thread.sleep(1000);
-        dbHelper.makeReq(user, (double) 20,"A pit","1620","1620","1080","1080","80");
+        dbHelper.makeReq(user, (double) 20,1620,1620,1080,1080, "30");
         Thread.sleep(1000);
         Map<String,Object> reqDetail = dbHelper.getRiderRequest(user);
         Thread.sleep(1000);
