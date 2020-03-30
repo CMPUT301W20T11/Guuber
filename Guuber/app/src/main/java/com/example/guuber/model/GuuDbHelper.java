@@ -574,7 +574,7 @@ public class GuuDbHelper {
             }
         });
     }
-    public synchronized boolean driverArrived(User rider){
+    public synchronized boolean driverHasArrived(User rider){
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
