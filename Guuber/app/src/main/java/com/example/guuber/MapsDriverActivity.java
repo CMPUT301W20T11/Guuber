@@ -59,6 +59,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class contains the home screen for a Driver.
@@ -299,9 +300,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
-            Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
-            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-            setDriverLocation(currentLocation); //<--Crash potential
+            assert locationManager != null;
+            Location location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
+
 
             if (location != null) {
                 /**create a new LatLng location object for the user current location**/
@@ -309,10 +310,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 setDriverLocation(currLocation); //driver must provide their location
 
                 /**move the camera to current location**/
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(currentLocation).zoom(10).build();
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(currLocation).zoom(10).build();
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         }
+
+
 
     }
 
@@ -324,7 +327,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     public void drawOpenRequests() {
         Double offeredTip = null, destinationLat = null, destinationLong = null, originLat = null, originLong = null, tripCost = null;
         String email = null;
-
         ArrayList<Map<String, Object>> openRequestList = driverDBHelper.getReqList(); //needs to be called twice to draw open requests. fine fore now
         android.util.Log.i(TAG, "OPEN REQUEST LIST RAW" + openRequestList.toString());
 
@@ -849,7 +851,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
         /**from the drivers current position**/
         LatLng currDriverLocation = getDriverLocation();
-        setDriverLocation(currDriverLocation);
         driverDirections.origin(
                 new com.google.maps.model.LatLng(
                         currDriverLocation.latitude,
