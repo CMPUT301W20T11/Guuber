@@ -833,7 +833,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     }
 
 
-
     /**
      * Dialog Builder for when the driver has arrived
      */

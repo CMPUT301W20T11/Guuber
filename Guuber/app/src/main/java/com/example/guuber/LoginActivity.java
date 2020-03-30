@@ -286,6 +286,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		}
 	}
 
+
 	public  void userPermissionsRationale(){
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Hey there Friend. To have the best experience with this application, " +
