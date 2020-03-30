@@ -698,11 +698,11 @@ public class GuuDbHelper {
 
         // Cut off after 5th decimal, so when you compare the drivers coordinates to the users, they don't have to be EXACTLY on them
         DecimalFormat df = new DecimalFormat("#.#####");
-        String ddLat = df.format(Double.parseDouble(dLat)); 
+        String ddLat = df.format(Double.parseDouble(dLat));
         String ddLng = df.format(Double.parseDouble(dLng));
 
-        String rrLat = df.format(rLat);
-        String rrLng = df.format(rLng);
+        String rrLat = df.format(rLat[0]);
+        String rrLng = df.format(rLng[0]);
 
 
         if (rrLat == ddLat && rrLng == ddLng) {
