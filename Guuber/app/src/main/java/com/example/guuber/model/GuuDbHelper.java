@@ -608,7 +608,7 @@ public class GuuDbHelper {
      * @param currentLng - the current Longitude of the driver
      *
      */
-    public synchronized  Boolean driverArrive(User rider, Double dLat, Double dLng) {
+    public synchronized  Boolean driverArrive(User rider, String dLat, String dLng) {
         // rider coordinates
         final Double[] rLat = new Double[1];
         final Double[] rLng = new Double[1];
@@ -636,13 +636,15 @@ public class GuuDbHelper {
         }catch (Exception e) {return false;}
         */
 
+
         // Cut off after 5th decimal, so when you compare the drivers coordinates to the users, they don't have to be EXACTLY on them
         DecimalFormat df = new DecimalFormat("#.#####");
-        String rrLat = df.format(rLat[0]);
-        String rrLng = df.format(rLng[0]);
+        String ddLat = df.format(Double.parseDouble(dLat)); 
+        String ddLng = df.format(Double.parseDouble(dLng));
 
-        String ddLat = df.format(dLat);
-        String ddLng = df.format(dLng);
+        String rrLat = df.format(rLat);
+        String rrLng = df.format(rLng);
+
 
         if (rrLat == ddLat && rrLng == ddLng) {
             return true; // driver has arrived to riders location
