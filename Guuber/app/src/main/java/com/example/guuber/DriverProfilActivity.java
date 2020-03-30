@@ -54,6 +54,8 @@ public class DriverProfilActivity extends AppCompatActivity {
         //UserData userData = UserData.getInstance();
         userInfo = ((UserData)(getApplicationContext())).getUser();
 
+        Toast.makeText(RiderProfileActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
+
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
         if (!editable){

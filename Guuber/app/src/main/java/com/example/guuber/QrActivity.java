@@ -115,7 +115,7 @@ public class QrActivity extends AppCompatActivity {
 		String qrString = qrEText.getText().toString();
 		// If no input is provided, prompt user for input
 		if(TextUtils.isEmpty(qrString)) {
-			Toast.makeText(QrActivity.this,"Please enter some text thanks man preciate it", Toast.LENGTH_SHORT).show();
+			Toast.makeText(QrActivity.this,"Please enter some text thanks man appreciate it", Toast.LENGTH_SHORT).show();
 		}else {
 			MultiFormatWriter multiFormatWriter = new MultiFormatWriter();
 			try {
