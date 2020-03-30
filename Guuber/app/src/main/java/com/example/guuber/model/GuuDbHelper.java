@@ -28,6 +28,8 @@ public class GuuDbHelper {
     private static CollectionReference users;
     private static DocumentReference profile;
     public static User user;
+    public static String rider;
+    public static boolean notify;
     public static Map<String, Object> Request = new HashMap<>();
     public static Vehicle car = new Vehicle();
     public static ArrayList<Map<String, Object>> reqList = new ArrayList<Map<String, Object>>();
@@ -561,7 +563,41 @@ public class GuuDbHelper {
 
     }
 
-
+    public synchronized void notifyRider(User driver){
+        setProfile(driver.getEmail());
+        profile.collection("driveRequest").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                rider = queryDocumentSnapshots.getDocuments().get(0).getId();
+                setProfile(rider);
+                profile.update("driverNotify", true);
+            }
+        });
+    }
+    public synchronized boolean driverArrived(User rider){
+        setProfile(rider.getEmail());
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                notify = documentSnapshot.getBoolean("driverNotify");
+            }
+        });
+        return notify;
+    }
+    public void completedRequest(User driver,User rider){
+        setProfile(driver.getEmail());
+        profile.collection("driveRequest").document(rider.getEmail()).delete();
+        Map<String, Object> delete = new HashMap<>();
+        delete.put("reqTip", FieldValue.delete());
+        delete.put("oriLat", FieldValue.delete());
+        delete.put("oriLng", FieldValue.delete());
+        delete.put("desLat", FieldValue.delete());
+        delete.put("desLng", FieldValue.delete());
+        delete.put("tripCost",FieldValue.delete());
+        delete.put("reqDriver",FieldValue.delete());
+        setProfile(rider.getEmail());
+        profile.update(delete);
+    }
     /**
      * Checks if driver has arrived to riders requested location
      * returns true if driverLocation == riderLocation
