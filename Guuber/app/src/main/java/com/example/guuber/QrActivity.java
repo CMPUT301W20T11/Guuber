@@ -42,7 +42,7 @@ public class QrActivity extends AppCompatActivity {
 	private static final String TAG = "QrActivity";
 
 	private ImageView qrImage;
-	private Button qrButton;
+//	private Button qrButton;
 	private TextView qrEText;
 
 	private List<String> qrInfo;
@@ -57,7 +57,7 @@ public class QrActivity extends AppCompatActivity {
 		setContentView(R.layout.activity_qr);
 
 		qrImage = findViewById(R.id.qr_image);
-		qrButton = findViewById(R.id.qr_button);
+//		qrButton = findViewById(R.id.qr_button);
 		qrEText = findViewById(R.id.qr_text);
 
 		// Display the back button
@@ -70,16 +70,20 @@ public class QrActivity extends AppCompatActivity {
 		// Get the amount and email into an array for easy access
 		qrInfo = Arrays.asList(info.split(","));
 
+		// Parse the payment amount into the textview
+		String previewString = qrInfo.get(1) + " QrBucks";
+		qrEText.setText(previewString);
+
 		// Generate a qr from the intent info
 		genQR(info);
 
 
-		qrButton.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				genQR();
-			}
-		});
+//		qrButton.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				genQR();
+//			}
+//		});
 	}
 
 	@Override
