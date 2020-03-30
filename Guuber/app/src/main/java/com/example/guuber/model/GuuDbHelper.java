@@ -359,7 +359,6 @@ public class GuuDbHelper {
     public synchronized Map<String,Object> getRiderRequest(User rider) throws InterruptedException {
 
         setProfile(rider.getEmail());
-        TimeUnit.SECONDS.sleep(5);
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -368,6 +367,7 @@ public class GuuDbHelper {
                        documentSnapshot.get("desLng"), documentSnapshot.get("tripCost").toString());
             }
         });
+        TimeUnit.SECONDS.sleep(5);
         return Request;
     }
 
@@ -574,20 +574,22 @@ public class GuuDbHelper {
             }
         });
     }
-    public synchronized boolean driverHasArrived(User rider){
+    public synchronized boolean hasDriverArrived(User rider) throws InterruptedException {
         setProfile(rider.getEmail());
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                notify = documentSnapshot.getBoolean("driverNotify");
+                notify = documentSnapshot.getBoolean("driverNotify").booleanValue();
             }
         });
+        TimeUnit.SECONDS.sleep(2);
         return notify;
     }
     public void completedRequest(User driver,User rider){
         setProfile(driver.getEmail());
         profile.collection("driveRequest").document(rider.getEmail()).delete();
         Map<String, Object> delete = new HashMap<>();
+        delete.put("driverNotify",FieldValue.delete());
         delete.put("reqTip", FieldValue.delete());
         delete.put("oriLat", FieldValue.delete());
         delete.put("oriLng", FieldValue.delete());

@@ -268,14 +268,15 @@ public class GuuDbHelperTest {
 
     @Test
     public void completingRequestTest() throws InterruptedException{
+        dbHelper.checkEmail(mockUser2());
+        Thread.sleep(1000);
         dbHelper.makeReq(mockUser2(),(double)10,69.312031230,72.01230345,30.12031204,50.12312415,"20");
         Thread.sleep(1000);
         dbHelper.reqAccepted(mockUser2(),mockUser3());
         Thread.sleep(1000);
         dbHelper.notifyRider(mockUser3());
         Thread.sleep(1000);
-        boolean check = dbHelper.driverHasArrived(mockUser2());
-        Thread.sleep(1000);
+        boolean check = dbHelper.hasDriverArrived(mockUser2());
         assertEquals(true,check);
         dbHelper.completedRequest(mockUser3(),mockUser2());
         Thread.sleep(1000);
