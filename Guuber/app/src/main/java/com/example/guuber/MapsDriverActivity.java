@@ -322,7 +322,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * switch case to pull values from the request object
      */
     public void drawOpenRequests() {
-        Double offeredTip = null, destinationLat = null, destinationLong = null, originLat = null, originLong = null;
+        Double offeredTip = null, destinationLat = null, destinationLong = null, originLat = null, originLong = null, tripCost = null;
         String email = null;
 
         ArrayList<Map<String, Object>> openRequestList = driverDBHelper.getReqList(); //needs to be called twice to draw open requests. fine fore now
@@ -335,6 +335,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 Object value = entry.getValue();
 
                 switch (key) {
+                    case "tripCost":
+                        tripCost = Double.parseDouble(value.toString());
+                        break;
                     case "reqTip":
                         offeredTip = Double.parseDouble(value.toString());
                         break;
@@ -355,7 +358,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         break;
                 }
             }
-            draw(originLat, originLong, destinationLat, destinationLong, email);
+            draw(originLat, originLong, destinationLat, destinationLong, email, tripCost, offeredTip);
         }
 
     }
@@ -368,14 +371,14 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * @param destinationLong riders destination
      * @param email riders email
      */
-    public void draw(Double originLat, Double originLong, Double destinationLat, Double destinationLong, String email) {
-        if (originLat == null || originLong == null || email == null || destinationLat == null || destinationLong == null) {
+    public void draw(Double originLat, Double originLong, Double destinationLat, Double destinationLong, String email, Double tripCost, Double offeredTip) {
+        if (originLat == null || originLong == null || email == null || destinationLat == null || destinationLong == null || tripCost == null || offeredTip == null) {
             noOpenRequestToast();
         } else {
             LatLng requestStart = new LatLng(originLat, originLong);
-            setMarker(requestStart, email);
+            setOpenRequestMarkers(requestStart, email, tripCost, offeredTip);
             LatLng requestEnd = new LatLng(destinationLat, destinationLong);
-            setMarker(requestEnd, email);
+            setOpenRequestMarkers(requestEnd, email, tripCost, offeredTip);
         }
     }
 
@@ -394,13 +397,19 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         Toast.makeText(MapsDriverActivity.this, "Please wait for Rider response before making another offer", Toast.LENGTH_LONG).show();
     }
 
+    public void setMarker(LatLng locationToMark, String title){
+        guuberDriverMap.addMarker(new MarkerOptions()
+                .position(locationToMark).flat(false).title(title)
+        );
+    }
+
     /**
      * set a marker given LATLNG information
      * @param locationToMark is location to set marker on
      **/
-    public void setMarker(LatLng locationToMark, String title) {
+    public void setOpenRequestMarkers(LatLng locationToMark, String title, Double TripCost, Double offeredTip) {
         guuberDriverMap.addMarker(new MarkerOptions()
-                .position(locationToMark).flat(false).title(title)
+                .position(locationToMark).flat(false).title(title).snippet("Trip Cost is: $" + TripCost + "Tip Offered is: $" + offeredTip)
         );
     }
 
