@@ -661,10 +661,10 @@ public class GuuDbHelper {
      * Checks if driver has arrived to riders requested location
      * returns true if driverLocation == riderLocation
      *
-     * @param rider - the rider with the request and accepts driver
+     * @param rider - the rider with the request
      *
-     * @param currentLat - the current Latitude of the driver
-     * @param currentLng - the current Longitude of the driver
+     * @param dLat - the current Latitude of the driver (str)
+     * @param dLng - the current Longitude of the driver (str)
      *
      */
     public synchronized  Boolean driverArrive(User rider, String dLat, String dLng) {
