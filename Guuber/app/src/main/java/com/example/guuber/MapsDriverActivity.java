@@ -55,6 +55,7 @@ import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -103,8 +104,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /***********the database******/
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -223,6 +222,17 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         Intent driverProfileIntent = new Intent(MapsDriverActivity.this, DriverProfilActivity.class);
         driverProfileIntent.putExtra("caller", "internal");
         startActivity(driverProfileIntent);
+    }
+
+    public void viewRiderProfile(User user) {
+        Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
+       //to be deleted, need to initialize all users properly
+        user.setNegRating(0);
+        user.setPosRating(0);
+        //delete only up to here
+        riderProfileIntent.putExtra("caller", "external");
+        riderProfileIntent.putExtra("riderProfile", user);
+        startActivity(riderProfileIntent);
     }
 
     /**
@@ -581,7 +591,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                             /**********TINASHE********/
                             //view the rider of this requests profile
                             //marker.getTitle() is equal to email
-                            //user = whateverdatabasename.getUser(marker.title())
+                            try {
+                                User user = driverDBHelper.getUser(marker.getTitle());
+                                viewRiderProfile(user);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     })
                     .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
