@@ -59,6 +59,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class contains the home screen for a Driver.
@@ -76,7 +77,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private static final int MYPROFILE = 2;
     private static final int WALLET = 3;
     private static final int SCANQR = 4;
+    private static final int SIGNOUT = 5;
 
+    // for signing out of app
+    private static final int RC_SIGN_OUT = 1000;
 
     private GoogleMap guuberDriverMap;
     private Spinner driverSpinner;
@@ -176,6 +180,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     /**start the scanQR activity**/
                     scanQR();
                     driverSpinner.setSelection(MENU);
+                }else if (position == SIGNOUT) {
+                    /**start the scanQR activity**/
+                    signOut();
+                    driverSpinner.setSelection(MENU);
                 }
             }
 
@@ -251,6 +259,15 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     public void scanQR() {
         final Intent scanQrProfileIntent = new Intent(MapsDriverActivity.this, scanQrActivity.class);
         startActivityForResult(scanQrProfileIntent, QR_SCAN_CODE);
+    }
+    /**
+     * Sign out a user and return to the login activity
+     **/
+    public void signOut() {
+        Intent signOutConfirm  = new Intent(MapsDriverActivity.this, LoginActivity.class);
+        signOutConfirm.putExtra("SignOut", "TRUE");
+        setResult(RC_SIGN_OUT, signOutConfirm);
+        finish();
     }
 
     /****************************************END SPINNER METHODS***********************************************/
