@@ -16,6 +16,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -510,7 +511,6 @@ public class GuuDbHelper {
                 }
             }
         });
-
         return offerStat;
     }
 
@@ -545,7 +545,7 @@ public class GuuDbHelper {
      * @param currentLng - the current Longitude of the driver
      *
      */
-    public synchronized  Boolean driverArrive(User rider, String currentLat, String currentLng) {
+    public synchronized  Boolean driverArrive(User rider, Double currentLat, Double currentLng) {
         final String[] Lat = new String[1];
         final String[] Lng = new String[1];
         setProfile(rider.getEmail());
@@ -555,6 +555,7 @@ public class GuuDbHelper {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot document = task.getResult();
+                assert document != null;
                 Lat[0] = (String) document.getString("oriLat");
                 Lng[0] = (String) document.getString("oriLng");
 
@@ -562,18 +563,20 @@ public class GuuDbHelper {
         });
 
         // Convert Coordinates to doubles
+        /**
         Double newLat = Double.parseDouble(Lat[0]);
         Double newLng = Double.parseDouble(Lng[0]);
         Double newCurrentLat = new Double(currentLat).doubleValue();
         Double newCurrentLng = new Double(currentLng).doubleValue();
+         **/
 
         // Cut off after 5th decimal, so when you compare the drivers coordinates to the users, they don't have to be EXACTLY on them
-        /**DecimalFormat df = new DecimalFormat("#.#####");
-         Double newerLat = df.format(newLat);
-         Double newerLng = df.format(newLng);
+        DecimalFormat df = new DecimalFormat("#.#####");
+        String newLat = df.format(Lat[0]);
+        String newLng = df.format(Lng[0]);
 
-         Double newerCurrentLat = df.format(dcurrentLat);
-         Double newerCurrentLng = df.format(dcurrentLng); **/
+        String newCurrentLat = df.format(currentLat);
+        String newCurrentLng = df.format(currentLng);
 
         if (newLat == newCurrentLat && newLng == newCurrentLng) {
             return true; // driver has arrived to riders location
@@ -586,7 +589,6 @@ public class GuuDbHelper {
             //String Lng = location.get("oriLng"));
         }
     }
-
 
     /**
      * Adds or updates the current vehicle to the users profile
