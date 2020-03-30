@@ -647,13 +647,13 @@ public class GuuDbHelper {
      * Checks if driver has arrived to riders requested location
      * returns true if driverLocation == riderLocation
      *
-     * @param rider - the rider with the request and accepts driver
+     * @param rider - the rider with the request
      *
-     * @param currentLat - the current Latitude of the driver
-     * @param currentLng - the current Longitude of the driver
+     * @param dLat - the current Latitude of the driver (str)
+     * @param dLng - the current Longitude of the driver (str)
      *
      */
-    public synchronized  Boolean driverArrive(User rider, Double dLat, Double dLng) {
+    public synchronized  Boolean driverArrive(User rider, String dLat, String dLng) {
         // rider coordinates
         final Double[] rLat = new Double[1];
         final Double[] rLng = new Double[1];
@@ -681,13 +681,15 @@ public class GuuDbHelper {
         }catch (Exception e) {return false;}
         */
 
+
         // Cut off after 5th decimal, so when you compare the drivers coordinates to the users, they don't have to be EXACTLY on them
         DecimalFormat df = new DecimalFormat("#.#####");
+        String ddLat = df.format(Double.parseDouble(dLat));
+        String ddLng = df.format(Double.parseDouble(dLng));
+
         String rrLat = df.format(rLat[0]);
         String rrLng = df.format(rLng[0]);
 
-        String ddLat = df.format(dLat);
-        String ddLng = df.format(dLng);
 
         if (rrLat == ddLat && rrLng == ddLng) {
             return true; // driver has arrived to riders location
