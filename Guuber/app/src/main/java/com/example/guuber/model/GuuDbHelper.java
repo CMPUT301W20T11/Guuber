@@ -261,7 +261,7 @@ public class GuuDbHelper {
      * Creates and stores the request into the database
      * @param rider - the person making the request
      * @param tip - the extra amount they are willing to pay
-     * @param location - the destination
+     * @param location - the pickup location
      * @param oriLat - Latitudinal coordinate of original place to be pickup
      * @param oriLng - Longitudinal coordinate of original place to be pickup
      * @param desLat - Latitudinal coordinate of the destination
@@ -269,7 +269,7 @@ public class GuuDbHelper {
      * @param tripCost - the cost of the trip
      */
 
-    public void makeReq(User rider, Double tip, String location, String oriLat, String oriLng, String desLat, String desLng, String tripCostb){
+    public void makeReq(User rider, Double tip, String location, String oriLat, String oriLng, String desLat, String desLng, String tripCost){
         setProfile(rider.getEmail());
         Map<String,Object> details = new HashMap<>();
         details.put("reqTip",tip);
