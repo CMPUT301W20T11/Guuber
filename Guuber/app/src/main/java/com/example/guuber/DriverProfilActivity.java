@@ -2,6 +2,7 @@ package com.example.guuber;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -201,5 +202,9 @@ public class DriverProfilActivity extends AppCompatActivity {
 
     public void deleteSelf(){
         driverDBHelper.deleteUser(userInfo.getEmail());
+        Toast.makeText(DriverProfilActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 }

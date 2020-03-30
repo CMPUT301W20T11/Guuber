@@ -3,6 +3,7 @@ package com.example.guuber;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -200,9 +201,10 @@ public class RiderProfileActivity extends AppCompatActivity {
 
     public void deleteSelf(){
         riderDBHelper.deleteUser(userInfo.getEmail());
+        Toast.makeText(RiderProfileActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
-    public void updateDatabase(User user){
-        //riderDBHelper.
-    }
 }
