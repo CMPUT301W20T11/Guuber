@@ -248,9 +248,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         originLong = Double.parseDouble(value.toString());
                 }
                 LatLng start = new LatLng(originLat,originLong);
-                setDestination();
+                LatLng end = new LatLng(destinationLat,destinationLong);
+                setDestination(end);
                 setOrigin(start);
-                setDestination(destinationLatitude, destinationLongitude);
+                calculateDirections();
             }
         }
 
