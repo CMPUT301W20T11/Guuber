@@ -21,16 +21,12 @@
             android:paddingTop="50dp"
             app:srcCompat="@drawable/guuber" />
 
-        <EditText
+        <TextView
             android:id="@+id/qr_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:gravity="center"
             android:hint="Text to encode" />
 
-        <Button
-            android:id="@+id/qr_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Generate" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
