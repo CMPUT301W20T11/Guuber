@@ -143,7 +143,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     } else {
                         invalidSearchToast();
                     }
-                }else{
+                } else {
                     youveSentAnOfferToast();
                 }
             }
@@ -178,6 +178,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     driverSpinner.setSelection(MENU);
                 }
             }
+
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
                 driverSpinner.setSelection(MENU);
@@ -201,7 +202,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         super.onResume();
         if (checkMapServices()) {
             if (isLocationPermissionGranted == false) {
-                checkUserPermission(); }
+                checkUserPermission();
+            }
         }
     }
 
@@ -226,7 +228,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     public void viewRiderProfile(User user) {
         Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
-       //to be deleted, need to initialize all users properly
+        //to be deleted, need to initialize all users properly
         user.setNegRating(0);
         user.setPosRating(0);
         //delete only up to here
@@ -276,11 +278,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         guuberDriverMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
             @Override
             public void onMapClick(LatLng arg0) {
-                if (routeInProgress == true || offerSent == true){
+                if (routeInProgress == true || offerSent == true) {
                     youveSentAnOfferToast(); //clicking on the map wont do anything when youre on a route or have sent an offer
-                }else {
+                } else {
                     geoLocationSearch.setText(arg0.toString()); //set the search bar to the coordinates clicked
-                    setSearch(arg0); }
+                    setSearch(arg0);
+                }
             }
         });
 
@@ -297,11 +300,13 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
             Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
+            LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            setDriverLocation(currentLocation); //<--Crash potential
 
             if (location != null) {
                 /**create a new LatLng location object for the user current location**/
-                LatLng currentLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                setDriverLocation(currentLocation); //driver must provide their location
+                LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                setDriverLocation(currLocation); //driver must provide their location
 
                 /**move the camera to current location**/
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(currentLocation).zoom(10).build();
@@ -331,17 +336,23 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
                 switch (key) {
                     case "reqTip":
-                        offeredTip = Double.parseDouble(value.toString());break;
+                        offeredTip = Double.parseDouble(value.toString());
+                        break;
                     case "desLat":
-                        destinationLat = Double.parseDouble(value.toString()); break;
+                        destinationLat = Double.parseDouble(value.toString());
+                        break;
                     case "oriLat":
-                        originLat = Double.parseDouble(value.toString()); break;
+                        originLat = Double.parseDouble(value.toString());
+                        break;
                     case "desLng":
-                        destinationLong = Double.parseDouble(value.toString()); break;
+                        destinationLong = Double.parseDouble(value.toString());
+                        break;
                     case "oriLng":
-                        originLong = Double.parseDouble(value.toString()); break;
+                        originLong = Double.parseDouble(value.toString());
+                        break;
                     case "email":
-                        email = value.toString(); break;
+                        email = value.toString();
+                        break;
                 }
             }
             draw(originLat, originLong, destinationLat, destinationLong, email);
@@ -363,8 +374,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         } else {
             LatLng requestStart = new LatLng(originLat, originLong);
             setMarker(requestStart, email);
-            //LatLng requestEnd = new LatLng(destinationLat, destinationLong);
-            //setMarker(requestEnd, email);
+            LatLng requestEnd = new LatLng(destinationLat, destinationLong);
+            setMarker(requestEnd, email);
         }
     }
 
@@ -379,7 +390,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * letting driver know they have already made an offer
      * they must be denied or be accepted and complete the trip before sending another offer
      */
-    private void youveSentAnOfferToast(){
+    private void youveSentAnOfferToast() {
         Toast.makeText(MapsDriverActivity.this, "Please wait for Rider response before making another offer", Toast.LENGTH_LONG).show();
     }
 
@@ -398,8 +409,22 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * (is necessarily set upon map render
      * @param location is the drivers current location
      **/
-    public void setDriverLocation(LatLng location) {
-        this.driverLocation = location;
+    public synchronized void setDriverLocation(LatLng location) {
+        //making sure we   have a driver location
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        if(location == null){
+            if (!checkUserPermission()){
+                checkUserPermission();
+            }else {
+                Location getLocation = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
+                LatLng driverLocation = new LatLng(getLocation.getLatitude(), getLocation.getLongitude());
+                this.driverLocation = driverLocation;
+            }
+        }else{
+            this.driverLocation = location;
+        }
+
     }
 
     /**
