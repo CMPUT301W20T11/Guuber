@@ -18,6 +18,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -597,8 +598,21 @@ public class GuuDbHelper {
             }
         });
 
+        // Convert Coordinates to doubles
+        Double newLat = new Double(Lat).doubleValue();
+        Double newLng = new Double(Lng).doubleValue();
+        Double newCurrentLat = new Double(currentLat).doubleValue();
+        Double newCurrentLng = new Double(currentLng).doubleValue();
 
-        if (Lat == currentLat && Lng == currentLng)
+        // Cut off after 5th decimal, so when you compare the drivers coordinates to the users, they don't have to be EXACTLY on them
+        DecimalFormat df = new DecimalFormat("#.#####");
+        Double newerLat = df.format(newLat);
+        Double newerLng = df.format(newLng);
+
+        Double newerCurrentLat = df.format(dcurrentLat);
+        Double newerCurrentLng = df.format(dcurrentLng);
+
+        if (newerLat == newerCurrentLat && newerLng == newerCurrentLng)
         {
             return true; // driver has arrived to riders location
         }
