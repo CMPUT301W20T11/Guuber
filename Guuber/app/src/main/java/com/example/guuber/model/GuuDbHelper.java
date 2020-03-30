@@ -545,7 +545,9 @@ public class GuuDbHelper {
         });
     }
 
+    public synchronized  void notifyRider(User driver){
 
+}
     /**
      * function to get the status of the arrival
      * @param email is the riders email
@@ -622,33 +624,15 @@ public class GuuDbHelper {
 
     }
 
-    public synchronized void notifyRider(User driver){
-        setProfile(driver.getEmail());
-        profile.collection("driveRequest").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                rider = queryDocumentSnapshots.getDocuments().get(0).getId();
-                setProfile(rider);
-                profile.update("driverNotify", true);
-            }
-        });
-    }
-    public synchronized boolean hasDriverArrived(User rider) throws InterruptedException {
-        setProfile(rider.getEmail());
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                notify = documentSnapshot.getBoolean("driverNotify").booleanValue();
-            }
-        });
-        TimeUnit.SECONDS.sleep(2);
-        return notify;
-    }
+    /**
+     * once the transaction is made the request is complete, this removes all the info about request
+     * @param driver - the driver who completed the request
+     * @param rider - the rider whos request was fulfilled
+     */
     public void completedRequest(User driver,User rider){
         setProfile(driver.getEmail());
         profile.collection("driveRequest").document(rider.getEmail()).delete();
         Map<String, Object> delete = new HashMap<>();
-        delete.put("driverNotify",FieldValue.delete());
         delete.put("reqTip", FieldValue.delete());
         delete.put("oriLat", FieldValue.delete());
         delete.put("oriLng", FieldValue.delete());

@@ -274,11 +274,7 @@ public class GuuDbHelperTest {
         Thread.sleep(1000);
         dbHelper.reqAccepted(mockUser2(),mockUser3());
         Thread.sleep(1000);
-        dbHelper.notifyRider(mockUser3());
-        Thread.sleep(1000);
-        boolean check = dbHelper.hasDriverArrived(mockUser2());
-        assertEquals(true,check);
-        dbHelper.completedRequest(mockUser3(),mockUser2());
+        dbHelper.completedRequest(mockUser3(),mockUser2()); // check on db its deletes it
         Thread.sleep(1000);
 
 
