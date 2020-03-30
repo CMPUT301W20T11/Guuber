@@ -6,6 +6,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import com.example.guuber.model.Transaction;
 import com.example.guuber.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -60,6 +62,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 	private FirebaseFirestore db = FirebaseFirestore.getInstance();
 	private DocumentReference uRef;
 
+	private static final int RC_SIGN_OUT = 1000;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +99,10 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		FirebaseUser currentUser = mAuth.getCurrentUser();
 		currentUser = null; // TODO delete when login activity is perfectly working
 		updateUI(currentUser);
+
 	}
+
+
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -115,6 +121,18 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 					// [START_EXCLUDE]
 					updateUI(null);
 					// [END_EXCLUDE]
+				}
+			}
+			// This is to handle sign out from the map activities
+			case RC_SIGN_OUT: {
+				if (resultCode == RC_SIGN_OUT) {
+					String confirmSignOut = data.getStringExtra("SignOut");
+					if (confirmSignOut.equals("TRUE")){
+						//mGoogleSignInClient.signOut();
+						signOut();
+					}
+
+
 				}
 			}
 		}
@@ -231,8 +249,8 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 						//else user is a driver
 						homeScreen = new Intent(context, MapsDriverActivity.class);
 					}
-
-					startActivity(homeScreen);
+					startActivityForResult(homeScreen, RC_SIGN_OUT);
+					//startActivity(homeScreen);
 				}
 			});
 		} else {
