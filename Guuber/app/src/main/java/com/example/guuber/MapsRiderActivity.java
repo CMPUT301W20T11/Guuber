@@ -663,7 +663,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         rideisPending = false;
                         polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripInProgressPolyLinesColors));
                         User currUser = ((UserData)(getApplicationContext())).getUser();
-                        riderDBHelper.acceptOffer(currUser); //<----if this causing crash
+                        riderDBHelper.acceptOffer(currUser);
                         yourDriverIsOnTheWayToast();
                         dialog.dismiss(); }
                 }).setNeutralButton("View Driver Profile", (dialog, id) -> {
@@ -671,7 +671,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     //User user = driverDBHelper.getUser(marker.getTitle());
                     /****crash here******/
                     User user = null;
-                    user.setEmail(potentialOfferer); 
+                    user.setEmail(potentialOfferer);
                     try {
                         user = riderDBHelper.getUser(potentialOfferer);
                         viewDriverProfile(user);
@@ -682,8 +682,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     //show the driver who is offering (potential offerers) profile
                     dialog.dismiss();
                 }).setNegativeButton("Decline", (dialog, which) -> {
-                    //user declined offer. waiting for a different offerer perhaps
-                    dialog.dismiss(); });
+                    User currUser = ((UserData)(getApplicationContext())).getUser();
+                    riderDBHelper.declineOffer(currUser);
+                    youDeclinedTheOfferToast();
+                    dialog.dismiss();
+        });
         final AlertDialog alert = builder.create(); alert.show();
     }
 
@@ -694,6 +697,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private void yourDriverIsOnTheWayToast(){
         new Handler().postDelayed(() -> {
             String toastStr ="Your Driver is on The Way!";
+            Toast.makeText(MapsRiderActivity.this, toastStr, Toast.LENGTH_LONG).show();
+        }, 600);
+    }
+
+    private void youDeclinedTheOfferToast(){
+        new Handler().postDelayed(() -> {
+            String toastStr ="You Declined The offer";
             Toast.makeText(MapsRiderActivity.this, toastStr, Toast.LENGTH_LONG).show();
         }, 600);
     }
@@ -713,7 +723,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         Double destinationLatitude = marker.getPosition().latitude;
         Double destinationLongitude = marker.getPosition().longitude;
 
-        User currUser = ((UserData)(getApplicationContext())).getUser();
+        User currUser = ((UserData)(getApplicationContext())).getUser(); //this works great
         Double tip = getTip();
         String tripCost = getTripCost().toString();
 

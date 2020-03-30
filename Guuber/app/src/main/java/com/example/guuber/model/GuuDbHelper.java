@@ -114,6 +114,10 @@ public class GuuDbHelper {
             //this.user.setTransHistory(transactions);
     }
 
+    public synchronized void setCurrUser(String email){
+        this.user.setEmail(email);
+    }
+
     /**
      * Gets the information under the person's email from the database
      * @param email - the user's email
@@ -176,7 +180,8 @@ public class GuuDbHelper {
      * @param email - email of the user
      */
     public synchronized void setProfile(String email){
-        this.profile = users.document(email);
+        this.profile = users.document(email); //this thread is running while all other methods are finishing and causing crashes everywhere
+
     }
 
     /**
@@ -476,13 +481,20 @@ public class GuuDbHelper {
      * @param rider - the person who declines the offer
      * @param driver - the person who's offer is declined
      */
-    public synchronized void declineOffer(User rider,User driver){
+    public synchronized void declineOffer(User rider){
         setProfile(rider.getEmail());
-        profile.update("rideOfferFrom",FieldValue.delete());
-        setProfile(driver.getEmail());
-        profile.update("offerTo",FieldValue.delete());
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                offerer = documentSnapshot.get("rideOfferFrom").toString();
+                setProfile(offerer);
+                profile.update("offerStatus", "declined");
+            }
+        });
+        setProfile(offerer);
         profile.update("offerStatus","declined");
     }
+
     /**
      * the rider accepting the offer they recieved
      * @param rider - the rider who accept the offer
@@ -550,6 +562,7 @@ public class GuuDbHelper {
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
     }
+
 
     /**
      * Checks if driver has arrived to riders requested location
