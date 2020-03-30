@@ -572,9 +572,9 @@ public class GuuDbHelper {
      * @param currentLng - the current Longitude of the driver
      *
      */
-    public synchronized  Boolean driverArrive(User rider, String currentLat, String currentLng) {
-        final String[] Lat = new String[1];
-        final String[] Lng = new String[1];
+    public synchronized  Boolean driverArrive(User rider, Double currentLat, Double currentLng) {
+        final Double[] Lat = new Double[1];
+        final Double[] Lng = new Double[1];
         setProfile(rider.getEmail());
         DocumentReference ref = db.collection("requests").document(rider.getEmail());
 
@@ -583,19 +583,19 @@ public class GuuDbHelper {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot document = task.getResult();
                 assert document != null;
-                Lat[0] = (String) document.getString("oriLat");
-                Lng[0] = (String) document.getString("oriLng");
+                Lat[0] = (Double) document.getDouble("oriLat");
+                Lng[0] = (Double) document.getDouble("oriLng");
 
             }
         });
 
-        // Convert Coordinates to doubles
-        /**
-        Double newLat = Double.parseDouble(Lat[0]);
-        Double newLng = Double.parseDouble(Lng[0]);
-        Double newCurrentLat = new Double(currentLat).doubleValue();
-        Double newCurrentLng = new Double(currentLng).doubleValue();
-         **/
+        /** Convert Coordinates to doubles
+         If one of the coordinates is a word or anything except numbers this function cannot work and returns a false
+        try{
+            Double testCurrentLat = new Double(currentLat).doubleValue();
+            Double testCurrentLng = new Double(currentLng).doubleValue();
+        }catch (Exception e) {return false;}
+        */
 
         // Cut off after 5th decimal, so when you compare the drivers coordinates to the users, they don't have to be EXACTLY on them
         DecimalFormat df = new DecimalFormat("#.#####");
