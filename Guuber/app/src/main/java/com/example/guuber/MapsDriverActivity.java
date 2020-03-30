@@ -312,6 +312,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 /**move the camera to current location**/
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(currLocation).zoom(10).build();
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            }else{
+                location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
+                android.util.Log.i("DRIVER LOCATION = ", null);
             }
         }
 
@@ -840,6 +843,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * @param marker the marker indicating the riders pickup location
      */
     private void calculateDirectionsToPickup(Marker marker) {
+
         Log.d(TAG, "calculateDirections: calculating directions.");
 
         /**to the clicked markers destination**/
