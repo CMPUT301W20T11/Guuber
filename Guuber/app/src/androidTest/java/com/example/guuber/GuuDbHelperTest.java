@@ -264,7 +264,13 @@ public class GuuDbHelperTest {
         Thread.sleep(1000);
         dbHelper.cancelRequest(mockUser2());
         Thread.sleep(1000);
-        }
+    }
+
+    @Test
+    public void completingRequestTest() throws InterruptedException{
+        
+    }
+
     @Test
     public void VehicleRegisterTest() throws InterruptedException{
         dbHelper.checkEmail(mockUser3());
