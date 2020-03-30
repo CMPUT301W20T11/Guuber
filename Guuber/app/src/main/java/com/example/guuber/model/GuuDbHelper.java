@@ -608,22 +608,25 @@ public class GuuDbHelper {
      * @param currentLng - the current Longitude of the driver
      *
      */
-    public synchronized  Boolean driverArrive(User rider, Double currentLat, Double currentLng) {
-        final Double[] Lat = new Double[1];
-        final Double[] Lng = new Double[1];
-        setProfile(rider.getEmail());
-        DocumentReference ref = db.collection("requests").document(rider.getEmail());
+    public synchronized  Boolean driverArrive(User rider, Double dLat, Double dLng) {
+        // rider coordinates
+        final Double[] rLat = new Double[1];
+        final Double[] rLng = new Double[1];
 
-        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+        setProfile(rider.getEmail());
+        DocumentReference riderRef = db.collection("Users").document(rider.getEmail());
+        riderRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot document = task.getResult();
                 assert document != null;
-                Lat[0] = (Double) document.getDouble("oriLat");
-                Lng[0] = (Double) document.getDouble("oriLng");
+                rLat[0] = (Double) document.getDouble("oriLat");
+                rLng[0] = (Double) document.getDouble("oriLng");
 
             }
         });
+
 
         /** Convert Coordinates to doubles
          If one of the coordinates is a word or anything except numbers this function cannot work and returns a false
@@ -635,16 +638,18 @@ public class GuuDbHelper {
 
         // Cut off after 5th decimal, so when you compare the drivers coordinates to the users, they don't have to be EXACTLY on them
         DecimalFormat df = new DecimalFormat("#.#####");
-        String newLat = df.format(Lat[0]);
-        String newLng = df.format(Lng[0]);
+        String rrLat = df.format(rLat[0]);
+        String rrLng = df.format(rLng[0]);
 
-        String newCurrentLat = df.format(currentLat);
-        String newCurrentLng = df.format(currentLng);
+        String ddLat = df.format(dLat);
+        String ddLng = df.format(dLng);
 
-        if (newLat == newCurrentLat && newLng == newCurrentLng) {
+        if (rrLat == ddLat && rrLng == ddLng) {
             return true; // driver has arrived to riders location
-        } else {
-            return false; // driver is not at rider location }
+        }
+        else {
+            return false; // driver is not at rider location
+        }
 
             //Map<String,Object> location;
             //Map<String,Object> location = profile.collection("requests").document(rider.getEmail()).;
