@@ -643,7 +643,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * letting the user know their is no takers yet for their request
      */
     public void noOffersYetToast(){
-        Toast.makeText(this, "No Offers Yet! Keep Checking Back In",Toast.LENGTH_LONG);
+        new Handler().postDelayed(() -> {
+            Toast.makeText(MapsRiderActivity.this, "No Offers Yet! Keep Checking Back In", Toast.LENGTH_LONG).show();
+        }, 400);
+
     }
 
     /**
@@ -666,18 +669,20 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 }).setNeutralButton("View Driver Profile", (dialog, id) -> {
                     /*****TINASHE*****/
                     //User user = driverDBHelper.getUser(marker.getTitle());
-
+                    /****crash here******/
                     User user = null;
+                    user.setEmail(potentialOfferer); 
                     try {
                         user = riderDBHelper.getUser(potentialOfferer);
                         viewDriverProfile(user);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
+                    /*****end crash****/
                     //show the driver who is offering (potential offerers) profile
                     dialog.dismiss();
                 }).setNegativeButton("Decline", (dialog, which) -> {
-                    Log.i("RIDER CLICKED ACCEPTED", "ACCEPTED");
+                    //user declined offer. waiting for a different offerer perhaps
                     dialog.dismiss(); });
         final AlertDialog alert = builder.create(); alert.show();
     }
