@@ -173,12 +173,9 @@ public class GuuDbHelperTest {
         dbHelper.makeReq(user, (double) 60, 0000,0000,1000,1000,"5050");
         Thread.sleep(1000);
 
-        Boolean mike = dbHelper.driverArrive(user, "0000", "0000");
-        Thread.sleep(1000);
-        //if (mike == true)
-        //{
-        //    System.out.println("works");
-        //}
+        //Boolean mike = dbHelper.driverArrive(user, "0000", "0000");
+        //Thread.sleep(1000);
+
 
 
         Map<String,Object> reqDetail;
