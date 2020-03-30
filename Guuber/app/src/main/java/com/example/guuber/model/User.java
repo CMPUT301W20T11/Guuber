@@ -1,15 +1,20 @@
 package com.example.guuber.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.fragment.app.DialogFragment;
 
 import com.example.guuber.MapsDriverActivity;
+import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  * Base app user class
  */
-public class User{
+public class User implements Serializable {
     private Wallet wallet;
 
     private String phoneNumber;
@@ -23,6 +28,10 @@ public class User{
     private Integer posRating;
     private Integer negRating;
 
+//    /***********the database******/
+//    private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
+//    private GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
+
     /**
      * Empty constructor for firebase use
      */
@@ -32,11 +41,11 @@ public class User{
 
     /**
      * On create
-     * @param phoneNumber - User phone number
-     * @param email - User email
-     * @param firstName - User first name
-     * @param lastName - User last name
      *
+     * @param phoneNumber - User phone number
+     * @param email       - User email
+     * @param firstName   - User first name
+     * @param lastName    - User last name
      */
     public User(String phoneNumber, String email, String firstName, String lastName, String uname, int posRating, int negRating) {
         this.phoneNumber = phoneNumber;
@@ -52,10 +61,11 @@ public class User{
 
     /**
      * Deprecated user constructor (Delete later)
+     *
      * @param phoneNumber - User phone number
-     * @param email - User email
-     * @param firstName - User first name
-     * @param lastName - User last name
+     * @param email       - User email
+     * @param firstName   - User first name
+     * @param lastName    - User last name
      */
     public User(String phoneNumber, String email, String firstName, String lastName, int posRating, int negRating) {
         this.phoneNumber = phoneNumber;
@@ -85,34 +95,39 @@ public class User{
 //        this.vehicle = vehicle;
 //    }
 
-    public int getPosRating(){
+    public int getPosRating() {
         return posRating;
     }
 
-    public void setPosRating(int posRating){
+    public void setPosRating(int posRating) {
         this.posRating = posRating;
     }
 
-    public int getNegRating(){
+    public int getNegRating() {
         return negRating;
     }
 
-    public void setNegRating(int negRating){
+    public void setNegRating(int negRating) {
         this.negRating = negRating;
     }
 
     /**
      * adjusts the user rating based on external user's review
+     *
      * @param bool
      */
-    public void adjustRating(Boolean bool){
-        if (bool){this.posRating = this.posRating + 1;}
-        else{this.negRating = this.negRating - 1;}
+    public void adjustRating(Boolean bool) {
+        if (bool) {
+            this.posRating = this.posRating + 1;
+        } else {
+            this.negRating = this.negRating - 1;
+        }
     }
 
 
     /**
-     *  Set rider status
+     * Set rider status
+     *
      * @param rider
      */
     public void setRider(Integer rider) {
@@ -121,6 +136,7 @@ public class User{
 
     /**
      * Get rider status
+     *
      * @return
      */
     public Integer getRider() {
@@ -129,6 +145,7 @@ public class User{
 
     /**
      * Get user wallet
+     *
      * @return - User wallet
      */
     public Wallet getWallet() {
@@ -137,6 +154,7 @@ public class User{
 
     /**
      * Set user wallet
+     *
      * @param wallet - User wallet
      */
     public void setWallet(Wallet wallet) {
@@ -145,6 +163,7 @@ public class User{
 
     /**
      * Get user phone number
+     *
      * @return - User phone number
      */
     public String getPhoneNumber() {
@@ -153,6 +172,7 @@ public class User{
 
     /**
      * Set user phone number
+     *
      * @param phoneNumber - User phone number
      */
     public void setPhoneNumber(String phoneNumber) {
@@ -161,6 +181,7 @@ public class User{
 
     /**
      * Get user email
+     *
      * @return - User email
      */
     public String getEmail() {
@@ -169,6 +190,7 @@ public class User{
 
     /**
      * Set user email
+     *
      * @param email - User email
      */
     public void setEmail(String email) {
@@ -177,6 +199,7 @@ public class User{
 
     /**
      * Get user first name
+     *
      * @return - User first name
      */
     public String getFirstName() {
@@ -185,6 +208,7 @@ public class User{
 
     /**
      * Set user first name
+     *
      * @param firstName - User first name
      */
     public void setFirstName(String firstName) {
@@ -193,6 +217,7 @@ public class User{
 
     /**
      * Get user last name
+     *
      * @return - User last name
      */
     public String getLastName() {
@@ -201,6 +226,7 @@ public class User{
 
     /**
      * Set user last name
+     *
      * @param lastName - User last name
      */
     public void setLastName(String lastName) {
@@ -221,7 +247,7 @@ public class User{
      * Uses AggPositive + AggNegative from db to make AggTotal (then from there you can easily make a percentage of Negative to Positive reviews for each user)
      * When a user gets a new rating add it to either the AggPositive or AggNegative
      */
-    public void rateUser(){}
-
-
+    public void rateUser() {
+    }
 }
+

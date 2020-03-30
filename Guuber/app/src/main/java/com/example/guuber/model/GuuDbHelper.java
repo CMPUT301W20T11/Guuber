@@ -101,10 +101,11 @@ public class GuuDbHelper {
      * @param rider        - whether if the user is a rider of driver
      * @param posRating    - number of ratings that are positive
      * @param negRating    - number of ratings that are negative
-     * @param balance      - Amount in users wallet
-     * @param transactions - list of transactions(changes to their balance) that the user incurred
-
      */
+     //* @param balance      - Amount in users wallet
+     //* @param transactions - list of transactions(changes to their balance) that the user incurred
+
+
     public void setUser(String phone, String email, String first, String last, String uname, Integer rider, Integer posRating, Integer negRating) {
             this.user.setEmail(email);
             this.user.setPhoneNumber(phone);
@@ -199,6 +200,7 @@ public class GuuDbHelper {
     public void deleteUser(String email){
         setProfile(email);
         profile.delete();
+
     }
 
     /**
@@ -234,10 +236,23 @@ public class GuuDbHelper {
         users.document(email).update("negRating", FieldValue.increment(1));
     }
 
+    public void updateProfileAll(User user) throws InterruptedException {
+        String email=user.getEmail();
+        User oldUser = getUser(user.getEmail());
+        if (!oldUser.getPhoneNumber().equals(user.getPhoneNumber())){
+            updatePhoneNumber(email, user.getPhoneNumber());
+        }
+        if (oldUser.getNegRating()!=user.getNegRating()){
+            updateNegRating(email);
+        }
+        if (oldUser.getPosRating()!=user.getPosRating()){
+            updateNegRating(email);
+        }
+        if (oldUser.getUsername().equals(user.getUsername())){
+            updateUsername(email, user.getEmail());
+        }
 
-
-
-
+    }
 
     /**
      * Updates users balance (also updates transactions by appending amount to be added to balance to the transactions list)
