@@ -267,7 +267,9 @@ public class GuuDbHelperTest {
     }
 
     @Test
-    public
+    public void completingRequestTest() throws InterruptedException{
+        
+    }
 
     @Test
     public void VehicleRegisterTest() throws InterruptedException{
