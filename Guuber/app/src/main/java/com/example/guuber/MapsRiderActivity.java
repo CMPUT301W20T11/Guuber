@@ -118,7 +118,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private GuuDbHelper riderDBHelper = new GuuDbHelper(riderMapsDB);
 
     //DB
-    private CollectionReference uRef = riderMapsDB.collection("requests");
+    private CollectionReference uRefRequests = riderMapsDB.collection("requests");
+    private CollectionReference uRefUsers = riderMapsDB.collection("Users");
     /**TINASHE YOU MIGHT NEED THIS**/
     String potentialOfferer = null;
 
@@ -178,10 +179,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     /**start the view trips activity**/
                     viewRiderProfile();
                     riderSpinner.setSelection(MENU);
-                }else if (position == VIEWTRIPS) {
-                    /**start the my profile activity*/
-                    viewRiderTrips();
-                    riderSpinner.setSelection(MENU);
                 }else if (position == WALLET){
                     /**start the wallet activity**/
                     openRiderWallet();
@@ -226,8 +223,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         User currUser = ((UserData)(getApplicationContext())).getUser(); //current rider
         String email = currUser.getEmail();
-        uRef.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
-            if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("oriLng") != null) {
+        uRefRequests.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
+            if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("desLat") != null) {
                 rideisPending = Boolean.TRUE;
                 android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
                 Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
@@ -249,13 +246,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     /**********************************SPINNER METHODS*****************************************/
 
-    /**
-     * Starts activity containing trip history for rider
-     **/
-    public void viewRiderTrips() {
-        final Intent riderTripsIntent = new Intent(MapsRiderActivity.this, ViewTripsActivity.class);
-        startActivity(riderTripsIntent);
-    }
 
     /**
      * Starts activity to display riders profile
@@ -822,6 +812,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         String tripCost = getTripCost().toString();
 
         riderDBHelper.makeReq(currUser, tip, originLatitude , originLongitude, destinationLatitude,destinationLongitude,tripCost);
+        riderDBHelper.setRequest(currUser.getEmail(), tip , originLatitude, originLongitude, destinationLatitude,destinationLongitude, tripCost);
         android.util.Log.i(TAG, "REQUEST MADE");
         rideisPending = true;
     }
