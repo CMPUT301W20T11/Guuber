@@ -11,11 +11,13 @@
     <ImageView
         android:id="@+id/imageViewRdIn"
         android:layout_width="134dp"
+        android:foregroundGravity="center"
         android:layout_height="132dp"
         android:layout_marginStart="155dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="16dp"
         android:layout_marginEnd="136dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/guuber" />
@@ -24,10 +26,7 @@
         android:id="@+id/likeButtonRdIn"
         android:layout_width="90dp"
         android:layout_height="100dp"
-        android:layout_marginStart="80dp"
-        android:layout_marginTop="6dp"
-        android:layout_marginEnd="63dp"
-        app:layout_constraintEnd_toStartOf="@+id/dislikeButtonRdIn"
+        android:layout_marginStart="76dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewRdIn"
         app:srcCompat="@drawable/guuber" />
@@ -36,8 +35,7 @@
         android:id="@+id/dislikeButtonRdIn"
         android:layout_width="90dp"
         android:layout_height="100dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginEnd="68dp"
+        android:layout_marginEnd="108dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewRdIn"
         app:srcCompat="@drawable/guuber" />
@@ -48,6 +46,7 @@
         android:layout_height="41dp"
         android:layout_marginEnd="19dp"
         android:layout_marginBottom="18dp"
+        android:fontFamily="monospace"
         android:text="DELETE ACCOUNT"
         android:textColor="#FF0000"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -61,6 +60,7 @@
         android:layout_marginEnd="14dp"
         android:text="Username"
         android:textColor="#FF5722"
+        android:fontFamily="monospace"
         app:layout_constraintEnd_toStartOf="@+id/usernameTextRdIn"
         app:layout_constraintTop_toBottomOf="@+id/likeButtonRdIn" />
 
@@ -72,6 +72,7 @@
         android:layout_marginEnd="38dp"
         android:text="Phone"
         android:textColor="#FF5722"
+        android:fontFamily="monospace"
         app:layout_constraintEnd_toStartOf="@+id/phoneTextRdIn"
         app:layout_constraintTop_toBottomOf="@+id/usernameLabelRdIn" />
 
@@ -79,8 +80,9 @@
         android:id="@+id/emailLabelRdIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="11dp"
-        android:layout_marginEnd="43dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="36dp"
+        android:fontFamily="monospace"
         android:text="Email"
         android:textColor="#FF5722"
         app:layout_constraintEnd_toStartOf="@+id/emailTextRdIn"
@@ -95,6 +97,7 @@
         android:ems="10"
         android:text="Name"
         android:textColor="#FFFFFF"
+        android:fontFamily="monospace"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/likeButtonRdIn" />
 
@@ -106,6 +109,7 @@
         android:layout_marginEnd="56dp"
         android:ems="10"
         android:textColor="#FFFFFF"
+        android:fontFamily="monospace"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/usernameTextRdIn" />
 
@@ -117,6 +121,7 @@
         android:layout_marginEnd="56dp"
         android:ems="10"
         android:textColor="#FFFFFF"
+        android:fontFamily="monospace"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/phoneTextRdIn" />
 
@@ -124,27 +129,33 @@
         android:id="@+id/posRate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="116dp"
+        android:layout_marginStart="104dp"
         android:layout_marginBottom="65dp"
+        android:fontFamily="monospace"
         android:text="100%"
         android:textColor="#00FF00"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/usernameLabelRdIn"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/likeButtonRdIn" />
+        app:layout_constraintTop_toBottomOf="@+id/likeButtonRdIn"
+        app:layout_constraintVertical_bias="0.0" />
 
     <TextView
         android:id="@+id/negRate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="95dp"
+        android:layout_marginEnd="124dp"
         android:layout_marginBottom="66dp"
+        android:fontFamily="monospace"
         android:text="100%"
         android:textColor="#FF0000"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/usernameTextRdIn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dislikeButtonRdIn" />
+        app:layout_constraintTop_toBottomOf="@+id/dislikeButtonRdIn"
+        app:layout_constraintVertical_bias="0.0" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

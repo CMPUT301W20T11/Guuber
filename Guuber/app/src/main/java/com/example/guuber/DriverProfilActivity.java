@@ -64,7 +64,7 @@ public class DriverProfilActivity extends AppCompatActivity {
         Toast.makeText(DriverProfilActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
 
         vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
-        vehicleRegField = findViewById(R.id.carRegTextDrIn);
+        //vehicleRegField = findViewById(R.id.carRegTextDrIn);
         phoneNumberField = findViewById(R.id.phoneTextDrIn);
         usernameField = findViewById(R.id.usernameTextDrIn);
         emailField = findViewById(R.id.emailTextDrIn);
@@ -112,7 +112,7 @@ public class DriverProfilActivity extends AppCompatActivity {
                     return true;
                 }
             });
-            vehicleRegField.setText(carReg);
+            //vehicleRegField.setText(carReg);
             phoneNumberField.setText(phoneNumber);
             usernameField.setText(username);
             emailField.setText(email);
@@ -132,7 +132,7 @@ public class DriverProfilActivity extends AppCompatActivity {
                 posRate = userInfo.getPosRating();
                 negRate = userInfo.getNegRating();
 
-                vehicleRegField.setText(carReg);
+                //vehicleRegField.setText(carReg);
                 phoneNumberField.setText(phoneNumber);
                 usernameField.setText(username);
                 emailField.setText(email);
