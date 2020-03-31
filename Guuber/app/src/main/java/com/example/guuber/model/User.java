@@ -114,15 +114,13 @@ public class User implements Serializable {
             return pos;}
     }
 
-    public int getPosRating() {
-        return this.posRating;
-    }
+    public int getPosRating(){return this.posRating;}
 
     public void setPosRating(int posRating) {
         this.posRating = posRating;
     }
 
-    public int getNegRating() { return this.negRating; }
+    public int getNegRating() {return this.negRating;}
 
     public void setNegRating(int negRating) {
         this.negRating = negRating;

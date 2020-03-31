@@ -54,20 +54,25 @@ public class RiderProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rider_profile_disp);
-        userInfo = ((UserData)(getApplicationContext())).getUser();
+        //userInfo = ((UserData)(getApplicationContext())).getUser();
 
         Toast.makeText(RiderProfileActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
 
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
-        if (!editable){
+        if (editable){ userInfo = ((UserData)(getApplicationContext())).getUser();
+            //System.out.println("wroooooooooooooooongnggggggggggggggggggggggggggggggggggggg");
+        }
+        else {
             //userInfo = (User) getIntent().getSerializableExtra("riderProfile");
             String externalEmail = getIntent().getStringExtra("external_email");
+            //System.out.println("looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong " + externalEmail);
             uRef.document(externalEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
                 userInfo = documentSnapshot.toObject(User.class);
+                //System.out.println(userInfo.getPhoneNumber()+ "dataaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             });
         }
-
+        //System.out.println(userInfo.getPhoneNumber()+"interrrrrrrrrrrrrrrrrrrrrrrr");
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -265,6 +270,7 @@ public class RiderProfileActivity extends AppCompatActivity {
         phoneNumberField.setText(phoneNumber);
         usernameField.setText(username);
         emailField.setText(email);
+
         //negRateDisplay.setText(negRate.toString()+"%");
         //posRateDisplay.setText(posRate.toString()+"%");
         negRateDisplay.setText(negRate.toString());
