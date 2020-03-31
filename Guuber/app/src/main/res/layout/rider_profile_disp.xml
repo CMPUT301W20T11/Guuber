@@ -11,16 +11,17 @@
     <ImageView
         android:id="@+id/imageViewRdIn"
         android:layout_width="134dp"
-        android:foregroundGravity="center"
         android:layout_height="132dp"
         android:layout_marginStart="155dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="136dp"
+        android:foregroundGravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/guuber" />
+        app:srcCompat="@drawable/riderprf"
+        tools:srcCompat="@drawable/riderprf" />
 
     <ImageView
         android:id="@+id/likeButtonRdIn"
@@ -29,7 +30,7 @@
         android:layout_marginStart="76dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/imageViewRdIn"
-        app:srcCompat="@drawable/guuber" />
+        app:srcCompat="@drawable/riderprf" />
 
     <ImageView
         android:id="@+id/dislikeButtonRdIn"

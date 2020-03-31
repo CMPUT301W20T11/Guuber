@@ -34,7 +34,6 @@ public class DriverProfilActivity extends AppCompatActivity {
     TextView emailField;
     TextView usernameField;
     TextView phoneNumberField;
-    TextView vehicleRegField;
     TextView posRateDisplay;
     TextView negRateDisplay;
     ImageView likeButton;
@@ -42,7 +41,6 @@ public class DriverProfilActivity extends AppCompatActivity {
     ImageView profileImg;
 
     Button deleteButton;
-    Vehicle vehicle;
     User userInfo;
     Boolean editable;
 
@@ -63,8 +61,8 @@ public class DriverProfilActivity extends AppCompatActivity {
 
         Toast.makeText(DriverProfilActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
 
-        vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
-        //vehicleRegField = findViewById(R.id.carRegTextDrIn);
+
+
         phoneNumberField = findViewById(R.id.phoneTextDrIn);
         usernameField = findViewById(R.id.usernameTextDrIn);
         emailField = findViewById(R.id.emailTextDrIn);
@@ -73,9 +71,7 @@ public class DriverProfilActivity extends AppCompatActivity {
         profileImg = findViewById(R.id.imageViewDrIn);
         posRateDisplay = findViewById(R.id.posRateDr);
         negRateDisplay = findViewById(R.id.negRateDr);
-        vehicleRegField.setVisibility(View.INVISIBLE);
-        TextView vehicleRegTitle = findViewById(R.id.carRegLabelDrIn);
-        vehicleRegTitle.setVisibility(View.INVISIBLE);
+
         if (editable){
             userInfo = ((UserData)(getApplicationContext())).getUser();
             phoneNumber = userInfo.getPhoneNumber();
@@ -114,13 +110,12 @@ public class DriverProfilActivity extends AppCompatActivity {
                     return true;
                 }
             });
-            //vehicleRegField.setText(carReg);
             phoneNumberField.setText(phoneNumber);
             usernameField.setText(username);
             emailField.setText(email);
             likeButton.setImageResource(R.drawable.smile);
             dislikeButton.setImageResource(R.drawable.frowny);
-            profileImg.setImageResource(R.drawable.profilepic);
+
             negRateDisplay.setText(negRate.toString());
             posRateDisplay.setText(posRate.toString());
         }//finish editable if
@@ -133,14 +128,11 @@ public class DriverProfilActivity extends AppCompatActivity {
                 email = userInfo.getEmail();
                 posRate = userInfo.getPosRating();
                 negRate = userInfo.getNegRating();
-
-                //vehicleRegField.setText(carReg);
                 phoneNumberField.setText(phoneNumber);
                 usernameField.setText(username);
                 emailField.setText(email);
                 likeButton.setImageResource(R.drawable.smile);
                 dislikeButton.setImageResource(R.drawable.frowny);
-                profileImg.setImageResource(R.drawable.profilepic);
                 negRateDisplay.setText(negRate.toString());
                 posRateDisplay.setText(posRate.toString());
 

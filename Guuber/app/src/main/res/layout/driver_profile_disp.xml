@@ -9,14 +9,14 @@
 
     <ImageView
         android:id="@+id/imageViewDrIn"
-        android:layout_width="wrap_content"
-        android:layout_height="132dp"
+        android:layout_width="278dp"
+        android:layout_height="153dp"
         android:layout_marginTop="28dp"
         android:foregroundGravity="center"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/guuber" />
+        app:srcCompat="@drawable/driverprf" />
 
     <ImageView
         android:id="@+id/likeButtonDrIn"
