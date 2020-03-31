@@ -46,7 +46,7 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.driver_profile_disp);
+        setContentView(R.layout.activity_view_profile);
 
         // Display the back button
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
