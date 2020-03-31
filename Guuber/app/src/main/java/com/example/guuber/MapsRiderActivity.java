@@ -228,6 +228,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         String email = currUser.getEmail();
         uRef.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
             if (documentSnapshot != null) {
+                rideisPending = Boolean.TRUE;
                 android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
                 Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
                 Double originLong = Double.parseDouble(documentSnapshot.get("oriLng").toString());
@@ -238,6 +239,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 setDestination(end);
                 setOrigin(start);
                 calculateDirections();
+                setMarker(getOrigin(), "Origin");
+                setMarker(getDestination(), "Destination");
             }
         });
     }
