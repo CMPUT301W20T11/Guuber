@@ -26,6 +26,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
@@ -60,6 +63,10 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
 	private static final int RC_SIGN_OUT = 1000;
 
+	//location client
+	private FusedLocationProviderClient fusedLocationClient;
+	Location currLocation;
+
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -90,22 +97,20 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		});
 
 
-		/******INITIALIZING LOCATION MANAGER*********/
-		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		Criteria criteria = new Criteria();
-		if (checkUserPermissions()) {
-			if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-				isLocationPermissionGranted = true;
-				Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
-				//android.util.Log.i("LOCATION MANAGER INIT", location.toString());
-			} else {
-				ActivityCompat.requestPermissions(this,
-						new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-						PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-				}
-			}
-		}
-	/**********************************************/
+		/******INITIALIZING LOCATION CLIENT*********/
+		fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+		fusedLocationClient.getLastLocation()
+				.addOnSuccessListener(this, new OnSuccessListener<Location>() {
+					@Override
+					public void onSuccess(Location location) {
+						android.util.Log.i("Holy shit", "location is null");
+						if (location != null) {
+							currLocation = location;
+						}
+					}
+				});
+		/**********************************************/
+	}
 
 	@Override
 	protected void onStart() {

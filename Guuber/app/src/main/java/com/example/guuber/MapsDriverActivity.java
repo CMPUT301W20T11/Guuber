@@ -34,6 +34,8 @@ import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -47,6 +49,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
@@ -87,7 +90,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private static final int RC_SIGN_OUT = 1000;
 
 
-
     //booleans for status
     private boolean offerSent;
     private boolean offerAccepted;
@@ -96,8 +98,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     //location
     LocationManager locationManager;
     Criteria criteria = new Criteria();
-    private static Location location;
+    private static Location currLocation;
     private GeoApiContext geoApiContext = null;
+    private FusedLocationProviderClient fusedLocationClient;
+
 
     //maps/globals
     private boolean isLocationPermissionGranted = false;
@@ -196,10 +200,25 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
-        /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                         android.util.Log.i("Holy shit", "location is null");
+                        if (location != null) {
+                            currLocation = location ;
+                            driverLocation = new LatLng(currLocation.getLatitude(),currLocation.getLatitude());
+                            setDriverLocation(driverLocation);
+                        }
+                    }
+                });
+
         if (geoApiContext == null) {
             geoApiContext = new GeoApiContext.Builder().apiKey(getString(R.string.maps_key)).build();
         }
+        /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.driver_map);
         mapFragment.getMapAsync(this);
 
@@ -310,17 +329,16 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             assert locationManager != null;
-            location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
+            currLocation = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
 
 
-
-            if (location != null) {
+            if (currLocation != null) {
                 /**create a new LatLng location object for the user current location**/
-                LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                setDriverLocation(currLocation); //driver must provide their location
+                LatLng theLocation = new LatLng(currLocation.getLatitude(), currLocation.getLongitude());
+                setDriverLocation(theLocation); //driver must provide their location
 
                 /**move the camera to current location**/
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(currLocation).zoom(10).build();
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(theLocation).zoom(10).build();
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         }
@@ -625,7 +643,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-
+        calculateDirectionsToPickup(marker);
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
         riderEmail = marker.getTitle();
 
@@ -905,7 +923,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * @param marker the marker indicating the riders pickup location
      */
     private void calculateDirectionsToPickup(Marker marker) {
-            driverLocation = new LatLng(location.getLatitude(),location.getLongitude());
+            driverLocation = new LatLng(currLocation.getLatitude(),currLocation.getLongitude());
             setDriverLocation(driverLocation);
             Log.d(TAG, "calculateDirections: calculating directions.");
 
