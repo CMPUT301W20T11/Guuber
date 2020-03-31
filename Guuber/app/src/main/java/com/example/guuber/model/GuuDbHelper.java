@@ -868,11 +868,6 @@ public class GuuDbHelper {
         this.car.setReg(driver);
 
     }
-
-    public synchronized void clearRideOver(String rideEmail, String driveEmail) {
-        
-    }
-
     
 
 
