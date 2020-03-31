@@ -43,7 +43,7 @@ public class GuuDbHelper {
     public static String cancelee;
     public static String canceler;
     public static String canceled = "false";
-    public static ArrayList profileInformation = null;
+    public static Map<String,Object> profileInformation;
 
 
 
@@ -95,6 +95,7 @@ public class GuuDbHelper {
                 }
             }
         });
+        Thread.sleep(1000);
     }
 
 
@@ -260,25 +261,26 @@ public class GuuDbHelper {
      * @param email
      * @return
      */
-    public synchronized ArrayList getProfileAll(String email) {
+    public synchronized Map<String,Object> getProfileAll(String email) {
         setProfile(email);
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                String t = documentSnapshot.get("phoneNumber").toString();
-                profileInformation.add(t);
-                String i = documentSnapshot.get("email").toString();
-                profileInformation.add(i);
-                String n = documentSnapshot.get("firstName").toString();
-                profileInformation.add(n);
-                String a = documentSnapshot.get("lastName").toString();
-                profileInformation.add(a);
-                String s = documentSnapshot.get("username").toString();
-                profileInformation.add(s);
-                String h = documentSnapshot.get("posRating").toString();
-                profileInformation.add(h);
-                String e = documentSnapshot.get("negRating").toString();
-                profileInformation.add(e);
+                profileInformation = documentSnapshot.getData();
+//                String t = documentSnapshot.get("phoneNumber").toString();
+//                profileInformation.add(t);
+//                String i = documentSnapshot.get("email").toString();
+//                profileInformation.add(i);
+//                String n = documentSnapshot.get("firstName").toString();
+//                profileInformation.add(n);
+//                String a = documentSnapshot.get("lastName").toString();
+//                profileInformation.add(a);
+//                String s = documentSnapshot.get("username").toString();
+//                profileInformation.add(s);
+//                String h = documentSnapshot.get("posRating").toString();
+//                profileInformation.add(h);
+//                String e = documentSnapshot.get("negRating").toString();
+//                profileInformation.add(e);
             }
         });
         return profileInformation;
