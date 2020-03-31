@@ -583,7 +583,7 @@ public class GuuDbHelper {
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                canceled = documentSnapshot.get("cancelStatus").toString();
+                canceled = documentSnapshot.get("canceled").toString();
             }
         });
         return canceled;

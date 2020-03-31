@@ -713,8 +713,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             User currDriver = ((UserData)(getApplicationContext())).getUser();
-                            String cancelled = "false"; //initialize string
+                            String cancelled;
                             cancelled = driverDBHelper.getCancellationStatus(currDriver.getEmail());
+
                             if (cancelled.equals("false")){
                                 youHaveNotBeenCancelledOnToast();
                             }else{
