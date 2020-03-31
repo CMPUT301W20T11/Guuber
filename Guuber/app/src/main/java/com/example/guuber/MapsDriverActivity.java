@@ -272,31 +272,13 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 if (documentSnapshot.get("offerStatus").toString().equals("accepted")) {
                     String offerToEmail = documentSnapshot.get("offerTo").toString();
                     getRideDetails(offerToEmail);
-                    // Get coordinates from Coord array list
-                    //android.util.Log.i("Coord", Coord.toString());
-                    //Double originLat = Coord.get(0);
-                    //Double originLong = Coord.get(1);
-                    //Double destinationLat = Coord.get(2);
-                    //Double destinationLong = Coord.get(3);
-                    //LatLng start = new LatLng(originLat, originLong);
-                    //LatLng end = new LatLng(destinationLat, destinationLong);
 
-                    //setMarker(start, "Origin");
-                    //setMarker(end, "Destination");
-                    //calculateDirectionsBetweenPickupandDropOff(offerToEmail,start, end);
                 }
-//                android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
-//                Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
-//                Double originLong = Double.parseDouble(documentSnapshot.get("oriLng").toString());
-//                Double destinationLong = Double.parseDouble(documentSnapshot.get("desLng").toString());
-//                Double destinationLat = Double.parseDouble(documentSnapshot.get("desLat").toString());
-//                LatLng start = new LatLng(originLat, originLong);
-//                LatLng end = new LatLng(destinationLat, destinationLong);
-                //setDestination(end);
-                //setOrigin(start);
-                //calculateDirections();
-                //setMarker(getOrigin(), "Origin");
-                //setMarker(getDestination(), "Destination");
+                else if (documentSnapshot.get("offerStatus").toString().equals("pending")) {
+                    String offerToEmail = documentSnapshot.get("offerTo").toString();
+                    getRideDetails(offerToEmail);
+                }
+
             }
         });
     }
@@ -317,28 +299,17 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 LatLng start = new LatLng(originLat, originLong);
                 LatLng end = new LatLng(destinationLat, destinationLong);
 
-                setMarker(start, "Origin");
-                setMarker(end, "Destination");
+                setMarker(start, offerToEmail);
+                setMarker(end, offerToEmail);
+
+                Marker startMarker =  guuberDriverMap.addMarker(new MarkerOptions().position(start).flat(false).title(offerToEmail));
+                calculateDirectionsToPickup(startMarker);
                 calculateDirectionsBetweenPickupandDropOff(offerToEmail,start, end);
             }
         });
     }
 
-    /**
-     *
-     */
-    private void pleaseCloseAndOpenAppDialog(){
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Your Device Location Has Not Been Initialized! Please Close and Re-open  the Application and We Will Get It For You!")
-                .setCancelable(false)
-                .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
-                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
-                       finish();
-                    }
-                });
-        final AlertDialog alert = builder.create();
-        alert.show();
-    }
+
 
     /****************************************SPINNER METHODS***********************************************/
 
@@ -378,6 +349,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         final Intent scanQrProfileIntent = new Intent(MapsDriverActivity.this, scanQrActivity.class);
         startActivityForResult(scanQrProfileIntent, QR_SCAN_CODE);
     }
+
     /**
      * Sign out a user and return to the login activity
      **/
