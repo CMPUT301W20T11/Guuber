@@ -238,6 +238,7 @@ public class GuuDbHelper {
         users.document(email).update("negRating", FieldValue.increment(1));
     }
 
+    /**************
     public synchronized void  updateProfileAll(User user) throws InterruptedException {
         String email = user.getEmail();
         //User oldUser = getUser(user.getEmail());
@@ -256,6 +257,7 @@ public class GuuDbHelper {
         }
 
     }
+     ************************/
 
     /**
      * returns an ArrayList of profile information

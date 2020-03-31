@@ -615,9 +615,18 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     .setMessage("Choose A Tip Percentage")
                     .setView(numberPicker)
                     .setNegativeButton("Make a request", (dialog, which) -> {
-                        rideisPending = true; //ride is an open request
-                        setTip(numberPicker.getValue()); //set the tip percentage
-                        makeRequest(marker); //make the request
+                        User currRider = ((UserData)(getApplicationContext())).getUser();
+                        riderMapsDB.collection("Users").document(currRider.getEmail()).get().addOnSuccessListener(documentSnapshot -> {
+                                    boolean canPay = documentSnapshot.toObject(User.class).getWallet().validateTrans(getTripCost());
+                                    if(!canPay){
+                                        depositSomeMoneyToast();
+                                    }
+                                    else{
+                                        rideisPending = true; //ride is an open request
+                                        setTip(numberPicker.getValue()); //set the tip percentage
+                                        makeRequest(marker); //make the request
+                                    }
+                                });
                         dialog.dismiss();
                     }
                     ).setNeutralButton("Exit", (dialog, id) -> dialog.cancel());
@@ -660,7 +669,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                             public void onClick(DialogInterface dialog, int which) {
                                 /*****TINASHE*****/
                                 final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
-                                driverProfileIntent.putExtra("DRIVER_EMAIL", potentialOfferer);
+                                driverProfileIntent.putExtra("EMAIL", potentialOfferer);
                                 startActivity(driverProfileIntent);
                                 /*******************************/
                             }
@@ -691,6 +700,19 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         }
     }
 
+    /**
+     * rider is broke
+     */
+    private void depositSomeMoneyToast(){
+        new Handler().postDelayed(() -> {
+            Toast.makeText(MapsRiderActivity.this, "You Don't Have Enough Money for This Trip", Toast.LENGTH_LONG).show();
+        }, 400);
+    }
+
+
+    /**
+     * let the rider know the driver is on the way
+     */
     private void driverHasNotArrivedYetToast(){
         new Handler().postDelayed(() -> {
             Toast.makeText(MapsRiderActivity.this, "Your driver has not arrived yet", Toast.LENGTH_LONG).show();
@@ -729,7 +751,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 }).setNeutralButton("View Driver Profile", (dialog, id) -> {
                     /*****TINASHE*****/
                     final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
-                    driverProfileIntent.putExtra("DRIVER_EMAIL", potentialOfferer);
+                    driverProfileIntent.putExtra("EMAIL", potentialOfferer);
                     startActivity(driverProfileIntent);
                     /***************/
                     dialog.dismiss();
@@ -907,7 +929,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                                     public void onClick(DialogInterface dialog, int which) {
                                         /**********TINASHE********/
                                         final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
-                                        driverProfileIntent.putExtra("DRIVER_EMAIL", potentialOfferer);
+                                        driverProfileIntent.putExtra("EMAIL", potentialOfferer);
                                         startActivity(driverProfileIntent);
                                         /************************/
                                     }
