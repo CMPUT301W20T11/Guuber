@@ -103,8 +103,8 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
             likeButton.setImageResource(R.drawable.smile);
             dislikeButton.setImageResource(R.drawable.frowny);
             profileImg.setImageResource(R.drawable.profilepic);
-            negRateDisplay.setText(negRate.toString()+"%");
-            posRateDisplay.setText(posRate.toString()+"%");
+            negRateDisplay.setText(negRate.toString());
+            posRateDisplay.setText(posRate.toString());
         });
 
         // On like button

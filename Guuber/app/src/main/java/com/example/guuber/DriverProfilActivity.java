@@ -73,7 +73,9 @@ public class DriverProfilActivity extends AppCompatActivity {
         profileImg = findViewById(R.id.imageViewDrIn);
         posRateDisplay = findViewById(R.id.posRateDr);
         negRateDisplay = findViewById(R.id.negRateDr);
-
+        vehicleRegField.setVisibility(View.INVISIBLE);
+        TextView vehicleRegTitle = findViewById(R.id.carRegLabelDrIn);
+        vehicleRegTitle.setVisibility(View.INVISIBLE);
         if (editable){
             userInfo = ((UserData)(getApplicationContext())).getUser();
             phoneNumber = userInfo.getPhoneNumber();
