@@ -653,9 +653,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             builder
                 .setTitle("Ride Is Pending")
                     .setPositiveButton("Check For Offers", (dialog, which) -> {
-                        /*****temporary call saying trip is over until we have offer Request going*****/
                         User currUser = ((UserData)(getApplicationContext())).getUser();
-                        potentialOfferer = null; // <-- fixed a crash. Initialize just in case db has not updated yet.
+                        potentialOfferer = null; //<--this fixes a crash
                         try {
                             potentialOfferer = riderDBHelper.seeOffer(currUser); //required to surround with try catch
                         } catch (InterruptedException e) {
@@ -670,9 +669,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         }
                     })
                     .setNegativeButton("Cancel request", (dialog, which) -> {
-                        User currUser = ((UserData)(getApplicationContext())).getUser();
+                        User currRider = ((UserData)(getApplicationContext())).getUser();
+
                         rideisPending = false;
-                        riderDBHelper.cancelRequest(currUser);
+                        riderDBHelper.cancelRequest(currRider);
                         guuberRiderMap.clear();
                         dialog.dismiss();
                     });
@@ -707,8 +707,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         rideisPending = false;
                         rideInProgress = false;
                         guuberRiderMap.clear();
-                        User currUser = ((UserData) (getApplicationContext())).getUser();
-                        riderDBHelper.cancelRequest(currUser);
+                        User currRider = ((UserData) (getApplicationContext())).getUser();
+                        riderDBHelper.setCancellationStatus(currRider.getEmail(), potentialOfferer);
+                        riderDBHelper.cancelRequest(currRider);
                         dialog.dismiss();
                     });
             final AlertDialog alert = builder.create();  alert.show();
@@ -785,6 +786,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         }, 600);
     }
 
+    /**
+     * let the rider know they have declined the offer
+     */
     private void youDeclinedTheOfferToast(){
         new Handler().postDelayed(() -> {
             String toastStr ="You Declined The offer";
