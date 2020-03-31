@@ -192,8 +192,8 @@ public class DriverProfilActivity extends AppCompatActivity {
         likeButton.setImageResource(R.drawable.smile);
         dislikeButton.setImageResource(R.drawable.frowny);
         profileImg.setImageResource(R.drawable.profilepic);
-        negRateDisplay.setText(negRate.toString()+"%");
-        posRateDisplay.setText(posRate.toString()+"%");
+        negRateDisplay.setText(negRate.toString());
+        posRateDisplay.setText(posRate.toString());
 
         deleteButton = findViewById(R.id.deleteAccButtonDrIn);
         if (!editable){deleteButton.setVisibility(View.INVISIBLE);}
@@ -228,6 +228,7 @@ public class DriverProfilActivity extends AppCompatActivity {
             userInfo.setUsername(value);
         }
         updateDatabase();
+        updateViews();
     }
 
     public void updateDatabase(){
@@ -250,6 +251,23 @@ public class DriverProfilActivity extends AppCompatActivity {
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
+    }
+
+    public void updateViews(){
+
+        phoneNumber = userInfo.getPhoneNumber();
+        username = userInfo.getUsername();
+        email = userInfo.getEmail();
+        posRate = userInfo.getPosRating();
+        negRate = userInfo.getNegRating();
+
+        phoneNumberField.setText(phoneNumber);
+        usernameField.setText(username);
+        emailField.setText(email);
+        //negRateDisplay.setText(negRate.toString()+"%");
+        //posRateDisplay.setText(posRate.toString()+"%");
+        negRateDisplay.setText(negRate.toString());
+        posRateDisplay.setText(posRate.toString());
     }
 
 }
