@@ -43,7 +43,7 @@ public class GuuDbHelper {
     public static String cancelee;
     public static String canceler;
     public static String canceled = "false";
-    public static ArrayList profileInformaiton;
+    public static ArrayList profileInformation = null;
 
 
 
@@ -266,22 +266,22 @@ public class GuuDbHelper {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 String t = documentSnapshot.get("phoneNumber").toString();
-                profileInformaiton.add(t);
+                profileInformation.add(t);
                 String i = documentSnapshot.get("email").toString();
-                profileInformaiton.add(i);
+                profileInformation.add(i);
                 String n = documentSnapshot.get("firstName").toString();
-                profileInformaiton.add(n);
+                profileInformation.add(n);
                 String a = documentSnapshot.get("lastName").toString();
-                profileInformaiton.add(a);
+                profileInformation.add(a);
                 String s = documentSnapshot.get("username").toString();
-                profileInformaiton.add(s);
+                profileInformation.add(s);
                 String h = documentSnapshot.get("posRating").toString();
-                profileInformaiton.add(h);
+                profileInformation.add(h);
                 String e = documentSnapshot.get("negRating").toString();
-                profileInformaiton.add(e);
+                profileInformation.add(e);
             }
         });
-        return profileInformaiton;
+        return profileInformation;
     }
 
 
