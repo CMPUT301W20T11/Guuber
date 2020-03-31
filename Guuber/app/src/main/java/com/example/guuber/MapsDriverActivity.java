@@ -317,9 +317,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(currLocation).zoom(10).build();
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }else{
+
                 location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
-                LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                setMarker(currLocation," Your Location");
+                //LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                //setMarker(currLocation," Your Location");
                 android.util.Log.i("DRIVER LOCATION = ", null);
             }
         }

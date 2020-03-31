@@ -6,28 +6,24 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
 import android.Manifest;
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.RadioGroup;
 import android.widget.Toast;
 
-import com.example.guuber.model.Transaction;
 import com.example.guuber.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -64,6 +60,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
 	private static final int RC_SIGN_OUT = 1000;
 
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -91,7 +88,25 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 				}
 			}
 		});
-	}
+
+
+		/******INITIALIZING LOCATION MANAGER*********/
+		LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		Criteria criteria = new Criteria();
+		if (checkUserPermissions()) {
+			if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+				isLocationPermissionGranted = true;
+				Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
+				android.util.Log.i("LOCATION MANAGER INIT", location.toString());
+			} else {
+				ActivityCompat.requestPermissions(this,
+						new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+						PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+				}
+
+			}
+		}
+	/**********************************************/
 
 	@Override
 	protected void onStart() {
@@ -274,17 +289,19 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		updateUI(user);
 	}
 
-	public void checkUserPermissions(){
+	public boolean checkUserPermissions(){
 		if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
 				android.Manifest.permission.ACCESS_FINE_LOCATION)
 				== PackageManager.PERMISSION_GRANTED) {
 					isLocationPermissionGranted = true;
+					return true;
 			} else {
 				ActivityCompat.requestPermissions(this,
 						new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
 						PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+				return false;
 				}
-			}
+	}
 
 	@Override
 	public void onRequestPermissionsResult(int requestCode,

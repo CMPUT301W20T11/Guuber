@@ -62,7 +62,7 @@ public class GuuDbHelper {
         this.db = db.getInstance();
         this.users = this.db.collection("Users");
         this.requests = this.db.collection("requests");
-        this.user = new User();
+        user = new User();
     }
 
 
