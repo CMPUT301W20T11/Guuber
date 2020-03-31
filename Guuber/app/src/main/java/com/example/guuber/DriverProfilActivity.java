@@ -195,12 +195,12 @@ public class DriverProfilActivity extends AppCompatActivity {
             userInfo.setUsername(value);
         }
 
-        try {
-            User userInfo = ((UserData)(getApplicationContext())).getUser();
-            driverDBHelper.updateProfileAll(userInfo);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            User userInfo = ((UserData)(getApplicationContext())).getUser();
+//            //driverDBHelper.updateProfileAll(userInfo);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
     }
 
     public void deleteSelf(){
