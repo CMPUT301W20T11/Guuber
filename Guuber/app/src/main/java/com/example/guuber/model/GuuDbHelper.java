@@ -497,7 +497,7 @@ public class GuuDbHelper {
     public synchronized void offerRide(User driver,User rider){
         setProfile(driver.getEmail());
         profile.update("offerStatus","pending");
-        profile.update("offerTo",rider.getEmail());
+        profile.update("offerTo", rider.getEmail());
         setProfile(rider.getEmail());
         profile.update("rideOfferFrom",driver.getEmail());
     }

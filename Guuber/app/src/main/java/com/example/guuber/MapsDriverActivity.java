@@ -310,8 +310,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 LatLng start = new LatLng(originLat, originLong);
                 LatLng end = new LatLng(destinationLat, destinationLong);
 
-                setMarker(start, "Origin");
-                setMarker(end, "Destination");
+                setMarker(start, offerToEmail);
+                setMarker(end, offerToEmail);
 
                 Marker startMarker =  guuberDriverMap.addMarker(new MarkerOptions().position(start).flat(false).title(offerToEmail));
                 calculateDirectionsToPickup(startMarker);
