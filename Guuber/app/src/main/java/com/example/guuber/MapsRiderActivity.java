@@ -38,6 +38,8 @@ import android.widget.Toast;
 import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
 import com.google.android.gms.auth.api.signin.GoogleSignInApi;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -111,6 +113,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 12;
     private static final String TAG = "MapsRiderActivity";
     private GeoApiContext geoRiderApiContext = null;
+    private FusedLocationProviderClient fusedLocationClient;
 
     /***********the database******/
     private FirebaseFirestore riderMapsDB = FirebaseFirestore.getInstance();
@@ -199,6 +202,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         });
 
 
+
+
         /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         if (geoRiderApiContext == null) {
             geoRiderApiContext = new GeoApiContext.Builder().apiKey(getString(R.string.maps_key)).build();
@@ -215,12 +220,40 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     protected void onResume() {
         super.onResume();
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            android.util.Log.i("LOCATION = ", "NONNULL");
+                        }else {
+                            pleaseCloseAndOpenAppDialog();
+                        }
+                    }
+                });
         if (checkMapServices()) {
             if (!isLocationPermissionGranted) {
                 checkUserPermission();
             }
         }
         updateMapPendingRider();
+    }
+
+    /**
+     *
+     */
+    private void pleaseCloseAndOpenAppDialog(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your Device Location Has Not Been Initialized! Please Close and Re-open the Application and We Will Get It For You!")
+                .setCancelable(false)
+                .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        finish();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     protected void updateMapPendingRider() {

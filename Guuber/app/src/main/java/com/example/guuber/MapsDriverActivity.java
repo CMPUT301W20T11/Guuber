@@ -230,11 +230,41 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     protected void onResume() {
         super.onResume();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            currLocation = location ;
+                            driverLocation = new LatLng(currLocation.getLatitude(),currLocation.getLatitude());
+                            setDriverLocation(driverLocation);
+                        }else{
+                            pleaseCloseAndOpenAppDialog();
+                        }
+                    }
+                });
         if(checkMapServices()){
             if(!isLocationPermissionGranted){
                 checkUserPermission();
             }
         }
+    }
+
+    /**
+     *
+     */
+    private void pleaseCloseAndOpenAppDialog(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your Device Location Has Not Been Initialized! Please Close and Re-open  the Application and We Will Get It For You!")
+                .setCancelable(false)
+                .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                       finish();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
     /****************************************SPINNER METHODS***********************************************/
