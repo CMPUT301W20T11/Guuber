@@ -257,6 +257,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     }
 
     /***DONT USE THIS ONE****/
+    // this function is fixed, not tested because mapsdriveractivity keeps crashing
+    // search for Tinashe, delete three lines that start ViewProfileActivity_Matt and uncomment call to this method to implement
     public void viewDriverProfile(String d_email) {
         Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
         driverProfileIntent.putExtra("caller", "external");
@@ -660,6 +662,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 /*****TINASHE*****/
+                                //viewDriverProfile(potentialOfferer);
                                 final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
                                 driverProfileIntent.putExtra("EMAIL", potentialOfferer);
                                 startActivity(driverProfileIntent);
@@ -742,6 +745,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         dialog.dismiss(); }
                 }).setNeutralButton("View Driver Profile", (dialog, id) -> {
                     /*****TINASHE*****/
+                    //viewDriverProfile(potentialOfferer);
                     final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
                     driverProfileIntent.putExtra("EMAIL", potentialOfferer);
                     startActivity(driverProfileIntent);
@@ -922,6 +926,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         /**********TINASHE********/
+                                        //viewDriverProfile(potentialOfferer);
                                         final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
                                         driverProfileIntent.putExtra("EMAIL", potentialOfferer);
                                         startActivity(driverProfileIntent);
