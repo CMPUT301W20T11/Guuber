@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -74,8 +75,32 @@ public class RiderProfileActivity extends AppCompatActivity {
         phoneNumber = userInfo.getPhoneNumber();
         username = userInfo.getUsername();
         email = userInfo.getEmail();
-        posRate = userInfo.getPosRating();
-        negRate = userInfo.getNegRating();
+        posRate = userInfo.getPercentPositive();
+        negRate = userInfo.getPercentNegative();
+
+        //onClickListeners for email and phone number fields to contact User
+        if (!editable){
+
+            emailField.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.setData(Uri.parse("mailto:"+ email));
+                    startActivity(intent);
+                }
+            });
+
+            phoneNumberField.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:"+phoneNumber));
+                    startActivity(intent);
+
+                }
+            });
+
+        }
 
         //like and dislike buttons onclick listeners to rate drivers and riders from their profile view
 

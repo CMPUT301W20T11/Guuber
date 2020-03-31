@@ -240,14 +240,27 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         //user.setNegRating(0);
         //user.setPosRating(0);
         //delete only up to here
-        System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-        System.out.println(user.getEmail());
-        System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+//        System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
+//        System.out.println(user.getEmail());
+//        System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
 
 
         riderProfileIntent.putExtra("caller", "external");
         riderProfileIntent.putExtra("riderProfile", user);
         startActivity(riderProfileIntent);
+    }
+
+    public User makeExternalUser(ArrayList userInfo){
+        String email = userInfo.get(1).toString();
+        String uname = userInfo.get(4).toString();
+        String phone = userInfo.get(0).toString();
+        String first = userInfo.get(2).toString();
+        String last = userInfo.get(3).toString();
+        Integer negRating = userInfo.get(6).hashCode();
+        Integer posRating = userInfo.get(5).hashCode();
+
+        User user = new User(phone, email, first, last, uname, posRating, negRating);
+        return user;
     }
 
     /**
@@ -656,12 +669,21 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                             /**********TINASHE********/
                             //view the rider of this requests profile
                             //marker.getTitle() is equal to email
+                            User user = null;
                             try {
-                                User user = driverDBHelper.getUser(marker.getTitle());
-                                viewRiderProfile(user);
+                                user = driverDBHelper.getUser(marker.getTitle());
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
+                            //ArrayList userInfo = driverDBHelper.getProfileAll(marker.getTitle());
+                            //User user = makeExternalUser(userInfo);
+                            try {
+                                User user2 = driverDBHelper.getUser(marker.getTitle());
+                                viewRiderProfile(user2);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+
                         }
                     })
                     .setNeutralButton("Exit", new DialogInterface.OnClickListener() {

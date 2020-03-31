@@ -759,6 +759,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     user.setEmail(potentialOfferer);
                     try {
                         user = riderDBHelper.getUser(potentialOfferer);
+                        user = riderDBHelper.getUser(potentialOfferer);
                         viewDriverProfile(user);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -944,6 +945,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                                         //Tinashe I don't know how you're going to call profile sorry here's some skeleton
                                         User user = null;
                                         try {
+                                            user = riderDBHelper.getUser(driversEmail);
                                             user = riderDBHelper.getUser(driversEmail);
                                             viewDriverProfile(user);
                                         } catch (InterruptedException e) {
