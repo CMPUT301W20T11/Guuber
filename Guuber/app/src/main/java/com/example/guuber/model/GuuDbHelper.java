@@ -270,6 +270,7 @@ public class GuuDbHelper {
      * @param desLat - Latitudinal coordinate of the destination
      * @param desLng - Latitudinal coordinate of the destination
      * @param tripCost - the cost of the trip
+     *  >WORKS
      */
     public synchronized void makeReq(User rider, Double tip, double oriLat, double oriLng, double desLat, double desLng, String tripCost){
         setProfile(rider.getEmail());
@@ -289,6 +290,7 @@ public class GuuDbHelper {
     /**
      * Cancels the user's request
      * @param rider - rider who want to cancel their request
+     *  >WORKS
      */
     public synchronized void cancelRequest(User rider) {
         setProfile(rider.getEmail());
@@ -361,7 +363,6 @@ public class GuuDbHelper {
      * @return - the details of the request in as a Map<String,Object> format </String,Object>
      */
     public synchronized Map<String,Object> getRiderRequest(User rider) throws InterruptedException {
-
         setProfile(rider.getEmail());
         TimeUnit.SECONDS.sleep(5);
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -517,42 +518,44 @@ public class GuuDbHelper {
                 profile.update("arrived","false"); //driver now has a field
             }
         });
-        setProfile(offerer);
-        profile.update("arrived","false");
-        profile.update("offerStatus","accepted");
+        //setProfile(offerer); causing crash
+        //profile.update("arrived","false");
+        //profile.update("offerStatus","accepted");
     }
 
+
+    /**
+     * function to set the status of the arrival. Driver sets to true upon arrival
+     * @param email is the drivers email
+     * WORKS >
+     */
     public synchronized void setArrival(String email){
-        android.util.Log.i("DRIVER EMAIL = ", email);
         setProfile(email);
-        android.util.Log.i("Passed set Profile for ", email);
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 arriver = email;
                 setProfile(arriver);
-                android.util.Log.i("Passed set Profile for ", arriver);
                 profile.update("arrived","true");
 
-                android.util.Log.i("Getting Document snap ", "for rider");
                 arrivee = documentSnapshot.get("offerTo").toString();
-                android.util.Log.i("arrivee = ", arrivee);
                 setProfile(arrivee);
-                android.util.Log.i("Passed set Profile for ", arrivee);
                 profile.update("arrived","true"); //driver now has a field
             }
         });
-        //setProfile(arrivee);
-        //profile.update("arrived","true");
     }
 
 
+    /**
+     * function to get the status of the arrival
+     * @param email is the riders email
+     *  WORKS >
+     */
     public synchronized String getArrival(String email){
         setProfile(email);
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                android.util.Log.i("IN ARRIVAL STAT", "STAT");
                 arrivalStatus = documentSnapshot.get("arrived").toString();
                 if (arrivalStatus.equals("true")){
                     android.util.Log.i("ARRIVAL STATUS =", "true");
