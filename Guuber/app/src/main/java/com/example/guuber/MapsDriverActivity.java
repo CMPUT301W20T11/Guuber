@@ -235,7 +235,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         startActivity(driverProfileIntent);
     }
 
-    public void viewRiderProfile(User user) {
+    public void viewRiderProfile(String riderEmail){
         Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
         //to be deleted, need to initialize all users properly
         //user.setNegRating(0);
@@ -247,7 +247,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
 
         riderProfileIntent.putExtra("caller", "external");
-        riderProfileIntent.putExtra("riderProfile", user);
+        riderProfileIntent.putExtra("RIDER_EMAIL", riderEmail);
+//        riderProfileIntent.putExtra("riderProfile", user);
         startActivity(riderProfileIntent);
     }
 
@@ -670,19 +671,20 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             /**********TINASHE********/
-                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
-                            riderProfileIntent.putExtra("RIDER_EMAIL", riderEmail);
-                            startActivity(riderProfileIntent);
+//                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
+//                            riderProfileIntent.putExtra("RIDER_EMAIL", riderEmail);
+//                            startActivity(riderProfileIntent);
+                            viewRiderProfile(riderEmail);
                             /*******************************/
                             //view the rider of this requests profile
                             //marker.getTitle() is equal to email
-                            User user = null;
-                            try {
-                                User user = driverDBHelper.getUser(marker.getTitle());
-                                viewRiderProfile(user);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
+//                            User user = null;
+//                            try {
+//                                User user = driverDBHelper.getUser(marker.getTitle());
+//                                viewRiderProfile(user);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
                         }
                     })
                     .setNeutralButton("Exit", new DialogInterface.OnClickListener() {

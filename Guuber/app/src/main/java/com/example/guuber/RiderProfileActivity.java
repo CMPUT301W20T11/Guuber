@@ -224,7 +224,6 @@ public class RiderProfileActivity extends AppCompatActivity {
         }
         else if (field.equals("username")){
             userInfo.setUsername(value);
-            //System.out.println("helllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllljjjfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffp");
         }
 
         try {
