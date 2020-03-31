@@ -73,7 +73,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     /*** spinner codes**/
     private static final int MENU = 0;
-    private static final int VIEWTRIPS = 1;
+    //private static final int VIEWTRIPS = 1;
     private static final int MYPROFILE = 2;
     private static final int WALLET = 3;
     private static final int SCANQR = 4;
@@ -167,10 +167,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (position == MYPROFILE) {
                     /**start the view trips activity**/
-                    viewDriverTrips();
-                    driverSpinner.setSelection(MENU);
-                } else if (position == VIEWTRIPS) {
-                    /**start the my profile activity*/
                     viewDriverProfile();
                     driverSpinner.setSelection(MENU);
                 } else if (position == WALLET) {
@@ -218,13 +214,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     /****************************************SPINNER METHODS***********************************************/
 
-    /**
-     * Starts activity containing trip history for driver
-     **/
-    public void viewDriverTrips() {
-        final Intent driverTripsIntent = new Intent(MapsDriverActivity.this, ViewTripsActivity.class);
-        startActivity(driverTripsIntent);
-    }
+
 
     /**
      * Starts activity to display drivers profile
@@ -644,6 +634,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     public void onInfoWindowClick(Marker marker) {
         calculateDirectionsToPickup(marker); //draw drivers route to pickup
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
+        riderEmail = marker.getTitle();
 
         if(offerSent == false && offerAccepted == false) {
             builder
@@ -676,7 +667,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                             offerSent = true;
                             try {
-                                riderEmail = marker.getTitle();
                                 offerRide(marker);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();

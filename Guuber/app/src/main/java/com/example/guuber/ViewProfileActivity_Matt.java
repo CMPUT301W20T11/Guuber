@@ -106,6 +106,19 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
             negRateDisplay.setText(negRate.toString()+"%");
             posRateDisplay.setText(posRate.toString()+"%");
         });
+
+        // On like button
+        likeButton.setOnClickListener(v -> {
+           rateUser(true);
+           Toast.makeText(ViewProfileActivity_Matt.this, "Profile liked!", Toast.LENGTH_LONG).show();
+        });
+
+        // On dislike button
+        dislikeButton.setOnClickListener(v -> {
+            rateUser(false);
+            Toast.makeText(ViewProfileActivity_Matt.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+        });
+
     }
 
     // On back button pressed
@@ -120,6 +133,7 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
 
     // Rate the user
     public void rateUser(Boolean rating){
+
         // Update the db object's rating
         if(!rating){
             uRef.document(email).update("negRating", FieldValue.increment(1));

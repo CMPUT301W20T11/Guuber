@@ -335,6 +335,9 @@ public class GuuDbHelper {
         this.requests.document(rider.getEmail()).set(details);
     }
 
+
+
+
     /**
      * Cancels the user's request
      * @param rider - rider who want to cancel their request
@@ -710,6 +713,10 @@ public class GuuDbHelper {
         requests.document(rider.getEmail()).delete();
 
         setProfile(driver.getEmail());
+        profile.update("oriLat",reqDetails.get("oriLat"));
+        profile.update("oriLng",reqDetails.get("oriLng"));
+        profile.update("desLat",reqDetails.get("desLat"));
+        profile.update("desLng",reqDetails.get("desLng"));
         profile.update("offerStatus",FieldValue.delete());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
