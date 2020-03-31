@@ -878,8 +878,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * @param tipPercentage is an integer representing the tip percentage the rider has chosen
      */
     public void setTip(int tipPercentage){
-        tip = getTripCost() * (tipPercentage/100);
-        this.tip = Math.round(tip * 100.0) / 100.0;;
+        tip = getTripCost() * (tipPercentage/100.0);
+        this.tip = (double)Math.round(tip);
     }
 
     /**
