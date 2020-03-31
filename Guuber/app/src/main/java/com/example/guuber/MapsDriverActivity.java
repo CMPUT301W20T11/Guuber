@@ -243,7 +243,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 checkUserPermission();
             }
         }
-        //updateMapDriver();
+        updateMapDriver();
     }
 
     private void pleaseCloseAndOpenAppDialogD(){
@@ -310,10 +310,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 Double originLong = Double.parseDouble(documentSnapshot.get("oriLng").toString());
                 Double destinationLong = Double.parseDouble(documentSnapshot.get("desLng").toString());
                 Double destinationLat = Double.parseDouble(documentSnapshot.get("desLat").toString());
-                Coord.add(0,originLat);
-                Coord.add(1,originLong);
-                Coord.add(2,destinationLat);
-                Coord.add(3,destinationLong);
+                //Coord.add(0,originLat);
+                //Coord.add(1,originLong);
+                //Coord.add(2,destinationLat);
+                //Coord.add(3,destinationLong);
                 LatLng start = new LatLng(originLat, originLong);
                 LatLng end = new LatLng(destinationLat, destinationLong);
 
