@@ -227,7 +227,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         User currUser = ((UserData)(getApplicationContext())).getUser(); //current rider
         String email = currUser.getEmail();
         uRef.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
-            if (documentSnapshot != null) {
+            if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("oriLng") != null) {
                 rideisPending = Boolean.TRUE;
                 android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
                 Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());

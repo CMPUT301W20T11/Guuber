@@ -201,8 +201,8 @@ public class RiderProfileActivity extends AppCompatActivity {
             e.printStackTrace();
         }
          ***/
-    }
 
+        /****
     public void deleteSelf(){
         riderDBHelper.deleteUser(userInfo.getEmail());
         Toast.makeText(RiderProfileActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
@@ -210,5 +210,6 @@ public class RiderProfileActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
-
+    ***/
+    }
 }
