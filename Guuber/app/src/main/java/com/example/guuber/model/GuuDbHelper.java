@@ -868,8 +868,6 @@ public class GuuDbHelper {
         this.car.setReg(driver);
 
     }
-
-
     
 
 
