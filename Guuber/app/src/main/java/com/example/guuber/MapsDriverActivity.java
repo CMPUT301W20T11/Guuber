@@ -235,34 +235,15 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         startActivity(driverProfileIntent);
     }
 
-    public void viewRiderProfile(String riderEmail){
+    public void viewRiderProfile(User user) {
         Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
         //to be deleted, need to initialize all users properly
-        //user.setNegRating(0);
-        //user.setPosRating(0);
+        user.setNegRating(0);
+        user.setPosRating(0);
         //delete only up to here
-//        System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-//        System.out.println(user.getEmail());
-//        System.out.println("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh");
-
-
         riderProfileIntent.putExtra("caller", "external");
-        riderProfileIntent.putExtra("RIDER_EMAIL", riderEmail);
-//        riderProfileIntent.putExtra("riderProfile", user);
+        riderProfileIntent.putExtra("riderProfile", user);
         startActivity(riderProfileIntent);
-    }
-
-    public User makeExternalUser(ArrayList userInfo){
-        String email = userInfo.get(1).toString();
-        String uname = userInfo.get(4).toString();
-        String phone = userInfo.get(0).toString();
-        String first = userInfo.get(2).toString();
-        String last = userInfo.get(3).toString();
-        Integer negRating = userInfo.get(6).hashCode();
-        Integer posRating = userInfo.get(5).hashCode();
-
-        User user = new User(phone, email, first, last, uname, posRating, negRating);
-        return user;
     }
 
     /**
@@ -671,20 +652,16 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             /**********TINASHE********/
-//                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
-//                            riderProfileIntent.putExtra("RIDER_EMAIL", riderEmail);
-//                            startActivity(riderProfileIntent);
-                            viewRiderProfile(riderEmail);
+                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
+                            riderProfileIntent.putExtra("EMAIL", riderEmail);
+                            startActivity(riderProfileIntent);
                             /*******************************/
-                            //view the rider of this requests profile
-                            //marker.getTitle() is equal to email
-//                            User user = null;
-//                            try {
-//                                User user = driverDBHelper.getUser(marker.getTitle());
-//                                viewRiderProfile(user);
-//                            } catch (InterruptedException e) {
-//                                e.printStackTrace();
-//                            }
+                            try {
+                                User user = driverDBHelper.getUser(marker.getTitle());
+                                viewRiderProfile(user);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     })
                     .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
@@ -774,7 +751,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         public void onClick(DialogInterface dialog, int which) {
                             /******TINASHE*******/
                             final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
-                            riderProfileIntent.putExtra("RIDER_EMAIL", riderEmail);
+                            riderProfileIntent.putExtra("EMAIL", riderEmail);
                             startActivity(riderProfileIntent);
                             /*******************/
                         }

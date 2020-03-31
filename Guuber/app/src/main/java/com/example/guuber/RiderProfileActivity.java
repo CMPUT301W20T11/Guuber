@@ -109,11 +109,11 @@ public class RiderProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(RiderProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-                    try {
-                        riderDBHelper.updateProfileAll(userInfo);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        riderDBHelper.updateProfileAll(userInfo);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
                     // for quick on screen test delete System.out.print("LIKE##################################################");
                 }
             }
@@ -124,11 +124,11 @@ public class RiderProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(RiderProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
-                    try {
-                        riderDBHelper.updateProfileAll(userInfo);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        riderDBHelper.updateProfileAll(userInfo);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
                 }
             }
         });
@@ -226,12 +226,14 @@ public class RiderProfileActivity extends AppCompatActivity {
             userInfo.setUsername(value);
         }
 
+        /***
         try {
             riderDBHelper.updateProfileAll(userInfo);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
+         ***/}
+
 
     public void deleteSelf(){
         riderDBHelper.deleteUser(userInfo.getEmail());
@@ -240,5 +242,5 @@ public class RiderProfileActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
-
 }
+
