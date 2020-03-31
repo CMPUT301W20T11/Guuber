@@ -4,6 +4,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -15,6 +16,8 @@ import android.widget.Toast;
 
 import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
@@ -44,8 +47,9 @@ public class RiderProfileActivity extends AppCompatActivity {
     /***********the database******/
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper riderDBHelper = new GuuDbHelper(driverMapsDB);
-
+    private CollectionReference uRef = driverMapsDB.collection("Users");
     private static final String TAG = "RiderProfileActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +61,13 @@ public class RiderProfileActivity extends AppCompatActivity {
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
         if (!editable){
-            userInfo = (User) getIntent().getSerializableExtra("riderProfile");
+            //userInfo = (User) getIntent().getSerializableExtra("riderProfile");
+            String externalEmail = getIntent().getStringExtra("external_email");
+            uRef.document(externalEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
+                userInfo = documentSnapshot.toObject(User.class);
+            });
         }
+
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -77,6 +86,30 @@ public class RiderProfileActivity extends AppCompatActivity {
         posRate = userInfo.getPosRating();
         negRate = userInfo.getNegRating();
 
+        //onClickListeners for email and phone number fields to contact User
+        if (!editable){
+
+            emailField.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.setData(Uri.parse("mailto:"+ email));
+                    startActivity(intent);
+                }
+            });
+
+            phoneNumberField.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:"+phoneNumber));
+                    startActivity(intent);
+
+                }
+            });
+
+        }
+
         //like and dislike buttons onclick listeners to rate drivers and riders from their profile view
 
         likeButton.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +117,10 @@ public class RiderProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(RiderProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-                    // for quick on screen test delete System.out.print("LIKE##################################################");
+                    rateUser(true);
+//                    userInfo.adjustRating(true);
+//                    updateDatabase();
+                    likeButton.setClickable(false);
                 }
             }
         });
@@ -94,6 +130,10 @@ public class RiderProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(RiderProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+                    rateUser(false);
+//                    userInfo.adjustRating(false);
+//                    updateDatabase();
+                    dislikeButton.setClickable(false);
                 }
             }
         });
@@ -153,8 +193,10 @@ public class RiderProfileActivity extends AppCompatActivity {
         likeButton.setImageResource(R.drawable.smile);
         dislikeButton.setImageResource(R.drawable.frowny);
         profileImg.setImageResource(R.drawable.profilepic);
-        negRateDisplay.setText(negRate.toString()+"%");
-        posRateDisplay.setText(posRate.toString()+"%");
+        //negRateDisplay.setText(negRate.toString()+"%");
+        //posRateDisplay.setText(posRate.toString()+"%");
+        negRateDisplay.setText(negRate.toString());
+        posRateDisplay.setText(posRate.toString());
 
         deleteButton = findViewById(R.id.deleteAccButtonRdIn);
         if (!editable){deleteButton.setVisibility(View.INVISIBLE);}
@@ -184,25 +226,27 @@ public class RiderProfileActivity extends AppCompatActivity {
     }
 
     public void updateData(String field, String value)  {
-        if (field.equals("email")){
-            userInfo.setEmail(value);
-        }
-        else if (field.equals("phone number")){
+        if (field.equals("phone number")) {
             userInfo.setPhoneNumber(value);
-        }
-        else if (field.equals("username")){
+        } else if (field.equals("username")) {
             userInfo.setUsername(value);
         }
+        updateDatabase();
+    }
 
-        /***
-        try {
-            riderDBHelper.updateProfileAll(userInfo);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+    public void updateDatabase(){
+        uRef.document(userInfo.getEmail()).set(userInfo);
+    }
+
+    public void rateUser(Boolean rating){
+        // Update the db object's rating
+        if(!rating){
+            uRef.document(email).update("negRating", FieldValue.increment(1));
+        }else{
+            uRef.document(email).update("posRating", FieldValue.increment(1));
         }
-         ***/
+    }
 
-        /****
     public void deleteSelf(){
         riderDBHelper.deleteUser(userInfo.getEmail());
         Toast.makeText(RiderProfileActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
@@ -210,6 +254,5 @@ public class RiderProfileActivity extends AppCompatActivity {
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
-    ***/
-    }
 }
+

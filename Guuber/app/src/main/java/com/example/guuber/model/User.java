@@ -27,6 +27,8 @@ public class User implements Serializable {
 
     private Integer posRating;
     private Integer negRating;
+    private Integer percentNegative;
+    private Integer percentPositive;
 
 //    /***********the database******/
 //    private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
@@ -95,17 +97,32 @@ public class User implements Serializable {
 //        this.vehicle = vehicle;
 //    }
 
+    public int getPercentNegative(){
+        Integer total = getNegRating() + getPosRating();
+        if (total==0){
+            return 0;}
+        else{
+            Integer neg = (getNegRating() * 100) / total;
+            return neg;}
+    }
+    public int getPercentPositive(){
+        Integer total = getNegRating() + getPosRating();
+        if (total==0){
+            return 0;}
+        else{
+            Integer pos = (getPosRating() * 100) / total;
+            return pos;}
+    }
+
     public int getPosRating() {
-        return posRating;
+        return this.posRating;
     }
 
     public void setPosRating(int posRating) {
         this.posRating = posRating;
     }
 
-    public int getNegRating() {
-        return negRating;
-    }
+    public int getNegRating() { return this.negRating; }
 
     public void setNegRating(int negRating) {
         this.negRating = negRating;
@@ -120,7 +137,7 @@ public class User implements Serializable {
         if (bool) {
             this.posRating = this.posRating + 1;
         } else {
-            this.negRating = this.negRating - 1;
+            this.negRating = this.negRating + 1;
         }
     }
 

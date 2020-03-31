@@ -20,7 +20,7 @@ import androidx.fragment.app.DialogFragment;
 public class DeleteAccountFragment extends DialogFragment {
     private TextView dialogueMessage;
     private TextView dialogueTitle;
-    /***
+
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -47,7 +47,4 @@ public class DeleteAccountFragment extends DialogFragment {
         })//add click listener that calls Main activity method
          .create();
     }
-    **/
-
-
 }

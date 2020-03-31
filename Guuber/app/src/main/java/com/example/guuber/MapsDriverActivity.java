@@ -223,14 +223,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     }
 
     /***DONT USE THIS ONE****/
-    public void viewRiderProfile(User user) {
+    // this function is fixed, not tested because mapsdriveractivity keeps crashing
+    // search for Tinashe, delete three lines that start ViewProfileActivity_Matt and uncomment call to this method to implement
+    public void viewRiderProfile(String r_email) {
         Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
-        //to be deleted, need to initialize all users properly
-        user.setNegRating(0);
-        user.setPosRating(0);
-        //delete only up to here
         riderProfileIntent.putExtra("caller", "external");
-        riderProfileIntent.putExtra("riderProfile", user);
+        riderProfileIntent.putExtra("external_email", r_email);
         startActivity(riderProfileIntent);
     }
 
@@ -641,9 +639,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             /**********TINASHE********/
-                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, ViewProfileActivity_Matt.class);
-                            riderProfileIntent.putExtra("EMAIL", riderEmail);
-                            startActivity(riderProfileIntent);
+                            viewRiderProfile(riderEmail);
+//                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, ViewProfileActivity_Matt.class);
+//                            riderProfileIntent.putExtra("EMAIL", riderEmail);
+//                            startActivity(riderProfileIntent);
                             /*******************************/
                         }
                     })
@@ -733,9 +732,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             /******TINASHE*******/
-                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, ViewProfileActivity_Matt.class);
-                            riderProfileIntent.putExtra("EMAIL", riderEmail);
-                            startActivity(riderProfileIntent);
+                            viewRiderProfile(riderEmail);
+//                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, ViewProfileActivity_Matt.class);
+//                            riderProfileIntent.putExtra("EMAIL", riderEmail);
+//                            startActivity(riderProfileIntent);
                             /*******************/
                         }
                     })

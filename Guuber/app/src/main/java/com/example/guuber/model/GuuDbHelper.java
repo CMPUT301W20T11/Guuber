@@ -244,16 +244,16 @@ public class GuuDbHelper {
         String email = user.getEmail();
         //User oldUser = getUser(user.getEmail());
         //instead!!!!! just use the user the is passed in, because that is equivalent to users information who is currentley using the app
-        if (!oldUser.getPhoneNumber().equals(user.getPhoneNumber())){
+        if (!user.getPhoneNumber().equals(user.getPhoneNumber())){
             updatePhoneNumber(email, user.getPhoneNumber());
         }
-        if (oldUser.getNegRating()!=user.getNegRating()){
+        if (user.getNegRating()!=user.getNegRating()){
             updateNegRating(email);
         }
-        if (oldUser.getPosRating()!=user.getPosRating()){
+        if (user.getPosRating()!=user.getPosRating()){
             updateNegRating(email);
         }
-        if (oldUser.getUsername().equals(user.getUsername())){
+        if (user.getUsername().equals(user.getUsername())){
             updateUsername(email, user.getEmail());
         }
 
