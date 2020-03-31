@@ -8,14 +8,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.guuber.model.User;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 /**
  * Code to display drivers information on their profile
@@ -66,8 +69,25 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
         Intent intent = getIntent();
         email = intent.getExtras().getString("EMAIL");
 
+        // On like button
+        likeButton.setOnClickListener(v -> {
+           rateUser(true);
+            Toast.makeText(ViewProfileActivity_Matt.this, "Profile liked!", Toast.LENGTH_LONG).show();
+        });
+
+        // On dislike button
+        dislikeButton.setOnClickListener(v -> {
+            rateUser(false);
+            Toast.makeText(ViewProfileActivity_Matt.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+
         // Db query to get the user info with the intent email
-        uRef.document(email).get().addOnSuccessListener(documentSnapshot -> {
+        uRef.document(email).addSnapshotListener(this , (documentSnapshot, e) -> {
             user = documentSnapshot.toObject(User.class);
 
             // Get user attributes, no point in getting email since we already got it
@@ -87,7 +107,6 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
             posRateDisplay.setText(posRate.toString()+"%");
         });
 
-
         // On like button
         likeButton.setOnClickListener(v -> {
            rateUser(true);
@@ -101,6 +120,7 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
         });
 
     }
+
     // On back button pressed
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -113,11 +133,12 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
 
     // Rate the user
     public void rateUser(Boolean rating){
+
         // Update the db object's rating
-        if(rating){
-            uRef.document(email).update("posRating", FieldValue.increment(1));
-        }else{
+        if(!rating){
             uRef.document(email).update("negRating", FieldValue.increment(1));
+        }else{
+            uRef.document(email).update("posRating", FieldValue.increment(1));
         }
     }
 }
