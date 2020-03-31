@@ -241,6 +241,7 @@ public class GuuDbHelper {
     public synchronized void  updateProfileAll(User user) throws InterruptedException {
         String email = user.getEmail();
         User oldUser = getUser(user.getEmail());
+
         if (!oldUser.getPhoneNumber().equals(user.getPhoneNumber())){
             updatePhoneNumber(email, user.getPhoneNumber());
         }

@@ -675,7 +675,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            //ArrayList userInfo = driverDBHelper.getProfileAll(marker.getTitle());
+                            //Map<String, Object> userInfo = driverDBHelper.getProfileAll(marker.getTitle());
                             //User user = makeExternalUser(userInfo);
                             try {
                                 User user2 = driverDBHelper.getUser(marker.getTitle());

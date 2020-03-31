@@ -219,14 +219,12 @@ public class RiderProfileActivity extends AppCompatActivity {
     }
 
     public void updateData(String field, String value)  {
-        if (field.equals("email")){
-            userInfo.setEmail(value);
-        }
-        else if (field.equals("phone number")){
+        if (field.equals("phone number")){
             userInfo.setPhoneNumber(value);
         }
         else if (field.equals("username")){
             userInfo.setUsername(value);
+            //System.out.println("helllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllljjjfffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffp");
         }
 
         try {
