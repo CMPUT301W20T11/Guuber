@@ -407,7 +407,6 @@ public class GuuDbHelper {
      */
     public synchronized Map<String,Object> getRiderRequest(User rider) throws InterruptedException {
         setProfile(rider.getEmail());
-        TimeUnit.SECONDS.sleep(5);
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
@@ -416,6 +415,7 @@ public class GuuDbHelper {
                        documentSnapshot.get("desLng"), documentSnapshot.get("tripCost").toString());
             }
         });
+        TimeUnit.SECONDS.sleep(5);
         return Request;
     }
 
@@ -625,7 +625,9 @@ public class GuuDbHelper {
         });
     }
 
+    public synchronized  void notifyRider(User driver){
 
+}
     /**
      * function to get the status of the arrival
      * @param email is the riders email
@@ -702,27 +704,11 @@ public class GuuDbHelper {
 
     }
 
-    public synchronized void notifyRider(User driver){
-        setProfile(driver.getEmail());
-        profile.collection("driveRequest").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                rider = queryDocumentSnapshots.getDocuments().get(0).getId();
-                setProfile(rider);
-                profile.update("driverNotify", true);
-            }
-        });
-    }
-    public synchronized boolean driverHasArrived(User rider){
-        setProfile(rider.getEmail());
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                notify = documentSnapshot.getBoolean("driverNotify");
-            }
-        });
-        return notify;
-    }
+    /**
+     * once the transaction is made the request is complete, this removes all the info about request
+     * @param driver - the driver who completed the request
+     * @param rider - the rider whos request was fulfilled
+     */
     public void completedRequest(User driver,User rider){
         setProfile(driver.getEmail());
         profile.collection("driveRequest").document(rider.getEmail()).delete();
