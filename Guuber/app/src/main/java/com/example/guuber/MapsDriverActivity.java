@@ -121,6 +121,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private CollectionReference uRefRequests = driverMapsDB.collection("requests");
     private CollectionReference uRefUsers = driverMapsDB.collection("Users");
 
+    //Global coord
+    private ArrayList<Double> Coord;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -221,6 +223,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 checkUserPermission();
             }
         }
+        //updateMapDriver();
     }
 
 
@@ -228,15 +231,34 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         User currUser = ((UserData)(getApplicationContext())).getUser(); //current rider
         String email = currUser.getEmail();
         uRefUsers.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
-            if (documentSnapshot.get("offerTo") != null && documentSnapshot.get("desLat") != null) {
+            // these fields should only be populated if there is an active request or pending request
+            if (documentSnapshot.get("offerTo") != null && documentSnapshot.get("offerStatus") != null) {
                 //rideisPending = Boolean.TRUE;
-                android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
-                Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
-                Double originLong = Double.parseDouble(documentSnapshot.get("oriLng").toString());
-                Double destinationLong = Double.parseDouble(documentSnapshot.get("desLng").toString());
-                Double destinationLat = Double.parseDouble(documentSnapshot.get("desLat").toString());
-                LatLng start = new LatLng(originLat, originLong);
-                LatLng end = new LatLng(destinationLat, destinationLong);
+
+                // check if active
+                if (documentSnapshot.get("offerStatus").toString().equals("accepted")) {
+                    String offerToEmail = documentSnapshot.get("offerTo").toString();
+                    getRideDetails(offerToEmail);
+                    // Get coordinates from Coord array list
+                    android.util.Log.i("Coord", Coord.toString());
+                    Double originLat = Coord.get(0);
+                    Double originLong = Coord.get(1);
+                    Double destinationLat = Coord.get(2);
+                    Double destinationLong = Coord.get(3);
+                    LatLng start = new LatLng(originLat, originLong);
+                    LatLng end = new LatLng(destinationLat, destinationLong);
+
+                    setMarker(start, "Origin");
+                    setMarker(end, "Destination");
+                    calculateDirectionsBetweenPickupandDropOff(offerToEmail,start, end);
+                }
+//                android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
+//                Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
+//                Double originLong = Double.parseDouble(documentSnapshot.get("oriLng").toString());
+//                Double destinationLong = Double.parseDouble(documentSnapshot.get("desLng").toString());
+//                Double destinationLat = Double.parseDouble(documentSnapshot.get("desLat").toString());
+//                LatLng start = new LatLng(originLat, originLong);
+//                LatLng end = new LatLng(destinationLat, destinationLong);
                 //setDestination(end);
                 //setOrigin(start);
                 //calculateDirections();
@@ -245,6 +267,24 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
     }
+    protected void getRideDetails(String offerToEmail) {
+
+        uRefUsers.document(offerToEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
+            if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("desLat") != null) {
+
+                android.util.Log.i("getRideDetails", documentSnapshot.toString());
+                Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
+                Double originLong = Double.parseDouble(documentSnapshot.get("oriLng").toString());
+                Double destinationLong = Double.parseDouble(documentSnapshot.get("desLng").toString());
+                Double destinationLat = Double.parseDouble(documentSnapshot.get("desLat").toString());
+                Coord.add(0,originLat);
+                Coord.add(1,originLong);
+                Coord.add(2,destinationLat);
+                Coord.add(3,destinationLong);
+            }
+        });
+    }
+
     /****************************************SPINNER METHODS***********************************************/
 
 
