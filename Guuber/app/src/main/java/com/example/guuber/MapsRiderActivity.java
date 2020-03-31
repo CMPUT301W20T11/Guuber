@@ -89,6 +89,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int  WALLET = 3;
     private static final int  QR = 4;
     private static final int QR_REQ_CODE = 3;
+    private static final int SIGNOUT = 5;
+
+    // for signing out of app
+    private static final int RC_SIGN_OUT = 1000;
 
     private GoogleMap guuberRiderMap;
     private Button changeOriginButton, changeDestinationButton;
@@ -183,6 +187,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 }else if (position == QR){
                     /**generate a QR code**/
                     makeQR();
+                    riderSpinner.setSelection(MENU);
+                }else if (position == SIGNOUT) {
+                    /**start the scanQR activity**/
+                    signOut();
                     riderSpinner.setSelection(MENU);
                 }
             }
@@ -311,7 +319,15 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         qrProfileIntent.putExtra("INFO_TAG", info);
         startActivityForResult(qrProfileIntent, QR_REQ_CODE);
     }
-
+    /**
+     * Sign out a user and return to the login activity
+     **/
+    public void signOut() {
+        Intent signOutConfirm  = new Intent(MapsRiderActivity.this, LoginActivity.class);
+        signOutConfirm.putExtra("SignOut", "TRUE");
+        setResult(RC_SIGN_OUT, signOutConfirm);
+        finish();
+    }
     /**********************************END SPINNER METHODS*****************************************/
 
      /**

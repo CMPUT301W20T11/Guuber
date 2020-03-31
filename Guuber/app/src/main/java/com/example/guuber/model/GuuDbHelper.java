@@ -28,6 +28,8 @@ public class GuuDbHelper {
     private static CollectionReference users;
     private static DocumentReference profile;
     public static User user;
+    public static String rider;
+    public static boolean notify;
     public static Map<String, Object> Request = new HashMap<>();
     public static Vehicle car = new Vehicle();
     public static ArrayList<Map<String, Object>> reqList = new ArrayList<Map<String, Object>>();
@@ -617,7 +619,41 @@ public class GuuDbHelper {
 
     }
 
-
+    public synchronized void notifyRider(User driver){
+        setProfile(driver.getEmail());
+        profile.collection("driveRequest").get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                rider = queryDocumentSnapshots.getDocuments().get(0).getId();
+                setProfile(rider);
+                profile.update("driverNotify", true);
+            }
+        });
+    }
+    public synchronized boolean driverHasArrived(User rider){
+        setProfile(rider.getEmail());
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                notify = documentSnapshot.getBoolean("driverNotify");
+            }
+        });
+        return notify;
+    }
+    public void completedRequest(User driver,User rider){
+        setProfile(driver.getEmail());
+        profile.collection("driveRequest").document(rider.getEmail()).delete();
+        Map<String, Object> delete = new HashMap<>();
+        delete.put("reqTip", FieldValue.delete());
+        delete.put("oriLat", FieldValue.delete());
+        delete.put("oriLng", FieldValue.delete());
+        delete.put("desLat", FieldValue.delete());
+        delete.put("desLng", FieldValue.delete());
+        delete.put("tripCost",FieldValue.delete());
+        delete.put("reqDriver",FieldValue.delete());
+        setProfile(rider.getEmail());
+        profile.update(delete);
+    }
     /**
      * Checks if driver has arrived to riders requested location
      * returns true if driverLocation == riderLocation
@@ -628,50 +664,55 @@ public class GuuDbHelper {
      * @param currentLng - the current Longitude of the driver
      *
      */
-    public synchronized  Boolean driverArrive(User rider, String currentLat, String currentLng) {
-        final String[] Lat = new String[1];
-        final String[] Lng = new String[1];
-        setProfile(rider.getEmail());
-        DocumentReference ref = db.collection("requests").document(rider.getEmail());
+    public synchronized  Boolean driverArrive(User rider, Double dLat, Double dLng) {
+        // rider coordinates
+        final Double[] rLat = new Double[1];
+        final Double[] rLng = new Double[1];
 
-        ref.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+
+        setProfile(rider.getEmail());
+        DocumentReference riderRef = db.collection("Users").document(rider.getEmail());
+        riderRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 DocumentSnapshot document = task.getResult();
                 assert document != null;
-                Lat[0] = (String) document.getString("oriLat");
-                Lng[0] = (String) document.getString("oriLng");
+                rLat[0] = (Double) document.getDouble("oriLat");
+                rLng[0] = (Double) document.getDouble("oriLng");
 
             }
         });
 
-        // Convert Coordinates to doubles
-        /**
-        Double newLat = Double.parseDouble(Lat[0]);
-        Double newLng = Double.parseDouble(Lng[0]);
-        Double newCurrentLat = new Double(currentLat).doubleValue();
-        Double newCurrentLng = new Double(currentLng).doubleValue();
-         **/
+
+        /** Convert Coordinates to doubles
+         If one of the coordinates is a word or anything except numbers this function cannot work and returns a false
+        try{
+            Double testCurrentLat = new Double(currentLat).doubleValue();
+            Double testCurrentLng = new Double(currentLng).doubleValue();
+        }catch (Exception e) {return false;}
+        */
 
         // Cut off after 5th decimal, so when you compare the drivers coordinates to the users, they don't have to be EXACTLY on them
         DecimalFormat df = new DecimalFormat("#.#####");
-        String newLat = df.format(Lat[0]);
-        String newLng = df.format(Lng[0]);
+        String rrLat = df.format(rLat[0]);
+        String rrLng = df.format(rLng[0]);
 
-        String newCurrentLat = df.format(currentLat);
-        String newCurrentLng = df.format(currentLng);
+        String ddLat = df.format(dLat);
+        String ddLng = df.format(dLng);
 
-        if (newLat == newCurrentLat && newLng == newCurrentLng) {
+        if (rrLat == ddLat && rrLng == ddLng) {
             return true; // driver has arrived to riders location
-        } else {
-            return false; // driver is not at rider location }
+        }
+        else {
+            return false; // driver is not at rider location
+        }
 
             //Map<String,Object> location;
             //Map<String,Object> location = profile.collection("requests").document(rider.getEmail()).;
             //String Lat = location.get("oriLat"));
             //String Lng = location.get("oriLng"));
         }
-    }
+
 
     /**
      * Adds or updates the current vehicle to the users profile

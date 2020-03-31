@@ -19,6 +19,7 @@
         <item>View Trips</item>
         <item>Wallet</item>
         <item>Generate QR</item>
+        <item>Sign Out</item>
     </string-array>
     <string-array name="menuDriver">
         <item>MENU</item>
@@ -26,6 +27,7 @@
         <item>View Trips</item>
         <item>Wallet</item>
         <item>Scan QR</item>
+        <item>Sign Out</item>
     </string-array>
 
     <!-- TODO: Remove or change this placeholder text -->
