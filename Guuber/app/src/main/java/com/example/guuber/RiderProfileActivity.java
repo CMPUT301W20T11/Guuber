@@ -194,11 +194,13 @@ public class RiderProfileActivity extends AppCompatActivity {
             userInfo.setUsername(value);
         }
 
+        /***
         try {
             riderDBHelper.updateProfileAll(userInfo);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+         ***/
     }
 
     public void deleteSelf(){
