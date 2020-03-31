@@ -256,6 +256,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         startActivity(riderProfileIntent);
     }
 
+    /***DONT USE THIS ONE****/
     public void viewDriverProfile(User user) {
         Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
         driverProfileIntent.putExtra("caller", "external");

@@ -222,6 +222,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         startActivity(driverProfileIntent);
     }
 
+    /***DONT USE THIS ONE****/
     public void viewRiderProfile(User user) {
         Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
         //to be deleted, need to initialize all users properly
@@ -644,12 +645,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                             riderProfileIntent.putExtra("EMAIL", riderEmail);
                             startActivity(riderProfileIntent);
                             /*******************************/
-                            try {
-                                User user = driverDBHelper.getUser(marker.getTitle());
-                                viewRiderProfile(user);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
                         }
                     })
                     .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
