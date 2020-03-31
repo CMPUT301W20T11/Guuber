@@ -243,17 +243,17 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     String offerToEmail = documentSnapshot.get("offerTo").toString();
                     getRideDetails(offerToEmail);
                     // Get coordinates from Coord array list
-                    android.util.Log.i("Coord", Coord.toString());
-                    Double originLat = Coord.get(0);
-                    Double originLong = Coord.get(1);
-                    Double destinationLat = Coord.get(2);
-                    Double destinationLong = Coord.get(3);
-                    LatLng start = new LatLng(originLat, originLong);
-                    LatLng end = new LatLng(destinationLat, destinationLong);
+                    //android.util.Log.i("Coord", Coord.toString());
+                    //Double originLat = Coord.get(0);
+                    //Double originLong = Coord.get(1);
+                    //Double destinationLat = Coord.get(2);
+                    //Double destinationLong = Coord.get(3);
+                    //LatLng start = new LatLng(originLat, originLong);
+                    //LatLng end = new LatLng(destinationLat, destinationLong);
 
-                    setMarker(start, "Origin");
-                    setMarker(end, "Destination");
-                    calculateDirectionsBetweenPickupandDropOff(offerToEmail,start, end);
+                    //setMarker(start, "Origin");
+                    //setMarker(end, "Destination");
+                    //calculateDirectionsBetweenPickupandDropOff(offerToEmail,start, end);
                 }
 //                android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
 //                Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
@@ -284,6 +284,12 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 Coord.add(1,originLong);
                 Coord.add(2,destinationLat);
                 Coord.add(3,destinationLong);
+                LatLng start = new LatLng(originLat, originLong);
+                LatLng end = new LatLng(destinationLat, destinationLong);
+
+                setMarker(start, "Origin");
+                setMarker(end, "Destination");
+                calculateDirectionsBetweenPickupandDropOff(offerToEmail,start, end);
             }
         });
     }
