@@ -674,7 +674,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 /*****TINASHE*****/
-                                final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
+                                final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
                                 driverProfileIntent.putExtra("EMAIL", potentialOfferer);
                                 startActivity(driverProfileIntent);
                                 /*******************************/
@@ -756,7 +756,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         dialog.dismiss(); }
                 }).setNeutralButton("View Driver Profile", (dialog, id) -> {
                     /*****TINASHE*****/
-                    final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
+                    final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
                     driverProfileIntent.putExtra("EMAIL", potentialOfferer);
                     startActivity(driverProfileIntent);
                     /***************/
@@ -879,8 +879,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * @param tipPercentage is an integer representing the tip percentage the rider has chosen
      */
     public void setTip(int tipPercentage){
-        tip = getTripCost() * (tipPercentage/100);
-        this.tip = Math.round(tip * 100.0) / 100.0;;
+        tip = getTripCost() * (tipPercentage/100.0);
+        this.tip = (double)Math.round(tip);
     }
 
     /**
@@ -934,7 +934,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         /**********TINASHE********/
-                                        final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
+                                        final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
                                         driverProfileIntent.putExtra("EMAIL", potentialOfferer);
                                         startActivity(driverProfileIntent);
                                         /************************/
