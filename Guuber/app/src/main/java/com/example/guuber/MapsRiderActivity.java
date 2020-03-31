@@ -291,9 +291,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     public void viewDriverProfile(User user) {
         Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
-        driverProfileIntent.putExtra("caller", "external");
-        user.setNegRating(0); //setNegRAting to getNegRating()
-        user.setPosRating(0);
+        //user.setNegRating(0); //setNegRAting to getNegRating()
+        //user.setPosRating(0);
         driverProfileIntent.putExtra("caller", "external");
         driverProfileIntent.putExtra("driverProfile", user);
         startActivity(driverProfileIntent);

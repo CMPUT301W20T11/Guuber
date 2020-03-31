@@ -88,7 +88,12 @@ public class DriverProfilActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(DriverProfilActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-                //likeButton.setClickable(false);
+                    try {
+                        driverDBHelper.updateProfileAll(userInfo);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //likeButton.setClickable(false);
                 }
             }
         });
@@ -98,6 +103,11 @@ public class DriverProfilActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(DriverProfilActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+                    try {
+                        driverDBHelper.updateProfileAll(userInfo);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     //dislikeButton.setClickable(false);
                 }
             }

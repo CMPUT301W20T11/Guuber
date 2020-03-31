@@ -84,6 +84,11 @@ public class RiderProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(RiderProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
+                    try {
+                        riderDBHelper.updateProfileAll(userInfo);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     // for quick on screen test delete System.out.print("LIKE##################################################");
                 }
             }
@@ -94,6 +99,11 @@ public class RiderProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(RiderProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+                    try {
+                        riderDBHelper.updateProfileAll(userInfo);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
