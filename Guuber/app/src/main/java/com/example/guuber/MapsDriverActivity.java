@@ -721,6 +721,25 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }else if (routeInProgress == true){
             builder
                     .setMessage("Route In Progress")
+                    .setNegativeButton("Check if Rider has Canceled", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            User currDriver = ((UserData)(getApplicationContext())).getUser();
+                            String cancelled = "false"; //initialize string
+                            cancelled = driverDBHelper.getCancellationStatus(currDriver.getEmail());
+                            if (cancelled.equals("false")){
+                                youHaveNotBeenCancelledOnToast();
+                            }else{
+                                routeInProgress = false;
+                                offerSent = false;
+                                offerAccepted = false;
+                                youHaveBeenCancelledOnToast();
+                                guuberDriverMap.clear(); //clear the map
+                                drawOpenRequests(); //draw the open requests
+                            }
+                            dialog.dismiss();
+                        }
+                    })
                     .setNeutralButton("View Rider Profile", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -728,7 +747,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                             android.util.Log.i("CLICKED ON:", "VIEW RIDER PROFILE");
                         }
                     })
-                    .setPositiveButton("Let The Rider Know You have Arrived", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("Let Rider Know You've Arrived", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             User currdriver = ((UserData)(getApplicationContext())).getUser();
@@ -738,6 +757,28 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     });
             final AlertDialog alert = builder.create();alert.show();
         }
+    }
+
+    /**
+     Let the Driver know, that the rider has not cancelled the request
+     */
+    private void youHaveNotBeenCancelledOnToast(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MapsDriverActivity.this," You Have Not Been Cancelled On", Toast.LENGTH_LONG).show();
+            }}, 500);
+    }
+
+    /**
+    Let the Driver know, that the rider has cancelled the request
+     */
+    private void youHaveBeenCancelledOnToast(){
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(MapsDriverActivity.this,"The Rider has cancelled your trip", Toast.LENGTH_LONG).show();
+            }}, 500);
     }
 
 
@@ -772,7 +813,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     }
 
     /**
-     * Crash on first try?
      * re draws the current route as green to indicate its in process
      * lets the driver know the route is in progress
      * @param riderEmail

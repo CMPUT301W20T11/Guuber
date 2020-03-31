@@ -19,6 +19,7 @@ import com.google.firebase.firestore.Source;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -38,7 +39,12 @@ public class GuuDbHelper {
 
     public static String arrivee;
     public static String arriver;
-    public static String arrivalStatus = "none";
+    public static String arrivalStatus = "false";
+    public static String cancelee;
+    public static String canceler;
+    public static String canceled = "false";
+    public static ArrayList profileInformaiton;
+
 
 
     //public static Wallet wall;
@@ -231,8 +237,8 @@ public class GuuDbHelper {
         users.document(email).update("negRating", FieldValue.increment(1));
     }
 
-    public void updateProfileAll(User user) throws InterruptedException {
-        String email=user.getEmail();
+    public synchronized void  updateProfileAll(User user) throws InterruptedException {
+        String email = user.getEmail();
         User oldUser = getUser(user.getEmail());
         if (!oldUser.getPhoneNumber().equals(user.getPhoneNumber())){
             updatePhoneNumber(email, user.getPhoneNumber());
@@ -248,6 +254,43 @@ public class GuuDbHelper {
         }
 
     }
+
+    /**
+     * returns an ArrayList of profile information
+     * @param email
+     * @return
+     */
+    public synchronized ArrayList getProfileAll(String email) {
+        setProfile(email);
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                String t = documentSnapshot.get("phoneNumber").toString();
+                profileInformaiton.add(t);
+                String i = documentSnapshot.get("email").toString();
+                profileInformaiton.add(i);
+                String n = documentSnapshot.get("firstName").toString();
+                profileInformaiton.add(n);
+                String a = documentSnapshot.get("lastName").toString();
+                profileInformaiton.add(a);
+                String s = documentSnapshot.get("username").toString();
+                profileInformaiton.add(s);
+                String h = documentSnapshot.get("posRating").toString();
+                profileInformaiton.add(h);
+                String e = documentSnapshot.get("negRating").toString();
+                profileInformaiton.add(e);
+            }
+        });
+        return profileInformaiton;
+    }
+
+
+
+
+
+
+
+
 
     /**
      * Updates users balance (also updates transactions by appending amount to be added to balance to the transactions list)
@@ -469,7 +512,7 @@ public class GuuDbHelper {
                 }
             }
         });
-        Thread.sleep(1000);
+        //Thread.sleep(1000);
         return offerer;
     }
 
@@ -511,16 +554,53 @@ public class GuuDbHelper {
                 arrivee = rider.getEmail();
                 setProfile(arrivee);
                 profile.update("arrived","false"); //rider now has a field
+                profile.update("canceled","false"); //rider now has a field
 
                 offerer = documentSnapshot.get("rideOfferFrom").toString();
                 setProfile(offerer);
                 profile.update("offerStatus","accepted");
                 profile.update("arrived","false"); //driver now has a field
+                profile.update("canceled","false"); //rider now has a field
             }
         });
-        //setProfile(offerer); causing crash
-        //profile.update("arrived","false");
-        //profile.update("offerStatus","accepted");
+    }
+
+    /**
+     * get the status of a cancelation
+     * @param driverEmail the drivers email
+     * @return either false or true
+     */
+    public synchronized String getCancellationStatus(String driverEmail){
+        setProfile(driverEmail);
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                canceled = documentSnapshot.get("cancelStatus").toString();
+            }
+        });
+        return canceled;
+    }
+
+    /**
+     * get the status of a cancelation
+     * @param riderEmail the drivers email
+     * @return either false or true
+     */
+    public synchronized String setCancellationStatus(String riderEmail, String driverEmail){
+        setProfile(riderEmail);
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                canceler = riderEmail;
+                setProfile(canceler);
+                profile.update("canceled","true");
+
+                cancelee = driverEmail;
+                setProfile(cancelee);
+                profile.update("canceled","true"); //driver now has a field
+            }
+        });
+        return canceled;
     }
 
 
