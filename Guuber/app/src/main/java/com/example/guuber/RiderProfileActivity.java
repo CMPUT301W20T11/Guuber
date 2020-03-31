@@ -58,21 +58,6 @@ public class RiderProfileActivity extends AppCompatActivity {
 
         Toast.makeText(RiderProfileActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
 
-        String caller = getIntent().getStringExtra("caller");
-        editable = caller.equals("internal");
-        if (editable){ userInfo = ((UserData)(getApplicationContext())).getUser();
-            //System.out.println("wroooooooooooooooongnggggggggggggggggggggggggggggggggggggg");
-        }
-        else {
-            //userInfo = (User) getIntent().getSerializableExtra("riderProfile");
-            String externalEmail = getIntent().getStringExtra("external_email");
-            //System.out.println("looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong " + externalEmail);
-            uRef.document(externalEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
-                userInfo = documentSnapshot.toObject(User.class);
-                //System.out.println(userInfo.getPhoneNumber()+ "dataaaaaaaaaaaaaaaaaaaaaaaaaaaa");
-            });
-        }
-        //System.out.println(userInfo.getPhoneNumber()+"interrrrrrrrrrrrrrrrrrrrrrrr");
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -85,68 +70,32 @@ public class RiderProfileActivity extends AppCompatActivity {
         posRateDisplay = findViewById(R.id.posRate);
         negRateDisplay = findViewById(R.id.negRate);
 
-        phoneNumber = userInfo.getPhoneNumber();
-        username = userInfo.getUsername();
-        email = userInfo.getEmail();
-        posRate = userInfo.getPosRating();
-        negRate = userInfo.getNegRating();
 
-        //onClickListeners for email and phone number fields to contact User
-        if (!editable){
+        String caller = getIntent().getStringExtra("caller");
+        editable = caller.equals("internal");
+        if (editable){
 
-            emailField.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setData(Uri.parse("mailto:"+ email));
-                    startActivity(intent);
-                }
-            });
+            userInfo = ((UserData)(getApplicationContext())).getUser();
+            //System.out.println("wroooooooooooooooongnggggggggggggggggggggggggggggggggggggg");
+            phoneNumber = userInfo.getPhoneNumber();
+            username = userInfo.getUsername();
+            email = userInfo.getEmail();
+            posRate = userInfo.getPosRating();
+            negRate = userInfo.getNegRating();
 
-            phoneNumberField.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse("tel:"+phoneNumber));
-                    startActivity(intent);
-
-                }
-            });
-
-        }
-
-        //like and dislike buttons onclick listeners to rate drivers and riders from their profile view
-
-        likeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!editable){userInfo.adjustRating(true);
-                    Toast.makeText(RiderProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-                    rateUser(true);
-//                    userInfo.adjustRating(true);
-//                    updateDatabase();
-                    likeButton.setClickable(false);
-                }
-            }
-        });
-
-        dislikeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!editable){userInfo.adjustRating(true);
-                    Toast.makeText(RiderProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
-                    rateUser(false);
-//                    userInfo.adjustRating(false);
-//                    updateDatabase();
-                    dislikeButton.setClickable(false);
-                }
-            }
-        });
-
-        /**
-         * allows for editing userdata
-         */
-        if (editable) {
+            phoneNumberField.setText(phoneNumber);
+            // for testing please disregard
+            //Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" +" "+userInfo.getPhoneNumber());
+            usernameField.setText(username);
+            emailField.setText(email);
+            likeButton.setImageResource(R.drawable.smile);
+            dislikeButton.setImageResource(R.drawable.frowny);
+            profileImg.setImageResource(R.drawable.profilepic);
+            negRateDisplay.setText(negRate.toString());
+            posRateDisplay.setText(posRate.toString());
+            /**
+             * allows for editing userdata
+             */
             phoneNumberField.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -175,33 +124,82 @@ public class RiderProfileActivity extends AppCompatActivity {
                 }
             });
 
-            emailField.setOnLongClickListener(new View.OnLongClickListener() {
+        } //finish editable if
+        else {
+            //userInfo = (User) getIntent().getSerializableExtra("riderProfile");
+            String externalEmail = getIntent().getStringExtra("external_email");
+            //System.out.println("looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong " + externalEmail);
+            uRef.document(externalEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
+                userInfo = documentSnapshot.toObject(User.class);
+                //System.out.println(userInfo.getPhoneNumber()+ "dataaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+                phoneNumber = userInfo.getPhoneNumber();
+                username = userInfo.getUsername();
+                email = userInfo.getEmail();
+                posRate = userInfo.getPosRating();
+                negRate = userInfo.getNegRating();
+
+                phoneNumberField.setText(phoneNumber);
+                // for testing please disregard
+                //Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" +" "+userInfo.getPhoneNumber());
+                usernameField.setText(username);
+                emailField.setText(email);
+                likeButton.setImageResource(R.drawable.smile);
+                dislikeButton.setImageResource(R.drawable.frowny);
+                profileImg.setImageResource(R.drawable.profilepic);
+                negRateDisplay.setText(negRate.toString());
+                posRateDisplay.setText(posRate.toString());
+            });
+
+            //onClickListeners for email and phone number fields to contact User
+
+            emailField.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View v) {
-                    EditUserdataFragment fragment = new EditUserdataFragment();
-                    Bundle phoneBundle = new Bundle();
-                    phoneBundle.putString("field", "email");
-                    phoneBundle.putString("old", email);
-                    phoneBundle.putString("activity", "RiderProfileActivity");
-                    fragment.setArguments(phoneBundle);
-                    fragment.show(getSupportFragmentManager(), "Edit Phone Number");
-                    return true;
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.setData(Uri.parse("mailto:"+ email));
+                    startActivity(intent);
                 }
             });
-        }
 
-        phoneNumberField.setText(phoneNumber);
-        // for testing please disregard
-        Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" +" "+userInfo.getPhoneNumber());
-        usernameField.setText(username);
-        emailField.setText(email);
-        likeButton.setImageResource(R.drawable.smile);
-        dislikeButton.setImageResource(R.drawable.frowny);
-        profileImg.setImageResource(R.drawable.profilepic);
-        //negRateDisplay.setText(negRate.toString()+"%");
-        //posRateDisplay.setText(posRate.toString()+"%");
-        negRateDisplay.setText(negRate.toString());
-        posRateDisplay.setText(posRate.toString());
+            phoneNumberField.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:"+phoneNumber));
+                    startActivity(intent);
+
+                }
+            });
+
+            //like and dislike buttons onclick listeners to rate drivers and riders from their profile view
+
+            likeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!editable){userInfo.adjustRating(true);
+                        Toast.makeText(RiderProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
+                        rateUser(true);
+//                    userInfo.adjustRating(true);
+//                    updateDatabase();
+                        likeButton.setClickable(false);
+                    }
+                }
+            });
+
+            dislikeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!editable){userInfo.adjustRating(true);
+                        Toast.makeText(RiderProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+                        rateUser(false);
+//                    userInfo.adjustRating(false);
+//                    updateDatabase();
+                        dislikeButton.setClickable(false);
+                    }
+                }
+            });
+        }// finish uneditable if
+        //System.out.println(userInfo.getPhoneNumber()+"interrrrrrrrrrrrrrrrrrrrrrrr");
 
         deleteButton = findViewById(R.id.deleteAccButtonRdIn);
         if (!editable){deleteButton.setVisibility(View.INVISIBLE);}

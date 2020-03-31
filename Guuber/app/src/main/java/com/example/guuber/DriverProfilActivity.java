@@ -56,25 +56,14 @@ public class DriverProfilActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.driver_profile_disp);
         //UserData userData = UserData.getInstance();
-
-        Toast.makeText(DriverProfilActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
-
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
-        if (!editable){
-            String externalEmail = getIntent().getStringExtra("external_email");
-            uRef.document(externalEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
-                userInfo = documentSnapshot.toObject(User.class);
-            });
-        }
-        else{
-            userInfo = ((UserData)(getApplicationContext())).getUser();
-        }
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
+        Toast.makeText(DriverProfilActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
 
+        vehicle = new Vehicle("Toyota", "RunX", "Gold", "AEJ 0430");
         vehicleRegField = findViewById(R.id.carRegTextDrIn);
         phoneNumberField = findViewById(R.id.phoneTextDrIn);
         usernameField = findViewById(R.id.usernameTextDrIn);
@@ -85,65 +74,17 @@ public class DriverProfilActivity extends AppCompatActivity {
         posRateDisplay = findViewById(R.id.posRateDr);
         negRateDisplay = findViewById(R.id.negRateDr);
 
-        phoneNumber = userInfo.getPhoneNumber();
-        username = userInfo.getUsername();
-        email = userInfo.getEmail();
-        posRate = userInfo.getPosRating();
-        negRate = userInfo.getNegRating();
-
-        //onClickListeners for email and phone number fields to contact User
         if (editable){
+            userInfo = ((UserData)(getApplicationContext())).getUser();
+            phoneNumber = userInfo.getPhoneNumber();
+            username = userInfo.getUsername();
+            email = userInfo.getEmail();
+            posRate = userInfo.getPosRating();
+            negRate = userInfo.getNegRating();
 
-            emailField.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setData(Uri.parse("mailto:"+ email));
-                    startActivity(intent);
-                }
-            });
-
-            phoneNumberField.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse("tel:"+phoneNumber));
-                    startActivity(intent);
-
-                }
-            });
-
-        }
-
-        //like and dislike buttons onclick listeners to rate drivers and riders from their profile view
-        likeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!editable){userInfo.adjustRating(true);
-                    Toast.makeText(DriverProfilActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-                    rateUser(true);
-                    //updateDatabase();
-                    likeButton.setClickable(false);
-                }
-            }
-        });
-
-        dislikeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!editable){userInfo.adjustRating(true);
-                    Toast.makeText(DriverProfilActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
-                    rateUser(false);
-                    //updateDatabase();
-                    dislikeButton.setClickable(false);
-                }
-            }
-        });
-
-        /**
-         * allows for editing userdata
-         */
-        if (editable){
+            /**
+             * allows for editing userdata
+             */
             phoneNumberField.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
@@ -171,45 +112,97 @@ public class DriverProfilActivity extends AppCompatActivity {
                     return true;
                 }
             });
+            vehicleRegField.setText(carReg);
+            phoneNumberField.setText(phoneNumber);
+            usernameField.setText(username);
+            emailField.setText(email);
+            likeButton.setImageResource(R.drawable.smile);
+            dislikeButton.setImageResource(R.drawable.frowny);
+            profileImg.setImageResource(R.drawable.profilepic);
+            negRateDisplay.setText(negRate.toString());
+            posRateDisplay.setText(posRate.toString());
+        }//finish editable if
+        else{
+            String externalEmail = getIntent().getStringExtra("external_email");
+            uRef.document(externalEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
+                userInfo = documentSnapshot.toObject(User.class);
+                phoneNumber = userInfo.getPhoneNumber();
+                username = userInfo.getUsername();
+                email = userInfo.getEmail();
+                posRate = userInfo.getPosRating();
+                negRate = userInfo.getNegRating();
 
-            emailField.setOnLongClickListener(new View.OnLongClickListener() {
+                vehicleRegField.setText(carReg);
+                phoneNumberField.setText(phoneNumber);
+                usernameField.setText(username);
+                emailField.setText(email);
+                likeButton.setImageResource(R.drawable.smile);
+                dislikeButton.setImageResource(R.drawable.frowny);
+                profileImg.setImageResource(R.drawable.profilepic);
+                negRateDisplay.setText(negRate.toString());
+                posRateDisplay.setText(posRate.toString());
+
+            });
+            //like and dislike buttons onclick listeners to rate drivers and riders from their profile view
+            likeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public boolean onLongClick(View v) {
-                    EditUserdataFragment fragment = new EditUserdataFragment();
-                    Bundle phoneBundle = new Bundle();
-                    phoneBundle.putString("field", "email");
-                    phoneBundle.putString("old", email);
-                    phoneBundle.putString("activity", "DriverProfilActivity");
-                    fragment.setArguments(phoneBundle);
-                    fragment.show(getSupportFragmentManager(), "Edit Phone Number");
-                    return true;
+                public void onClick(View v) {
+                    if (!editable){userInfo.adjustRating(true);
+                        Toast.makeText(DriverProfilActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
+                        rateUser(true);
+                        //updateDatabase();
+                        likeButton.setClickable(false);
+                    }
                 }
             });
-        }
 
-        vehicleRegField.setText(carReg);
-        phoneNumberField.setText(phoneNumber);
-        usernameField.setText(username);
-        emailField.setText(email);
-        likeButton.setImageResource(R.drawable.smile);
-        dislikeButton.setImageResource(R.drawable.frowny);
-        profileImg.setImageResource(R.drawable.profilepic);
-        negRateDisplay.setText(negRate.toString());
-        posRateDisplay.setText(posRate.toString());
+            dislikeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!editable){userInfo.adjustRating(true);
+                        Toast.makeText(DriverProfilActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+                        rateUser(false);
+                        //updateDatabase();
+                        dislikeButton.setClickable(false);
+                    }
+                }
+            });
+            //onClickListeners for email and phone number fields to contact User
+
+            emailField.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_SENDTO);
+                    intent.setData(Uri.parse("mailto:"+ email));
+                    startActivity(intent);
+                }
+            });
+
+            phoneNumberField.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(Intent.ACTION_DIAL);
+                    intent.setData(Uri.parse("tel:"+phoneNumber));
+                    startActivity(intent);
+                }
+            });
+
+        } //finish uneditable else
 
         deleteButton = findViewById(R.id.deleteAccButtonDrIn);
         if (!editable){deleteButton.setVisibility(View.INVISIBLE);}
         deleteButton.setOnClickListener(new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-              if (editable){
-                DeleteAccountFragment deleteFragment = new DeleteAccountFragment();
-                Bundle callingActivity = new Bundle();
-                callingActivity.putString("callingActivity", "driver");
-                deleteFragment.setArguments(callingActivity);
-                deleteFragment.show(getSupportFragmentManager(), "Delete Account");}
-        }
+            @Override
+            public void onClick(View v) {
+                if (editable){
+                    DeleteAccountFragment deleteFragment = new DeleteAccountFragment();
+                    Bundle callingActivity = new Bundle();
+                    callingActivity.putString("callingActivity", "driver");
+                    deleteFragment.setArguments(callingActivity);
+                    deleteFragment.show(getSupportFragmentManager(), "Delete Account");}
+            }
         });
+
     }
     /**implement logic here for what you want to
      * happen upon back button press**/
