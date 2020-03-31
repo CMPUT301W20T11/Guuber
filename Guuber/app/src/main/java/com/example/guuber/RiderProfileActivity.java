@@ -144,7 +144,7 @@ public class RiderProfileActivity extends AppCompatActivity {
                 emailField.setText(email);
                 likeButton.setImageResource(R.drawable.smile);
                 dislikeButton.setImageResource(R.drawable.frowny);
-     
+
                 negRateDisplay.setText(negRate.toString());
                 posRateDisplay.setText(posRate.toString());
             });
