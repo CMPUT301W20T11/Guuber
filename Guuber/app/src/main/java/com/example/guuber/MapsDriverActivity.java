@@ -231,6 +231,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     public void onSuccess(Location location) {
                         if (location != null) {
                             android.util.Log.i("LOCATION = ", "NONNULL");
+                            driverLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                            setDriverLocation(driverLocation);
                         }else {
                             pleaseCloseAndOpenAppDialogD();
                         }
