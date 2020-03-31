@@ -16,6 +16,7 @@ import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
 import com.example.guuber.model.Vehicle;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
@@ -62,7 +63,7 @@ public class DriverProfilActivity extends AppCompatActivity {
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
         if (!editable){
-            String externalEmail = getIntent().getStringExtra("rider_email");
+            String externalEmail = getIntent().getStringExtra("external_email");
             uRef.document(externalEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
                 userInfo = documentSnapshot.toObject(User.class);
             });
@@ -85,8 +86,8 @@ public class DriverProfilActivity extends AppCompatActivity {
         phoneNumber = userInfo.getPhoneNumber();
         username = userInfo.getUsername();
         email = userInfo.getEmail();
-        posRate = userInfo.getPercentPositive();
-        negRate = userInfo.getPercentNegative();
+        posRate = userInfo.getPosRating();
+        negRate = userInfo.getNegRating();
 
         //onClickListeners for email and phone number fields to contact User
         if (editable){
@@ -118,7 +119,8 @@ public class DriverProfilActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(DriverProfilActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-                    updateDatabase();
+                    rateUser(true);
+                    //updateDatabase();
                     likeButton.setClickable(false);
                 }
             }
@@ -129,7 +131,8 @@ public class DriverProfilActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(DriverProfilActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
-                    updateDatabase();
+                    rateUser(false);
+                    //updateDatabase();
                     dislikeButton.setClickable(false);
                 }
             }
@@ -229,6 +232,16 @@ public class DriverProfilActivity extends AppCompatActivity {
 
     public void updateDatabase(){
         uRef.document(userInfo.getEmail()).set(userInfo);
+    }
+
+    public void rateUser(Boolean rating){
+
+        // Update the db object's rating
+        if(!rating){
+            uRef.document(email).update("negRating", FieldValue.increment(1));
+        }else{
+            uRef.document(email).update("posRating", FieldValue.increment(1));
+        }
     }
 
     public void deleteSelf(){

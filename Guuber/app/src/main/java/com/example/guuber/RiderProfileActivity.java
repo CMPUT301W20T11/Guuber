@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
@@ -61,7 +62,7 @@ public class RiderProfileActivity extends AppCompatActivity {
         editable = caller.equals("internal");
         if (!editable){
             //userInfo = (User) getIntent().getSerializableExtra("riderProfile");
-            String externalEmail = getIntent().getStringExtra("driver_email");
+            String externalEmail = getIntent().getStringExtra("external_email");
             uRef.document(externalEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
                 userInfo = documentSnapshot.toObject(User.class);
             });
@@ -82,8 +83,8 @@ public class RiderProfileActivity extends AppCompatActivity {
         phoneNumber = userInfo.getPhoneNumber();
         username = userInfo.getUsername();
         email = userInfo.getEmail();
-        posRate = userInfo.getPercentPositive();
-        negRate = userInfo.getPercentNegative();
+        posRate = userInfo.getPosRating();
+        negRate = userInfo.getNegRating();
 
         //onClickListeners for email and phone number fields to contact User
         if (!editable){
@@ -116,8 +117,10 @@ public class RiderProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(RiderProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-                    userInfo.adjustRating(true);
-                    updateDatabase();
+                    rateUser(true);
+//                    userInfo.adjustRating(true);
+//                    updateDatabase();
+                    likeButton.setClickable(false);
                 }
             }
         });
@@ -127,8 +130,10 @@ public class RiderProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(RiderProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
-                    userInfo.adjustRating(false);
-                    updateDatabase();
+                    rateUser(false);
+//                    userInfo.adjustRating(false);
+//                    updateDatabase();
+                    dislikeButton.setClickable(false);
                 }
             }
         });
@@ -188,8 +193,10 @@ public class RiderProfileActivity extends AppCompatActivity {
         likeButton.setImageResource(R.drawable.smile);
         dislikeButton.setImageResource(R.drawable.frowny);
         profileImg.setImageResource(R.drawable.profilepic);
-        negRateDisplay.setText(negRate.toString()+"%");
-        posRateDisplay.setText(posRate.toString()+"%");
+        //negRateDisplay.setText(negRate.toString()+"%");
+        //posRateDisplay.setText(posRate.toString()+"%");
+        negRateDisplay.setText(negRate.toString());
+        posRateDisplay.setText(posRate.toString());
 
         deleteButton = findViewById(R.id.deleteAccButtonRdIn);
         if (!editable){deleteButton.setVisibility(View.INVISIBLE);}
@@ -229,6 +236,15 @@ public class RiderProfileActivity extends AppCompatActivity {
 
     public void updateDatabase(){
         uRef.document(userInfo.getEmail()).set(userInfo);
+    }
+
+    public void rateUser(Boolean rating){
+        // Update the db object's rating
+        if(!rating){
+            uRef.document(email).update("negRating", FieldValue.increment(1));
+        }else{
+            uRef.document(email).update("posRating", FieldValue.increment(1));
+        }
     }
 
     public void deleteSelf(){

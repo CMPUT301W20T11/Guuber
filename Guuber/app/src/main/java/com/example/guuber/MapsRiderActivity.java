@@ -262,7 +262,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     public void viewDriverProfile(String d_email) {
         Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
         driverProfileIntent.putExtra("caller", "external");
-        driverProfileIntent.putExtra("driver_email", d_email);
+        driverProfileIntent.putExtra("external_email", d_email);
         startActivity(driverProfileIntent);
     }
 
@@ -662,10 +662,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 /*****TINASHE*****/
-                                //viewDriverProfile(potentialOfferer);
-                                final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
-                                driverProfileIntent.putExtra("EMAIL", potentialOfferer);
-                                startActivity(driverProfileIntent);
+                                viewDriverProfile(potentialOfferer);
+//                                final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
+//                                driverProfileIntent.putExtra("EMAIL", potentialOfferer);
+//                                startActivity(driverProfileIntent);
                                 /*******************************/
                             }
                         })
@@ -745,10 +745,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         dialog.dismiss(); }
                 }).setNeutralButton("View Driver Profile", (dialog, id) -> {
                     /*****TINASHE*****/
-                    //viewDriverProfile(potentialOfferer);
-                    final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
-                    driverProfileIntent.putExtra("EMAIL", potentialOfferer);
-                    startActivity(driverProfileIntent);
+                    viewDriverProfile(potentialOfferer);
+//                    final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
+//                    driverProfileIntent.putExtra("EMAIL", potentialOfferer);
+//                    startActivity(driverProfileIntent);
                     /**************/
                     //show the driver who is offering (potential offerers) profile
                     dialog.dismiss();
@@ -926,10 +926,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         /**********TINASHE********/
-                                        //viewDriverProfile(potentialOfferer);
-                                        final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
-                                        driverProfileIntent.putExtra("EMAIL", potentialOfferer);
-                                        startActivity(driverProfileIntent);
+                                        viewDriverProfile(potentialOfferer);
+//                                        final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
+//                                        driverProfileIntent.putExtra("EMAIL", potentialOfferer);
+//                                        startActivity(driverProfileIntent);
                                         android.util.Log.i(TAG, "Rate Driver Button Clicked");
                                         //Tinashe I don't know how you're going to call profile sorry here's some skeleton
                                         /************************/

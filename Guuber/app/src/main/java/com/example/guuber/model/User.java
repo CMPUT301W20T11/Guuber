@@ -115,16 +115,14 @@ public class User implements Serializable {
     }
 
     public int getPosRating() {
-        return posRating;
+        return this.posRating;
     }
 
     public void setPosRating(int posRating) {
         this.posRating = posRating;
     }
 
-    public int getNegRating() {
-        return negRating;
-    }
+    public int getNegRating() { return this.negRating; }
 
     public void setNegRating(int negRating) {
         this.negRating = negRating;
@@ -139,7 +137,7 @@ public class User implements Serializable {
         if (bool) {
             this.posRating = this.posRating + 1;
         } else {
-            this.negRating = this.negRating - 1;
+            this.negRating = this.negRating + 1;
         }
     }
 
