@@ -47,6 +47,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
@@ -106,6 +107,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /***********the database******/
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
+
+    //DB
+    private CollectionReference uRefRequests = driverMapsDB.collection("requests");
+    private CollectionReference uRefUsers = driverMapsDB.collection("Users");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -209,6 +214,28 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
+
+    protected void updateMapDriver() {
+        User currUser = ((UserData)(getApplicationContext())).getUser(); //current rider
+        String email = currUser.getEmail();
+        uRefUsers.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
+            if (documentSnapshot.get("offerTo") != null && documentSnapshot.get("desLat") != null) {
+                //rideisPending = Boolean.TRUE;
+                android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
+                Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
+                Double originLong = Double.parseDouble(documentSnapshot.get("oriLng").toString());
+                Double destinationLong = Double.parseDouble(documentSnapshot.get("desLng").toString());
+                Double destinationLat = Double.parseDouble(documentSnapshot.get("desLat").toString());
+                LatLng start = new LatLng(originLat, originLong);
+                LatLng end = new LatLng(destinationLat, destinationLong);
+                //setDestination(end);
+                //setOrigin(start);
+                //calculateDirections();
+                //setMarker(getOrigin(), "Origin");
+                //setMarker(getDestination(), "Destination");
+            }
+        });
+    }
     /****************************************SPINNER METHODS***********************************************/
 
 
