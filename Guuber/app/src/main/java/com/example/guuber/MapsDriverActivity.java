@@ -378,6 +378,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         final Intent scanQrProfileIntent = new Intent(MapsDriverActivity.this, scanQrActivity.class);
         startActivityForResult(scanQrProfileIntent, QR_SCAN_CODE);
     }
+
     /**
      * Sign out a user and return to the login activity
      **/
