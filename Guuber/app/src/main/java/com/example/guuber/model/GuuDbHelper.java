@@ -707,7 +707,7 @@ public class GuuDbHelper {
     public synchronized void reqAccepted(User rider, User driver) throws InterruptedException {
 
         setProfile(rider.getEmail());
-        profile.update("rideOfferFrom",FieldValue.delete());
+        //profile.update("rideOfferFrom",FieldValue.delete());
         profile.update("reqDriver",driver.getEmail());
 
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
@@ -725,7 +725,7 @@ public class GuuDbHelper {
         requests.document(rider.getEmail()).delete();
 
         setProfile(driver.getEmail());
-        profile.update("offerStatus",FieldValue.delete());
+        //profile.update("offerStatus",FieldValue.delete());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
     }
