@@ -196,6 +196,7 @@ public class DriverProfilActivity extends AppCompatActivity {
         }
 
         try {
+            User userInfo = ((UserData)(getApplicationContext())).getUser();
             driverDBHelper.updateProfileAll(userInfo);
         } catch (InterruptedException e) {
             e.printStackTrace();

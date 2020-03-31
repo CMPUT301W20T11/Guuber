@@ -64,7 +64,7 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
 
         // Get the passed email info
         Intent intent = getIntent();
-        email = intent.getExtras().getString("Email");
+        email = intent.getExtras().getString("EMAIL");
 
         // Db query to get the user info with the intent email
         uRef.document(email).get().addOnSuccessListener(documentSnapshot -> {
