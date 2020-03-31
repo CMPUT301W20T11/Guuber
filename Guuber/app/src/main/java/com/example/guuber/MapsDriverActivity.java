@@ -768,6 +768,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
+
     /**
      Let the Driver know, that the rider has not cancelled the request
      */
@@ -778,6 +779,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 Toast.makeText(MapsDriverActivity.this," You Have Not Been Cancelled On", Toast.LENGTH_LONG).show();
             }}, 500);
     }
+
 
     /**
     Let the Driver know, that the rider has cancelled the request
