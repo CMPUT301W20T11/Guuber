@@ -172,6 +172,12 @@ public class GuuDbHelperTest {
         Thread.sleep(1000);
         dbHelper.makeReq(user, (double) 60, 0000,0000,1000,1000,"5050");
         Thread.sleep(1000);
+
+        //Boolean mike = dbHelper.driverArrive(user, "0000", "0000");
+        //Thread.sleep(1000);
+
+
+
         Map<String,Object> reqDetail;
         reqDetail = dbHelper.getRiderRequest(mockUser());
         Thread.sleep(1000);
@@ -182,6 +188,8 @@ public class GuuDbHelperTest {
         assertEquals("1000",reqDetail.get("desLat"));
         assertEquals("1000",reqDetail.get("desLng"));
         assertEquals("5050",reqDetail.get("tripCost"));
+
+
         dbHelper.cancelRequest(mockUser());
     }
 
@@ -268,16 +276,13 @@ public class GuuDbHelperTest {
 
     @Test
     public void completingRequestTest() throws InterruptedException{
+        dbHelper.checkEmail(mockUser2());
+        Thread.sleep(1000);
         dbHelper.makeReq(mockUser2(),(double)10,69.312031230,72.01230345,30.12031204,50.12312415,"20");
         Thread.sleep(1000);
         dbHelper.reqAccepted(mockUser2(),mockUser3());
         Thread.sleep(1000);
-        dbHelper.notifyRider(mockUser3());
-        Thread.sleep(1000);
-        boolean check = dbHelper.driverHasArrived(mockUser2());
-        Thread.sleep(1000);
-        assertEquals(true,check);
-        dbHelper.completedRequest(mockUser3(),mockUser2());
+        dbHelper.completedRequest(mockUser3(),mockUser2()); // check on db its deletes it
         Thread.sleep(1000);
 
 
