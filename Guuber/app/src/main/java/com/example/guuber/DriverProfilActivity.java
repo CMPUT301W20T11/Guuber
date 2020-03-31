@@ -56,7 +56,6 @@ public class DriverProfilActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.driver_profile_disp);
         //UserData userData = UserData.getInstance();
-        userInfo = ((UserData)(getApplicationContext())).getUser();
 
         Toast.makeText(DriverProfilActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
 
@@ -67,6 +66,9 @@ public class DriverProfilActivity extends AppCompatActivity {
             uRef.document(externalEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
                 userInfo = documentSnapshot.toObject(User.class);
             });
+        }
+        else{
+            userInfo = ((UserData)(getApplicationContext())).getUser();
         }
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

@@ -272,18 +272,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 if (documentSnapshot.get("offerStatus").toString().equals("accepted")) {
                     String offerToEmail = documentSnapshot.get("offerTo").toString();
                     getRideDetails(offerToEmail);
-                    // Get coordinates from Coord array list
-                    //android.util.Log.i("Coord", Coord.toString());
-                    //Double originLat = Coord.get(0);
-                    //Double originLong = Coord.get(1);
-                    //Double destinationLat = Coord.get(2);
-                    //Double destinationLong = Coord.get(3);
-                    //LatLng start = new LatLng(originLat, originLong);
-                    //LatLng end = new LatLng(destinationLat, destinationLong);
 
-                    //setMarker(start, "Origin");
-                    //setMarker(end, "Destination");
-                    //calculateDirectionsBetweenPickupandDropOff(offerToEmail,start, end);
+                }
+                else if (documentSnapshot.get("offerStatus").toString().equals("pending")) {
+                    String offerToEmail = documentSnapshot.get("offerTo").toString();
+                    getRideDetails(offerToEmail);
                 }
 //                android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
 //                Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
@@ -747,10 +740,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             /**********TINASHE********/
-                            viewRiderProfile(riderEmail);
-//                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, ViewProfileActivity_Matt.class);
-//                            riderProfileIntent.putExtra("EMAIL", riderEmail);
-//                            startActivity(riderProfileIntent);
+                            //viewRiderProfile(riderEmail);
+                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, ViewProfileActivity_Matt.class);
+                            riderProfileIntent.putExtra("EMAIL", riderEmail);
+                            startActivity(riderProfileIntent);
                             /*******************************/
                         }
                     })
@@ -840,10 +833,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             /******TINASHE*******/
-                            viewRiderProfile(riderEmail);
-//                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, ViewProfileActivity_Matt.class);
-//                            riderProfileIntent.putExtra("EMAIL", riderEmail);
-//                            startActivity(riderProfileIntent);
+                            //viewRiderProfile(riderEmail);
+                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, ViewProfileActivity_Matt.class);
+                            riderProfileIntent.putExtra("EMAIL", riderEmail);
+                            startActivity(riderProfileIntent);
                             /*******************/
                         }
                     })
