@@ -97,13 +97,12 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 			if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 				isLocationPermissionGranted = true;
 				Location location = locationManager.getLastKnownLocation(locationManager.getBestProvider(criteria, true));
-				android.util.Log.i("LOCATION MANAGER INIT", location.toString());
+				//android.util.Log.i("LOCATION MANAGER INIT", location.toString());
 			} else {
 				ActivityCompat.requestPermissions(this,
 						new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
 						PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
 				}
-
 			}
 		}
 	/**********************************************/

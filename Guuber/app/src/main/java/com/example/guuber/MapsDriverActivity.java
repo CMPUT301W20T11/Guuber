@@ -301,6 +301,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             guuberDriverMap.setOnMyLocationButtonClickListener(this);
             guuberDriverMap.setOnMyLocationClickListener(this);
 
+            
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
             assert locationManager != null;
@@ -321,7 +322,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
                 //LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
                 //setMarker(currLocation," Your Location");
-                android.util.Log.i("DRIVER LOCATION = ", null);
+                //android.util.Log.i("DRIVER LOCATION = ", null);
             }
         }
 
