@@ -150,6 +150,7 @@ public class GuuDbHelper {
      * */
     public synchronized void checkEmail(User newUser){
         Map<String,Object> user = new HashMap<>();
+
         user.put("firstName",newUser.getFirstName());
         user.put("lastName",newUser.getLastName());
         user.put("email",newUser.getEmail());
@@ -424,7 +425,7 @@ public class GuuDbHelper {
                        documentSnapshot.get("desLng"), documentSnapshot.get("tripCost").toString());
             }
         });
-        TimeUnit.SECONDS.sleep(5);
+
         return Request;
     }
 
@@ -706,10 +707,20 @@ public class GuuDbHelper {
     public synchronized void reqAccepted(User rider, User driver) throws InterruptedException {
 
         setProfile(rider.getEmail());
-
         profile.update("rideOfferFrom",FieldValue.delete());
         profile.update("reqDriver",driver.getEmail());
+
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                setRequest(documentSnapshot.get("email").toString(), documentSnapshot.get("reqTip"),
+                        documentSnapshot.get("oriLat"), documentSnapshot.get("oriLng"), documentSnapshot.get("desLat"),
+                        documentSnapshot.get("desLng"), documentSnapshot.get("tripCost").toString());
+            }
+        });
+
         Map<String,Object> reqDetails = getRiderRequest(rider);
+
         reqList.remove(reqDetails);
         requests.document(rider.getEmail()).delete();
 

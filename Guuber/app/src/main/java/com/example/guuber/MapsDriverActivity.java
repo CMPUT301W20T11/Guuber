@@ -72,39 +72,48 @@ import java.util.Objects;
  */
 public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
-    /*** spinner codes**/
+    //spinner codes
     private static final int MENU = 0;
     private static final int MYPROFILE = 1;
     private static final int WALLET = 2;
     private static final int SCANQR = 3;
-    private static final int QR_SCAN_CODE = 4;
     private static final int SIGNOUT = 4;
+
+    //permissions / result codes
+    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
+    public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 12;
+    private static final int QR_SCAN_CODE = 4;
 
     // for signing out of app
     private static final int RC_SIGN_OUT = 1000;
 
+
+
+    //booleans for status
+    private boolean offerSent;
+    private boolean offerAccepted;
+    private boolean routeInProgress;
+
+    //location
+    LocationManager locationManager;
+    Criteria criteria = new Criteria();
+    private static Location location;
+    private GeoApiContext geoApiContext = null;
+
+    //maps/globals
+    private boolean isLocationPermissionGranted = false;
+    private static final String TAG = "MapsDriverActivity";
+    private Polyline polyline;
+    private String riderEmail;
     private GoogleMap guuberDriverMap;
     private Spinner driverSpinner;
     private Button driverSearchButton;
     private EditText geoLocationSearch;
     private LatLng search;
     private LatLng driverLocation;
-    private boolean offerSent;
-    private boolean offerAccepted;
-    private boolean routeInProgress;
 
 
-    /*******NEW MAPS INTEGRATION*****/
-    private boolean isLocationPermissionGranted = false;
-    private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
-    public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 12;
-    private static final String TAG = "MapsDriverActivity";
-    private GeoApiContext geoApiContext = null;
-    private Polyline polyline;
-    private String riderEmail;
-    /*********************/
-
-    /***********the database******/
+    //database
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
 
@@ -207,8 +216,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     protected void onResume() {
         super.onResume();
-        if (checkMapServices()) {
-            if (isLocationPermissionGranted == false) {
+        if(checkMapServices()){
+            if(!isLocationPermissionGranted){
                 checkUserPermission();
             }
         }
@@ -320,19 +329,15 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
 
         if (checkUserPermission()) {
-            /**
-             * if user permission have been checked
-             * and location permission has been granted...
-             **/
+            /*** if user permission have been checked* and location permission has been granted...**/
             guuberDriverMap.setMyLocationEnabled(true);
             guuberDriverMap.setOnMyLocationButtonClickListener(this);
             guuberDriverMap.setOnMyLocationClickListener(this);
 
-            
-            LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
+
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             assert locationManager != null;
-            Location location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
+            location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
 
 
 
@@ -344,16 +349,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 /**move the camera to current location**/
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(currLocation).zoom(10).build();
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-            }else{
-
-                location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
-                //LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                //setMarker(currLocation," Your Location");
-                //android.util.Log.i("DRIVER LOCATION = ", null);
             }
         }
-
-
 
     }
 
@@ -464,8 +461,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      **/
     public synchronized void setDriverLocation(LatLng location) {
         //making sure we   have a driver location
-        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        Criteria criteria = new Criteria();
         if(location == null){
             if (!checkUserPermission()){
                 checkUserPermission();
@@ -657,7 +652,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        calculateDirectionsToPickup(marker); //draw drivers route to pickup
+
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
         riderEmail = marker.getTitle();
 
@@ -809,6 +804,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * Offer a ride to the Rider and be accepted or denied
      */
     public void offerRide(Marker marker) throws InterruptedException {
+
+
         calculateDirectionsToPickup(marker);
 
         offerSent = true;
@@ -935,38 +932,39 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * @param marker the marker indicating the riders pickup location
      */
     private void calculateDirectionsToPickup(Marker marker) {
+            driverLocation = new LatLng(location.getLatitude(),location.getLongitude());
+            setDriverLocation(driverLocation);
+            Log.d(TAG, "calculateDirections: calculating directions.");
 
-        Log.d(TAG, "calculateDirections: calculating directions.");
+            /**to the clicked markers destination**/
+            com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
+                    marker.getPosition().latitude,
+                    marker.getPosition().longitude
+            );
+            DirectionsApiRequest driverDirections = new DirectionsApiRequest(geoApiContext);
 
-        /**to the clicked markers destination**/
-        com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
-                marker.getPosition().latitude,
-                marker.getPosition().longitude
-        );
-        DirectionsApiRequest driverDirections = new DirectionsApiRequest(geoApiContext);
+            /**from the drivers current position**/
+            LatLng currDriverLocation = getDriverLocation();
+            driverDirections.origin(
+                    new com.google.maps.model.LatLng(
+                            currDriverLocation.latitude,
+                            currDriverLocation.longitude
+                    )
+            );
+            Log.d(TAG, "calculateDirections: destination: " + destination.toString());
+            driverDirections.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
+                @Override
+                public void onResult(DirectionsResult result) {
+                    addPolylinesToMap(result);
+                }
 
-        /**from the drivers current position**/
-        LatLng currDriverLocation = getDriverLocation();
-        driverDirections.origin(
-                new com.google.maps.model.LatLng(
-                        currDriverLocation.latitude,
-                        currDriverLocation.longitude
-                )
-        );
-        Log.d(TAG, "calculateDirections: destination: " + destination.toString());
-        driverDirections.destination(destination).setCallback(new PendingResult.Callback<DirectionsResult>() {
-            @Override
-            public void onResult(DirectionsResult result) {
-                addPolylinesToMap(result);
-            }
+                @Override
+                public void onFailure(Throwable e) {
+                    Log.e(TAG, "calculateDirections: Failed to get directions: " + e.getMessage());
 
-            @Override
-            public void onFailure(Throwable e) {
-                Log.e(TAG, "calculateDirections: Failed to get directions: " + e.getMessage());
-
-            }
-        });
-    }
+                }
+            });
+        }
 
 
     /**
