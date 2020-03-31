@@ -34,6 +34,10 @@ public class GuuDbHelper {
     public static String offerer;
     public static String offerStat = "none";
 
+    public static String arrivee;
+    public static String arriver;
+    public static String arrivalStatus = "none";
+
 
     //public static Wallet wall;
     //private static CollectionReference wallet;
@@ -477,7 +481,6 @@ public class GuuDbHelper {
     /**
      * Let the rider decline the offer from the driver
      * @param rider - the person who declines the offer
-     * @param driver - the person who's offer is declined
      */
     public synchronized void declineOffer(User rider){
         setProfile(rider.getEmail());
@@ -502,13 +505,61 @@ public class GuuDbHelper {
         profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
+                arrivee = rider.getEmail();
+                setProfile(arrivee);
+                profile.update("arrived","false"); //rider now has a field
+
                 offerer = documentSnapshot.get("rideOfferFrom").toString();
                 setProfile(offerer);
                 profile.update("offerStatus","accepted");
+                profile.update("arrived","false"); //driver now has a field
             }
         });
         setProfile(offerer);
+        profile.update("arrived","false");
         profile.update("offerStatus","accepted");
+    }
+
+    public synchronized void setArrival(String email){
+        android.util.Log.i("DRIVER EMAIL = ", email);
+        setProfile(email);
+        android.util.Log.i("Passed set Profile for ", email);
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                arriver = email;
+                setProfile(arriver);
+                android.util.Log.i("Passed set Profile for ", arriver);
+                profile.update("arrived","true");
+
+                android.util.Log.i("Getting Document snap ", "for rider");
+                arrivee = documentSnapshot.get("offerTo").toString();
+                android.util.Log.i("arrivee = ", arrivee);
+                setProfile(arrivee);
+                android.util.Log.i("Passed set Profile for ", arrivee);
+                profile.update("arrived","true"); //driver now has a field
+            }
+        });
+        //setProfile(arrivee);
+        //profile.update("arrived","true");
+    }
+
+
+    public synchronized String getArrival(String email){
+        setProfile(email);
+        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                android.util.Log.i("IN ARRIVAL STAT", "STAT");
+                arrivalStatus = documentSnapshot.get("arrived").toString();
+                if (arrivalStatus.equals("true")){
+                    android.util.Log.i("ARRIVAL STATUS =", "true");
+                }else if (arrivalStatus.equals("false")){
+                    android.util.Log.i("ARRIVAL STATUS =", "false");
+                }
+            }
+        });
+        return arrivalStatus;
     }
 
     /**
@@ -541,6 +592,10 @@ public class GuuDbHelper {
     }
 
 
+
+
+
+
     /**
      * Stores details between driver and rider when a request is accepted
      * @param rider - the rider with the request and accepts driver
@@ -549,13 +604,14 @@ public class GuuDbHelper {
     public synchronized void reqAccepted(User rider, User driver) throws InterruptedException {
 
         setProfile(rider.getEmail());
+
         profile.update("rideOfferFrom",FieldValue.delete());
         profile.update("reqDriver",driver.getEmail());
         Map<String,Object> reqDetails = getRiderRequest(rider);
         reqList.remove(reqDetails);
         requests.document(rider.getEmail()).delete();
+
         setProfile(driver.getEmail());
-        profile.update("offerTo",FieldValue.delete());
         profile.update("offerStatus",FieldValue.delete());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 

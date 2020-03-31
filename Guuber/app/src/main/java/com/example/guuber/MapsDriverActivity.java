@@ -304,6 +304,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             Location location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
 
 
+
             if (location != null) {
                 /**create a new LatLng location object for the user current location**/
                 LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
@@ -314,6 +315,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }else{
                 location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
+                LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                setMarker(currLocation," Your Location");
                 android.util.Log.i("DRIVER LOCATION = ", null);
             }
         }
@@ -686,6 +689,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                                     }
                                 }else if (statusCheck.equals("declined")){
                                     offerAccepted = false;
+                                    offerSent = false;
                                     offerDeclined();
                                     dialog.dismiss();
                                 }else if (statusCheck.equals("pending") || statusCheck.equals("none")){
@@ -701,10 +705,19 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }else if (routeInProgress == true){
             builder
                     .setMessage("Route In Progress")
+                    .setNeutralButton("View Rider Profile", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            /*****TINASHE TO DO*******/
+                            android.util.Log.i("CLICKED ON:", "VIEW RIDER PROFILE");
+                        }
+                    })
                     .setPositiveButton("Let The Rider Know You have Arrived", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            android.util.Log.i(TAG, "DRIVER HAS ARRIVED"); //TO DO AFTER CRASHES ARE FIXED
+                            User currdriver = ((UserData)(getApplicationContext())).getUser();
+                            String myEmail = currdriver.getEmail();
+                            driverDBHelper.setArrival(myEmail);
                         }
                     });
             final AlertDialog alert = builder.create();alert.show();
@@ -726,10 +739,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
 
         User currDriver = ((UserData)(getApplicationContext())).getUser();
-        android.util.Log.i("CURR DRIVER EMAIL",  currDriver.getEmail()); //works fine
+        android.util.Log.i("CURR DRIVER EMAIL",  currDriver.getEmail());
 
 
-        User riderToOfferTo = driverDBHelper.getUser(currReqRiderEmail); //<------ FIRST crash. even though rider email is correct
+        User riderToOfferTo = driverDBHelper.getUser(currReqRiderEmail);
         android.util.Log.i("Rider to Offer To: ",  riderToOfferTo.toString());
 
         String theRidersEmail = marker.getTitle();
