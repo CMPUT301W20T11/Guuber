@@ -50,6 +50,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
@@ -90,6 +91,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private static final int RC_SIGN_OUT = 1000;
 
 
+
     //booleans for status
     private boolean offerSent;
     private boolean offerAccepted;
@@ -98,10 +100,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     //location
     LocationManager locationManager;
     Criteria criteria = new Criteria();
-    private static Location currLocation;
+    private static Location location;
     private GeoApiContext geoApiContext = null;
-    private FusedLocationProviderClient fusedLocationClient;
-
 
     //maps/globals
     private boolean isLocationPermissionGranted = false;
@@ -115,11 +115,20 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private LatLng search;
     private LatLng driverLocation;
 
+    private static Location currLocation;
+    private FusedLocationProviderClient fusedLocationClient;
+
 
     //database
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
 
+    //DB
+    private CollectionReference uRefRequests = driverMapsDB.collection("requests");
+    private CollectionReference uRefUsers = driverMapsDB.collection("Users");
+
+    //Global coord
+    private ArrayList<Double> Coord;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -200,25 +209,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationClient.getLastLocation()
-                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
-                    @Override
-                    public void onSuccess(Location location) {
-                         android.util.Log.i("Holy shit", "location is null");
-                        if (location != null) {
-                            currLocation = location ;
-                            driverLocation = new LatLng(currLocation.getLatitude(),currLocation.getLatitude());
-                            setDriverLocation(driverLocation);
-                        }
-                    }
-                });
-
+        /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         if (geoApiContext == null) {
             geoApiContext = new GeoApiContext.Builder().apiKey(getString(R.string.maps_key)).build();
         }
-        /**Obtain the SupportMapFragment and get notified when the map is ready to be used.**/
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.driver_map);
         mapFragment.getMapAsync(this);
 
@@ -236,11 +230,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     @Override
                     public void onSuccess(Location location) {
                         if (location != null) {
-                            currLocation = location ;
-                            driverLocation = new LatLng(currLocation.getLatitude(),currLocation.getLatitude());
+                            android.util.Log.i("LOCATION = ", "NONNULL");
+                            driverLocation = new LatLng(location.getLatitude(), location.getLongitude());
                             setDriverLocation(driverLocation);
-                        }else{
-                            pleaseCloseAndOpenAppDialog();
+                        }else {
+                            pleaseCloseAndOpenAppDialogD();
                         }
                     }
                 });
@@ -249,6 +243,85 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 checkUserPermission();
             }
         }
+        updateMapDriver();
+    }
+
+    private void pleaseCloseAndOpenAppDialogD(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your Device Location Has Not Been Initialized! Please Close and Re-open the Application and We Will Get It For You!")
+                .setCancelable(false)
+                .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        finish();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
+
+    protected void updateMapDriver() {
+        User currUser = ((UserData)(getApplicationContext())).getUser(); //current rider
+        String email = currUser.getEmail();
+        uRefUsers.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
+            // these fields should only be populated if there is an active request or pending request
+            if (documentSnapshot.get("offerTo") != null && documentSnapshot.get("offerStatus") != null) {
+                //rideisPending = Boolean.TRUE;
+
+                // check if active
+                if (documentSnapshot.get("offerStatus").toString().equals("accepted")) {
+                    String offerToEmail = documentSnapshot.get("offerTo").toString();
+                    getRideDetails(offerToEmail);
+                    // Get coordinates from Coord array list
+                    //android.util.Log.i("Coord", Coord.toString());
+                    //Double originLat = Coord.get(0);
+                    //Double originLong = Coord.get(1);
+                    //Double destinationLat = Coord.get(2);
+                    //Double destinationLong = Coord.get(3);
+                    //LatLng start = new LatLng(originLat, originLong);
+                    //LatLng end = new LatLng(destinationLat, destinationLong);
+
+                    //setMarker(start, "Origin");
+                    //setMarker(end, "Destination");
+                    //calculateDirectionsBetweenPickupandDropOff(offerToEmail,start, end);
+                }
+//                android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
+//                Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
+//                Double originLong = Double.parseDouble(documentSnapshot.get("oriLng").toString());
+//                Double destinationLong = Double.parseDouble(documentSnapshot.get("desLng").toString());
+//                Double destinationLat = Double.parseDouble(documentSnapshot.get("desLat").toString());
+//                LatLng start = new LatLng(originLat, originLong);
+//                LatLng end = new LatLng(destinationLat, destinationLong);
+                //setDestination(end);
+                //setOrigin(start);
+                //calculateDirections();
+                //setMarker(getOrigin(), "Origin");
+                //setMarker(getDestination(), "Destination");
+            }
+        });
+    }
+    protected void getRideDetails(String offerToEmail) {
+
+        uRefUsers.document(offerToEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
+            if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("desLat") != null) {
+
+                android.util.Log.i("getRideDetails", documentSnapshot.toString());
+                Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
+                Double originLong = Double.parseDouble(documentSnapshot.get("oriLng").toString());
+                Double destinationLong = Double.parseDouble(documentSnapshot.get("desLng").toString());
+                Double destinationLat = Double.parseDouble(documentSnapshot.get("desLat").toString());
+                //Coord.add(0,originLat);
+                //Coord.add(1,originLong);
+                //Coord.add(2,destinationLat);
+                //Coord.add(3,destinationLong);
+                LatLng start = new LatLng(originLat, originLong);
+                LatLng end = new LatLng(destinationLat, destinationLong);
+
+                setMarker(start, "Origin");
+                setMarker(end, "Destination");
+                calculateDirectionsBetweenPickupandDropOff(offerToEmail,start, end);
+            }
+        });
     }
 
     /**
