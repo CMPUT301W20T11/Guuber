@@ -91,7 +91,7 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
         // On like button
         likeButton.setOnClickListener(v -> {
            rateUser(true);
-            Toast.makeText(ViewProfileActivity_Matt.this, "Profile liked!", Toast.LENGTH_LONG).show();
+           Toast.makeText(ViewProfileActivity_Matt.this, "Profile liked!", Toast.LENGTH_LONG).show();
         });
 
         // On dislike button
@@ -115,9 +115,9 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
     public void rateUser(Boolean rating){
         // Update the db object's rating
         if(rating){
-            uRef.document(email).update("negRating", FieldValue.increment(1));
-        }else{
             uRef.document(email).update("posRating", FieldValue.increment(1));
+        }else{
+            uRef.document(email).update("negRating", FieldValue.increment(1));
         }
     }
 }

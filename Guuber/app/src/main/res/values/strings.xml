@@ -16,7 +16,6 @@
     <string-array name="menuRider">
         <item>MENU</item>
         <item>My Profile</item>
-        <item>View Trips</item>
         <item>Wallet</item>
         <item>Generate QR</item>
         <item>Sign Out</item>

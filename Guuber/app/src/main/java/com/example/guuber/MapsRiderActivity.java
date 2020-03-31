@@ -178,10 +178,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     /**start the view trips activity**/
                     viewRiderProfile();
                     riderSpinner.setSelection(MENU);
-                }else if (position == VIEWTRIPS) {
-                    /**start the my profile activity*/
-                    viewRiderTrips();
-                    riderSpinner.setSelection(MENU);
                 }else if (position == WALLET){
                     /**start the wallet activity**/
                     openRiderWallet();
@@ -249,13 +245,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
     /**********************************SPINNER METHODS*****************************************/
 
-    /**
-     * Starts activity containing trip history for rider
-     **/
-    public void viewRiderTrips() {
-        final Intent riderTripsIntent = new Intent(MapsRiderActivity.this, ViewTripsActivity.class);
-        startActivity(riderTripsIntent);
-    }
 
     /**
      * Starts activity to display riders profile

@@ -29,7 +29,6 @@
         <activity android:name=".makeRequestScreen1" />
         <activity android:name=".makeRequestScreen2" />
         <activity android:name=".makeRequestScreen3" />
-        <activity android:name=".ViewTripsActivity" />
         <activity android:name=".DriverProfilActivity" />
         <activity android:name=".RiderProfileActivity" />
         <activity

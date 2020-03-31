@@ -335,6 +335,9 @@ public class GuuDbHelper {
         this.requests.document(rider.getEmail()).set(details);
     }
 
+
+
+
     /**
      * Cancels the user's request
      * @param rider - rider who want to cancel their request
