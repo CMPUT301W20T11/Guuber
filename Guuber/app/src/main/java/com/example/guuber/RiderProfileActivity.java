@@ -232,6 +232,7 @@ public class RiderProfileActivity extends AppCompatActivity {
             userInfo.setUsername(value);
         }
         updateDatabase();
+        updateViews();
     }
 
     public void updateDatabase(){
@@ -253,6 +254,21 @@ public class RiderProfileActivity extends AppCompatActivity {
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
+    }
+
+    public void updateViews(){phoneNumber = userInfo.getPhoneNumber();
+        username = userInfo.getUsername();
+        email = userInfo.getEmail();
+        posRate = userInfo.getPosRating();
+        negRate = userInfo.getNegRating();
+
+        phoneNumberField.setText(phoneNumber);
+        usernameField.setText(username);
+        emailField.setText(email);
+        //negRateDisplay.setText(negRate.toString()+"%");
+        //posRateDisplay.setText(posRate.toString()+"%");
+        negRateDisplay.setText(negRate.toString());
+        posRateDisplay.setText(posRate.toString());
     }
 }
 

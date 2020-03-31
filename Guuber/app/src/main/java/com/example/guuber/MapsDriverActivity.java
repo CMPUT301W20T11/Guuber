@@ -34,6 +34,8 @@ import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -47,6 +49,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.maps.DirectionsApiRequest;
@@ -285,6 +288,22 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         });
     }
 
+    /**
+     *
+     */
+    private void pleaseCloseAndOpenAppDialog(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your Device Location Has Not Been Initialized! Please Close and Re-open  the Application and We Will Get It For You!")
+                .setCancelable(false)
+                .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                       finish();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
+    }
+
     /****************************************SPINNER METHODS***********************************************/
 
 
@@ -377,17 +396,16 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             assert locationManager != null;
-            location = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
+            currLocation = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
 
 
-
-            if (location != null) {
+            if (currLocation != null) {
                 /**create a new LatLng location object for the user current location**/
-                LatLng currLocation = new LatLng(location.getLatitude(), location.getLongitude());
-                setDriverLocation(currLocation); //driver must provide their location
+                LatLng theLocation = new LatLng(currLocation.getLatitude(), currLocation.getLongitude());
+                setDriverLocation(theLocation); //driver must provide their location
 
                 /**move the camera to current location**/
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(currLocation).zoom(10).build();
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(theLocation).zoom(10).build();
                 guuberDriverMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         }
@@ -692,7 +710,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-
+        calculateDirectionsToPickup(marker);
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
         riderEmail = marker.getTitle();
 
@@ -972,7 +990,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * @param marker the marker indicating the riders pickup location
      */
     private void calculateDirectionsToPickup(Marker marker) {
-            driverLocation = new LatLng(location.getLatitude(),location.getLongitude());
+            driverLocation = new LatLng(currLocation.getLatitude(),currLocation.getLongitude());
             setDriverLocation(driverLocation);
             Log.d(TAG, "calculateDirections: calculating directions.");
 
