@@ -93,13 +93,14 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private boolean routeInProgress;
 
 
-    /*******NEW MAPS INTEGRATION**/
+    /*******NEW MAPS INTEGRATION*****/
     private boolean isLocationPermissionGranted = false;
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
     public static final int PERMISSIONS_REQUEST_ENABLE_GPS = 12;
     private static final String TAG = "MapsDriverActivity";
     private GeoApiContext geoApiContext = null;
     private Polyline polyline;
+    private String riderEmail;
     /*********************/
 
     // Activity result codes
@@ -367,6 +368,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     public void drawOpenRequests() {
         Double offeredTip = null, destinationLat = null, destinationLong = null, originLat = null, originLong = null, tripCost = null;
         String email = null;
+
+
         ArrayList<Map<String, Object>> openRequestList = driverDBHelper.getReqList(); //needs to be called twice to draw open requests. fine fore now
         android.util.Log.i(TAG, "OPEN REQUEST LIST RAW" + openRequestList.toString());
 
@@ -663,27 +666,23 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         if(offerSent == false && offerAccepted == false) {
             builder
                     .setMessage("What would you like to do?").setCancelable(false)
-                    .setPositiveButton("View This Riders Profile", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("View  Riders Profile", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             /**********TINASHE********/
+                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
+                            riderProfileIntent.putExtra("RIDER_EMAIL", riderEmail);
+                            startActivity(riderProfileIntent);
+                            /*******************************/
                             //view the rider of this requests profile
                             //marker.getTitle() is equal to email
                             User user = null;
                             try {
-                                user = driverDBHelper.getUser(marker.getTitle());
+                                User user = driverDBHelper.getUser(marker.getTitle());
+                                viewRiderProfile(user);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
-                            //Map<String, Object> userInfo = driverDBHelper.getProfileAll(marker.getTitle());
-                            //User user = makeExternalUser(userInfo);
-                            try {
-                                User user2 = driverDBHelper.getUser(marker.getTitle());
-                                viewRiderProfile(user2);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-
                         }
                     })
                     .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
@@ -698,7 +697,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         public void onClick(final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
                             offerSent = true;
                             try {
-                                offerRide(marker); //first crash
+                                riderEmail = marker.getTitle();
+                                offerRide(marker);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                             }
@@ -770,8 +770,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     .setNeutralButton("View Rider Profile", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            /*****TINASHE TO DO*******/
-                            android.util.Log.i("CLICKED ON:", "VIEW RIDER PROFILE");
+                            /******TINASHE*******/
+                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
+                            riderProfileIntent.putExtra("RIDER_EMAIL", riderEmail);
+                            startActivity(riderProfileIntent);
+                            /*******************/
                         }
                     })
                     .setPositiveButton("Let Rider Know You've Arrived", new DialogInterface.OnClickListener() {
@@ -786,6 +789,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         }
     }
 
+
     /**
      Let the Driver know, that the rider has not cancelled the request
      */
@@ -796,6 +800,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 Toast.makeText(MapsDriverActivity.this," You Have Not Been Cancelled On", Toast.LENGTH_LONG).show();
             }}, 500);
     }
+
 
     /**
     Let the Driver know, that the rider has cancelled the request

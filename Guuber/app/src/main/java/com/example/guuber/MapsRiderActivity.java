@@ -117,6 +117,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private FirebaseFirestore riderMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper riderDBHelper = new GuuDbHelper(riderMapsDB);
 
+    //DB
+    private CollectionReference uRef = riderMapsDB.collection("requests");
     /**TINASHE YOU MIGHT NEED THIS**/
     String potentialOfferer = null;
 
@@ -189,7 +191,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     makeQR();
                     riderSpinner.setSelection(MENU);
                 }else if (position == SIGNOUT) {
-                    /**start the scanQR activity**/
+                    /**Finish the maps activity**/
                     signOut();
                     riderSpinner.setSelection(MENU);
                 }
@@ -222,51 +224,22 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             }
         }
 
-
-        /**if (rideInProgress || rideisPending) {
-            calculateDirections();
-        }**/
-        Double offeredTip = null, destinationLat = null, destinationLong = null, originLat = null, originLong = null, tripCost = null;
-        String email = null;
-
         User currUser = ((UserData)(getApplicationContext())).getUser(); //current rider
-
-        ArrayList<Map<String, Object>> openRequestList = riderDBHelper.getReqList(); //needs to be called twice to draw open requests. fine fore now
-        android.util.Log.i(TAG, "OPEN REQUEST LIST RAW" + openRequestList.toString()); //might be empty upon on Resume
-
-        for (Map<String, Object> map : openRequestList) {
-            for (Map.Entry<String, Object> entry : map.entrySet()) {
-
-                String key = entry.getKey();
-                Object value = entry.getValue();
-
-                switch (key) {
-                    case "email":
-                        email = value.toString();
-                        if (email != currUser.getEmail()) {
-                            break;
-                        }
-                    case "tripCost":
-                        tripCost = Double.parseDouble(value.toString());
-                    case "reqTip":
-                        offeredTip = Double.parseDouble(value.toString());
-                    case "desLat":
-                        destinationLat = Double.parseDouble(value.toString());
-                    case "oriLat":
-                        originLat = Double.parseDouble(value.toString());
-                    case "desLng":
-                        destinationLong = Double.parseDouble(value.toString());
-                    case "oriLng":
-                        originLong = Double.parseDouble(value.toString());
-                }
-                LatLng start = new LatLng(originLat,originLong);
-                LatLng end = new LatLng(destinationLat,destinationLong);
+        String email = currUser.getEmail();
+        uRef.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
+            if (documentSnapshot != null) {
+                android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
+                Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
+                Double originLong = Double.parseDouble(documentSnapshot.get("oriLng").toString());
+                Double destinationLong = Double.parseDouble(documentSnapshot.get("desLng").toString());
+                Double destinationLat = Double.parseDouble(documentSnapshot.get("desLat").toString());
+                LatLng start = new LatLng(originLat, originLong);
+                LatLng end = new LatLng(destinationLat, destinationLong);
                 setDestination(end);
                 setOrigin(start);
                 calculateDirections();
             }
-        }
-
+        });
     }
 
     /**********************************SPINNER METHODS*****************************************/
@@ -685,8 +658,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 /*****TINASHE*****/
-                                android.util.Log.i("CLICKED ON = ", "View Driver Profile");
-
+                                final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
+                                driverProfileIntent.putExtra("DRIVER_EMAIL", potentialOfferer);
+                                startActivity(driverProfileIntent);
+                                /*******************************/
                             }
                         })
                     .setPositiveButton("Check If Driver Has Arrived", new DialogInterface.OnClickListener() {
@@ -696,11 +671,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                             String arrivalStat  = riderDBHelper.getArrival(currRider.getEmail());
                             if (arrivalStat.equals("true")) {
                                 driverIsHereDialog(currRider.getEmail(),potentialOfferer);
-                                dialog.dismiss();
                             }else {
                                 driverHasNotArrivedYetToast();
-                                dialog.dismiss();
                             }
+                            dialog.dismiss();
                         }
                     })
                     .setNegativeButton("Cancel request", (dialog, which) -> {
@@ -753,6 +727,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         dialog.dismiss(); }
                 }).setNeutralButton("View Driver Profile", (dialog, id) -> {
                     /*****TINASHE*****/
+                    final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
+                    driverProfileIntent.putExtra("DRIVER_EMAIL", potentialOfferer);
+                    startActivity(driverProfileIntent);
+                    /***************/
                     //User user = driverDBHelper.getUser(marker.getTitle());
                     /****crash here******/
                     User user = null;
@@ -782,10 +760,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      */
     private void yourDriverIsOnTheWayToast(){
         new Handler().postDelayed(() -> {
-            String toastStr ="Your Driver is on The Way!";
-            Toast.makeText(MapsRiderActivity.this, toastStr, Toast.LENGTH_LONG).show();
+            Toast.makeText(MapsRiderActivity.this, "Your Driver is on The Way!", Toast.LENGTH_LONG).show();
         }, 600);
     }
+
 
     /**
      * let the rider know they have declined the offer
@@ -939,6 +917,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         .setNegativeButton("Rate Driver", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
+                                        /**********TINASHE********/
+                                        final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
+                                        driverProfileIntent.putExtra("DRIVER_EMAIL", potentialOfferer);
+                                        startActivity(driverProfileIntent);
+                                        /************************/
                                         /***TINASHE****/
                                         android.util.Log.i(TAG, "Rate Driver Button Clicked");
 
