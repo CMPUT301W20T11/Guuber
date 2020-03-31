@@ -600,6 +600,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 android.util.Log.i(TAG,"IN QR REC COE ON ACTIVITY FINISH");
                 if(resultCode == RESULT_OK){
                     Toast.makeText(this, "Transaction processed",  Toast.LENGTH_SHORT).show();
+                    riderDBHelper.clear();
                     guuberRiderMap.clear();
                     //tell database request is gone
                     rideInProgress = false;

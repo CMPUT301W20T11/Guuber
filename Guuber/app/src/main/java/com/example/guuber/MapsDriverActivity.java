@@ -706,6 +706,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     routeInProgress = false;
                     offerAccepted = false;
                     guuberDriverMap.clear();
+                    User currDriver = ((UserData)(getApplicationContext())).getUser();
+                    //driverDBHelper.clearRideOver(riderEmail, currDriver.getEmail()); //clear the appropriate fields from the database
+
                     drawOpenRequests();
                 } else {
                     Toast.makeText(this, "Transaction failed. Try Paying your Driver Again", Toast.LENGTH_SHORT).show();
