@@ -15,6 +15,7 @@ import android.widget.Toast;
 import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
 import com.example.guuber.model.Vehicle;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
@@ -47,6 +48,7 @@ public class DriverProfilActivity extends AppCompatActivity {
     /***********the database******/
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
+    private CollectionReference uRef = driverMapsDB.collection("Users");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +62,10 @@ public class DriverProfilActivity extends AppCompatActivity {
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
         if (!editable){
-            userInfo = (User) getIntent().getSerializableExtra("riderProfile");
+            String externalEmail = getIntent().getStringExtra("rider_email");
+            uRef.document(externalEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
+                userInfo = documentSnapshot.toObject(User.class);
+            });
         }
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -113,12 +118,8 @@ public class DriverProfilActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(DriverProfilActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-//                    try {
-//                        driverDBHelper.updateProfileAll(userInfo);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-                    //likeButton.setClickable(false);
+                    updateDatabase();
+                    likeButton.setClickable(false);
                 }
             }
         });
@@ -128,12 +129,8 @@ public class DriverProfilActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(DriverProfilActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
-//                    try {
-//                        driverDBHelper.updateProfileAll(userInfo);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-                    //dislikeButton.setClickable(false);
+                    updateDatabase();
+                    dislikeButton.setClickable(false);
                 }
             }
         });
@@ -222,31 +219,25 @@ public class DriverProfilActivity extends AppCompatActivity {
         }
     }
     public void updateData(String field, String value) {
-
         if (field.equals("phone number")) {
             userInfo.setPhoneNumber(value);
         } else if (field.equals("username")) {
             userInfo.setUsername(value);
         }
-
-
-        /***
-         try {
-         User userInfo = ((UserData)(getApplicationContext())).getUser();
-         //driverDBHelper.updateProfileAll(userInfo);
-         } catch (InterruptedException e) {
-         e.printStackTrace();
-         }***/
+        updateDatabase();
     }
 
+    public void updateDatabase(){
+        uRef.document(userInfo.getEmail()).set(userInfo);
+    }
 
-        public void deleteSelf(){
+    public void deleteSelf(){
             driverDBHelper.deleteUser(userInfo.getEmail());
             Toast.makeText(DriverProfilActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
-        }
+    }
 
 }
 

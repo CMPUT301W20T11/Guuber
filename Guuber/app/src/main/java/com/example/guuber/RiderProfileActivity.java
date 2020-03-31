@@ -16,6 +16,7 @@ import android.widget.Toast;
 
 import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
@@ -45,8 +46,9 @@ public class RiderProfileActivity extends AppCompatActivity {
     /***********the database******/
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper riderDBHelper = new GuuDbHelper(driverMapsDB);
-
+    private CollectionReference uRef = driverMapsDB.collection("Users");
     private static final String TAG = "RiderProfileActivity";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,8 +60,13 @@ public class RiderProfileActivity extends AppCompatActivity {
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
         if (!editable){
-            userInfo = (User) getIntent().getSerializableExtra("riderProfile");
+            //userInfo = (User) getIntent().getSerializableExtra("riderProfile");
+            String externalEmail = getIntent().getStringExtra("driver_email");
+            uRef.document(externalEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
+                userInfo = documentSnapshot.toObject(User.class);
+            });
         }
+
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
@@ -109,12 +116,8 @@ public class RiderProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(RiderProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-//                    try {
-//                        riderDBHelper.updateProfileAll(userInfo);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-                    // for quick on screen test delete System.out.print("LIKE##################################################");
+                    userInfo.adjustRating(true);
+                    updateDatabase();
                 }
             }
         });
@@ -124,11 +127,8 @@ public class RiderProfileActivity extends AppCompatActivity {
             public void onClick(View v) {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(RiderProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
-//                    try {
-//                        riderDBHelper.updateProfileAll(userInfo);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
+                    userInfo.adjustRating(false);
+                    updateDatabase();
                 }
             }
         });
@@ -219,21 +219,17 @@ public class RiderProfileActivity extends AppCompatActivity {
     }
 
     public void updateData(String field, String value)  {
-        if (field.equals("phone number")){
+        if (field.equals("phone number")) {
             userInfo.setPhoneNumber(value);
-        }
-        else if (field.equals("username")){
+        } else if (field.equals("username")) {
             userInfo.setUsername(value);
         }
+        updateDatabase();
+    }
 
-        /***
-        try {
-            riderDBHelper.updateProfileAll(userInfo);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-         ***/}
-
+    public void updateDatabase(){
+        uRef.document(userInfo.getEmail()).set(userInfo);
+    }
 
     public void deleteSelf(){
         riderDBHelper.deleteUser(userInfo.getEmail());

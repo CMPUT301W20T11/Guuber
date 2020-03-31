@@ -223,14 +223,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     }
 
     /***DONT USE THIS ONE****/
-    public void viewRiderProfile(User user) {
+    public void viewRiderProfile(String r_email) {
         Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
-        //to be deleted, need to initialize all users properly
-        user.setNegRating(0);
-        user.setPosRating(0);
-        //delete only up to here
         riderProfileIntent.putExtra("caller", "external");
-        riderProfileIntent.putExtra("riderProfile", user);
+        riderProfileIntent.putExtra("rider_email", r_email);
         startActivity(riderProfileIntent);
     }
 
