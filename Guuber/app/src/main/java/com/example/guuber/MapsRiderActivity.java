@@ -214,8 +214,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     @Override
     protected void onResume() {
         super.onResume();
+
         if (checkMapServices()) {
-            if (isLocationPermissionGranted == false) {
+            if (!isLocationPermissionGranted) {
                 checkUserPermission();
             }
         }

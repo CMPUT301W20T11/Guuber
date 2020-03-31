@@ -202,8 +202,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     protected void onResume() {
         super.onResume();
-        if (checkMapServices()) {
-            if (isLocationPermissionGranted == false) {
+        if(checkMapServices()){
+            if(!isLocationPermissionGranted){
                 checkUserPermission();
             }
         }
@@ -301,7 +301,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             guuberDriverMap.setOnMyLocationButtonClickListener(this);
             guuberDriverMap.setOnMyLocationClickListener(this);
 
-            
+
             LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             Criteria criteria = new Criteria();
             assert locationManager != null;
@@ -630,7 +630,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        calculateDirectionsToPickup(marker); //draw drivers route to pickup
+
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsDriverActivity.this);
         riderEmail = marker.getTitle();
 
@@ -782,6 +782,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * Offer a ride to the Rider and be accepted or denied
      */
     public void offerRide(Marker marker) throws InterruptedException {
+
+
         calculateDirectionsToPickup(marker);
 
         offerSent = true;
