@@ -220,7 +220,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 checkUserPermission();
             }
         }
+        updateMapPendingRider();
+    }
 
+    protected void updateMapPendingRider() {
         User currUser = ((UserData)(getApplicationContext())).getUser(); //current rider
         String email = currUser.getEmail();
         uRefRequests.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
@@ -240,10 +243,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 setMarker(getDestination(), "Destination");
             }
         });
-
-
     }
-
     /**********************************SPINNER METHODS*****************************************/
 
 
