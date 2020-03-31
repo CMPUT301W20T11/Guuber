@@ -686,8 +686,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 /*****TINASHE*****/
-                                android.util.Log.i("CLICKED ON = ", "View Driver Profile");
-
+                                final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
+                                driverProfileIntent.putExtra("DRIVER_EMAIL", potentialOfferer);
+                                startActivity(driverProfileIntent);
+                                /*******************************/
                             }
                         })
                     .setPositiveButton("Check If Driver Has Arrived", new DialogInterface.OnClickListener() {
@@ -697,11 +699,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                             String arrivalStat  = riderDBHelper.getArrival(currRider.getEmail());
                             if (arrivalStat.equals("true")) {
                                 driverIsHereDialog(currRider.getEmail(),potentialOfferer);
-                                dialog.dismiss();
                             }else {
                                 driverHasNotArrivedYetToast();
-                                dialog.dismiss();
                             }
+                            dialog.dismiss();
                         }
                     })
                     .setNegativeButton("Cancel request", (dialog, which) -> {
@@ -754,18 +755,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         dialog.dismiss(); }
                 }).setNeutralButton("View Driver Profile", (dialog, id) -> {
                     /*****TINASHE*****/
-                    //User user = driverDBHelper.getUser(marker.getTitle());
-                    /****crash here******/
-                    User user = null;
-                    user.setEmail(potentialOfferer);
-                    try {
-                        user = riderDBHelper.getUser(potentialOfferer);
-                        viewDriverProfile(user);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    /*****end crash****/
-                    //show the driver who is offering (potential offerers) profile
+                    final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
+                    driverProfileIntent.putExtra("DRIVER_EMAIL", potentialOfferer);
+                    startActivity(driverProfileIntent);
+                    /***************/
                     dialog.dismiss();
                 }).setNegativeButton("Decline", (dialog, which) -> {
                     User currUser = ((UserData)(getApplicationContext())).getUser();
@@ -782,10 +775,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      */
     private void yourDriverIsOnTheWayToast(){
         new Handler().postDelayed(() -> {
-            String toastStr ="Your Driver is on The Way!";
-            Toast.makeText(MapsRiderActivity.this, toastStr, Toast.LENGTH_LONG).show();
+            Toast.makeText(MapsRiderActivity.this, "Your Driver is on The Way!", Toast.LENGTH_LONG).show();
         }, 600);
     }
+
 
     /**
      * let the rider know they have declined the offer
@@ -939,19 +932,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         .setNegativeButton("Rate Driver", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        /***TINASHE****/
-                                        android.util.Log.i(TAG, "Rate Driver Button Clicked");
-
-                                        //Tinashe I don't know how you're going to call profile sorry here's some skeleton
-                                        User user = null;
-                                        try {
-                                            user = riderDBHelper.getUser(driversEmail);
-                                            viewDriverProfile(user);
-                                        } catch (InterruptedException e) {
-                                            e.printStackTrace();
-                                        }
-                                        //final Intent rateDriverIntent = new Intent(MapsRiderActivity.this, DriverProfile.class);
-                                        //startActivity(rateDriverIntent);
+                                        /**********TINASHE********/
+                                        final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
+                                        driverProfileIntent.putExtra("DRIVER_EMAIL", potentialOfferer);
+                                        startActivity(driverProfileIntent);
+                                        /************************/
                                     }
                                 }
                         )

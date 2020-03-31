@@ -566,7 +566,7 @@ public class GuuDbHelper {
     }
 
     /**
-     * get the status of a cancelation
+     * get the status of a cancellation
      * @param driverEmail the drivers email
      * @return either false or true
      */
@@ -635,7 +635,7 @@ public class GuuDbHelper {
      */
     public synchronized String getArrival(String email){
         setProfile(email);
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+        users.document(email).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 arrivalStatus = documentSnapshot.get("arrived").toString();
@@ -647,6 +647,12 @@ public class GuuDbHelper {
             }
         });
         return arrivalStatus;
+
+    }
+
+
+    public synchronized String returnMe(String x){
+        return x;
     }
 
     /**
