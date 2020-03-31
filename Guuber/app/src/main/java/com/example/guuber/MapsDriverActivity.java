@@ -73,11 +73,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     /*** spinner codes**/
     private static final int MENU = 0;
-    //private static final int VIEWTRIPS = 1;
-    private static final int MYPROFILE = 2;
-    private static final int WALLET = 3;
-    private static final int SCANQR = 4;
-    private static final int SIGNOUT = 5;
+    private static final int MYPROFILE = 1;
+    private static final int WALLET = 2;
+    private static final int SCANQR = 3;
+    private static final int QR_SCAN_CODE = 4;
+    private static final int SIGNOUT = 4;
 
     // for signing out of app
     private static final int RC_SIGN_OUT = 1000;
@@ -102,9 +102,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private Polyline polyline;
     private String riderEmail;
     /*********************/
-
-    // Activity result codes
-    private static final int QR_SCAN_CODE = 4;
 
     /***********the database******/
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
@@ -225,6 +222,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         startActivity(driverProfileIntent);
     }
 
+    /***DONT USE THIS ONE****/
     public void viewRiderProfile(User user) {
         Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
         //to be deleted, need to initialize all users properly
@@ -647,12 +645,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                             riderProfileIntent.putExtra("EMAIL", riderEmail);
                             startActivity(riderProfileIntent);
                             /*******************************/
-                            try {
-                                User user = driverDBHelper.getUser(marker.getTitle());
-                                viewRiderProfile(user);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
                         }
                     })
                     .setNeutralButton("Exit", new DialogInterface.OnClickListener() {
@@ -721,8 +713,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             User currDriver = ((UserData)(getApplicationContext())).getUser();
-                            String cancelled = "false"; //initialize string
+                            String cancelled;
                             cancelled = driverDBHelper.getCancellationStatus(currDriver.getEmail());
+
                             if (cancelled.equals("false")){
                                 youHaveNotBeenCancelledOnToast();
                             }else{

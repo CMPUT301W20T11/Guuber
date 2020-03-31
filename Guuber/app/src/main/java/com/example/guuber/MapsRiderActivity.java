@@ -85,11 +85,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     /**spinner codes**/
     private static final int MENU = 0;
     private static final int MYPROFILE = 1;
-    private static final int VIEWTRIPS = 2;
-    private static final int  WALLET = 3;
-    private static final int  QR = 4;
+    private static final int  WALLET = 2;
+    private static final int  QR = 3;
     private static final int QR_REQ_CODE = 3;
-    private static final int SIGNOUT = 5;
+    private static final int SIGNOUT = 4;
 
     // for signing out of app
     private static final int RC_SIGN_OUT = 1000;
@@ -220,7 +219,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 checkUserPermission();
             }
         }
+        updateMapPendingRider();
+    }
 
+    protected void updateMapPendingRider() {
         User currUser = ((UserData)(getApplicationContext())).getUser(); //current rider
         String email = currUser.getEmail();
         uRefRequests.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
@@ -240,10 +242,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 setMarker(getDestination(), "Destination");
             }
         });
-
-
     }
-
     /**********************************SPINNER METHODS*****************************************/
 
 
@@ -257,6 +256,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         startActivity(riderProfileIntent);
     }
 
+    /***DONT USE THIS ONE****/
     public void viewDriverProfile(User user) {
         Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
         //user.setNegRating(0); //setNegRAting to getNegRating()
