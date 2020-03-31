@@ -800,6 +800,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         String tripCost = getTripCost().toString();
 
         riderDBHelper.makeReq(currUser, tip, originLatitude , originLongitude, destinationLatitude,destinationLongitude,tripCost);
+        riderDBHelper.setRequest(currUser.getEmail(), tip , originLatitude, originLongitude, destinationLatitude,destinationLongitude, tripCost);
         android.util.Log.i(TAG, "REQUEST MADE");
         rideisPending = true;
     }

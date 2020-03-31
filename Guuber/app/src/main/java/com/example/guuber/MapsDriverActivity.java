@@ -837,9 +837,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
 
         User currUser = ((UserData)(getApplicationContext())).getUser();
-        User riderForRoute = driverDBHelper.getUser(riderEmail); //crash three
+        User riderForRoute = driverDBHelper.getUser(riderEmail);
         try {
-            driverDBHelper.reqAccepted(riderForRoute, currUser); //crash four
+            driverDBHelper.reqAccepted(riderForRoute, currUser);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
