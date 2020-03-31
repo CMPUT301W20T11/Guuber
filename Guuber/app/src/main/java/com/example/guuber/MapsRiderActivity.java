@@ -118,7 +118,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private GuuDbHelper riderDBHelper = new GuuDbHelper(riderMapsDB);
 
     //DB
-    private CollectionReference uRef = riderMapsDB.collection("requests");
+    private CollectionReference uRefRequests = riderMapsDB.collection("requests");
+    private CollectionReference uRefUsers = riderMapsDB.collection("Users");
     /**TINASHE YOU MIGHT NEED THIS**/
     String potentialOfferer = null;
 
@@ -222,8 +223,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         User currUser = ((UserData)(getApplicationContext())).getUser(); //current rider
         String email = currUser.getEmail();
-        uRef.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
-            if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("oriLng") != null) {
+        uRefRequests.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
+            if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("desLat") != null) {
                 rideisPending = Boolean.TRUE;
                 android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
                 Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
