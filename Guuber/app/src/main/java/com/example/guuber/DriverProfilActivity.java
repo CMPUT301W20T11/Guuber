@@ -188,26 +188,29 @@ public class DriverProfilActivity extends AppCompatActivity {
     }
     public void updateData(String field, String value) {
 
-        if (field.equals("phone number")){
+        if (field.equals("phone number")) {
             userInfo.setPhoneNumber(value);
-        }
-        else if (field.equals("username")){
+        } else if (field.equals("username")) {
             userInfo.setUsername(value);
         }
 
-        try {
-            User userInfo = ((UserData)(getApplicationContext())).getUser();
-            driverDBHelper.updateProfileAll(userInfo);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
 
-    public void deleteSelf(){
-        driverDBHelper.deleteUser(userInfo.getEmail());
-        Toast.makeText(DriverProfilActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        /***
+         try {
+         User userInfo = ((UserData)(getApplicationContext())).getUser();
+         //driverDBHelper.updateProfileAll(userInfo);
+         } catch (InterruptedException e) {
+         e.printStackTrace();
+         }***/
+
+        /***
+        public void deleteSelf () {
+            driverDBHelper.deleteUser(userInfo.getEmail());
+            Toast.makeText(DriverProfilActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
+         **/
     }
 }

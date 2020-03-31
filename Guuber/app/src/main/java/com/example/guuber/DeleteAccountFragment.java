@@ -20,9 +20,10 @@ import androidx.fragment.app.DialogFragment;
 public class DeleteAccountFragment extends DialogFragment {
     private TextView dialogueMessage;
     private TextView dialogueTitle;
+    /***
     @NonNull
     @Override
-    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState){
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         View view = LayoutInflater.from(getActivity()).inflate(R.layout.delete_account_ragment, null);
         String activit = getArguments().getString("callingActivity");
         dialogueMessage = view.findViewById(R.id.deleteAccTextView);
@@ -30,19 +31,23 @@ public class DeleteAccountFragment extends DialogFragment {
         dialogueMessage.setText("WARNING: Continuing will permanently delete your account and all transaction history" +
                 "\nPlease note any positive balance left in the wallet upon deleting account will be forfeited to us");
         dialogueTitle.setText("WARNING");
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        return builder
-                .setView(view)
-                .setPositiveButton("CANCEL", null)//add click listener that closes the dialogue
-                .setNegativeButton("DELETE ACCOUNT", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if ("rider".equals(activit)){
-                        ((RiderProfileActivity) getActivity()).deleteSelf();}
-                        else if ("driver".equals(activit)){
-                        ((DriverProfilActivity) getActivity()).deleteSelf();}
-                    }
-                })//add click listener that calls Main activity method
-                .create();
+
+         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+         return builder
+
+         .setView(view)
+         .setPositiveButton("CANCEL", null)//add click listener that closes the dialogue
+         .setNegativeButton("DELETE ACCOUNT", new DialogInterface.OnClickListener() {
+        @Override public void onClick(DialogInterface dialog, int which) {
+        if ("rider".equals(activit)){
+        ((RiderProfileActivity) getActivity()).deleteSelf();}
+        else if ("driver".equals(activit)){
+        ((DriverProfilActivity) getActivity()).deleteSelf();}
+        }
+        })//add click listener that calls Main activity method
+         .create();
     }
+    **/
+
+
 }

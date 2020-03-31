@@ -652,8 +652,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             /**********TINASHE********/
-                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
-                            riderProfileIntent.putExtra("RIDER_EMAIL", riderEmail);
+                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, ViewProfileActivity_Matt.class);
+                            riderProfileIntent.putExtra("EMAIL", riderEmail);
                             startActivity(riderProfileIntent);
                             /*******************************/
                             try {
@@ -750,8 +750,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             /******TINASHE*******/
-                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
-                            riderProfileIntent.putExtra("RIDER_EMAIL", riderEmail);
+                            final Intent riderProfileIntent = new Intent(MapsDriverActivity.this, ViewProfileActivity_Matt.class);
+                            riderProfileIntent.putExtra("EMAIL", riderEmail);
                             startActivity(riderProfileIntent);
                             /*******************/
                         }

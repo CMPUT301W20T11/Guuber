@@ -118,7 +118,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private GuuDbHelper riderDBHelper = new GuuDbHelper(riderMapsDB);
 
     //DB
-    private CollectionReference uRef = riderMapsDB.collection("requests");
+    private CollectionReference uRefRequests = riderMapsDB.collection("requests");
+    private CollectionReference uRefUsers = riderMapsDB.collection("Users");
     /**TINASHE YOU MIGHT NEED THIS**/
     String potentialOfferer = null;
 
@@ -226,8 +227,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         User currUser = ((UserData)(getApplicationContext())).getUser(); //current rider
         String email = currUser.getEmail();
-        uRef.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
-            if (documentSnapshot != null) {
+        uRefRequests.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
+            if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("desLat") != null) {
+                rideisPending = Boolean.TRUE;
                 android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
                 Double originLat = Double.parseDouble(documentSnapshot.get("oriLat").toString());
                 Double originLong = Double.parseDouble(documentSnapshot.get("oriLng").toString());
@@ -238,8 +240,12 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 setDestination(end);
                 setOrigin(start);
                 calculateDirections();
+                setMarker(getOrigin(), "Origin");
+                setMarker(getDestination(), "Destination");
             }
         });
+
+
     }
 
     /**********************************SPINNER METHODS*****************************************/
@@ -615,9 +621,18 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     .setMessage("Choose A Tip Percentage")
                     .setView(numberPicker)
                     .setNegativeButton("Make a request", (dialog, which) -> {
-                        rideisPending = true; //ride is an open request
-                        setTip(numberPicker.getValue()); //set the tip percentage
-                        makeRequest(marker); //make the request
+                        User currRider = ((UserData)(getApplicationContext())).getUser();
+                        riderMapsDB.collection("Users").document(currRider.getEmail()).get().addOnSuccessListener(documentSnapshot -> {
+                                    boolean canPay = documentSnapshot.toObject(User.class).getWallet().validateTrans(getTripCost());
+                                    if(!canPay){
+                                        depositSomeMoneyToast();
+                                    }
+                                    else{
+                                        rideisPending = true; //ride is an open request
+                                        setTip(numberPicker.getValue()); //set the tip percentage
+                                        makeRequest(marker); //make the request
+                                    }
+                                });
                         dialog.dismiss();
                     }
                     ).setNeutralButton("Exit", (dialog, id) -> dialog.cancel());
@@ -659,8 +674,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 /*****TINASHE*****/
-                                final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
-                                driverProfileIntent.putExtra("DRIVER_EMAIL", potentialOfferer);
+                                final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
+                                driverProfileIntent.putExtra("EMAIL", potentialOfferer);
                                 startActivity(driverProfileIntent);
                                 /*******************************/
                             }
@@ -691,6 +706,19 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         }
     }
 
+    /**
+     * rider is broke
+     */
+    private void depositSomeMoneyToast(){
+        new Handler().postDelayed(() -> {
+            Toast.makeText(MapsRiderActivity.this, "You Don't Have Enough Money for This Trip", Toast.LENGTH_LONG).show();
+        }, 400);
+    }
+
+
+    /**
+     * let the rider know the driver is on the way
+     */
     private void driverHasNotArrivedYetToast(){
         new Handler().postDelayed(() -> {
             Toast.makeText(MapsRiderActivity.this, "Your driver has not arrived yet", Toast.LENGTH_LONG).show();
@@ -728,8 +756,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         dialog.dismiss(); }
                 }).setNeutralButton("View Driver Profile", (dialog, id) -> {
                     /*****TINASHE*****/
-                    final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
-                    driverProfileIntent.putExtra("DRIVER_EMAIL", potentialOfferer);
+                    final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
+                    driverProfileIntent.putExtra("EMAIL", potentialOfferer);
                     startActivity(driverProfileIntent);
                     /***************/
                     dialog.dismiss();
@@ -851,8 +879,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * @param tipPercentage is an integer representing the tip percentage the rider has chosen
      */
     public void setTip(int tipPercentage){
-        tip = getTripCost() * (tipPercentage/100);
-        this.tip = Math.round(tip * 100.0) / 100.0;;
+        tip = getTripCost() * (tipPercentage/100.0);
+        this.tip = (double)Math.round(tip);
     }
 
     /**
@@ -906,8 +934,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         /**********TINASHE********/
-                                        final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
-                                        driverProfileIntent.putExtra("DRIVER_EMAIL", potentialOfferer);
+                                        final Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity_Matt.class);
+                                        driverProfileIntent.putExtra("EMAIL", potentialOfferer);
                                         startActivity(driverProfileIntent);
                                         /************************/
                                     }
