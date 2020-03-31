@@ -869,6 +869,9 @@ public class GuuDbHelper {
 
     }
 
+    public synchronized void clearRideOver(String rideEmail, String driveEmail) {
+        
+    }
 
     
 
