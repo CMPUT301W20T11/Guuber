@@ -73,11 +73,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     /*** spinner codes**/
     private static final int MENU = 0;
-    //private static final int VIEWTRIPS = 1;
-    private static final int MYPROFILE = 2;
-    private static final int WALLET = 3;
-    private static final int SCANQR = 4;
-    private static final int SIGNOUT = 5;
+    private static final int MYPROFILE = 1;
+    private static final int WALLET = 2;
+    private static final int SCANQR = 3;
+    private static final int QR_SCAN_CODE = 4;
+    private static final int SIGNOUT = 4;
 
     // for signing out of app
     private static final int RC_SIGN_OUT = 1000;
@@ -102,9 +102,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private Polyline polyline;
     private String riderEmail;
     /*********************/
-
-    // Activity result codes
-    private static final int QR_SCAN_CODE = 4;
 
     /***********the database******/
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
