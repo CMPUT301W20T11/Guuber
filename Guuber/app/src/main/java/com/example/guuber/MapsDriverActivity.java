@@ -115,6 +115,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private LatLng search;
     private LatLng driverLocation;
 
+    private static Location currLocation;
+    private FusedLocationProviderClient fusedLocationClient;
+
 
     //database
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
@@ -221,12 +224,39 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     @Override
     protected void onResume() {
         super.onResume();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationClient.getLastLocation()
+                .addOnSuccessListener(this, new OnSuccessListener<Location>() {
+                    @Override
+                    public void onSuccess(Location location) {
+                        if (location != null) {
+                            android.util.Log.i("LOCATION = ", "NONNULL");
+                            driverLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                            setDriverLocation(driverLocation);
+                        }else {
+                            pleaseCloseAndOpenAppDialogD();
+                        }
+                    }
+                });
         if(checkMapServices()){
             if(!isLocationPermissionGranted){
                 checkUserPermission();
             }
         }
         //updateMapDriver();
+    }
+
+    private void pleaseCloseAndOpenAppDialogD(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Your Device Location Has Not Been Initialized! Please Close and Re-open the Application and We Will Get It For You!")
+                .setCancelable(false)
+                .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
+                    public void onClick(@SuppressWarnings("unused") final DialogInterface dialog, @SuppressWarnings("unused") final int id) {
+                        finish();
+                    }
+                });
+        final AlertDialog alert = builder.create();
+        alert.show();
     }
 
 
