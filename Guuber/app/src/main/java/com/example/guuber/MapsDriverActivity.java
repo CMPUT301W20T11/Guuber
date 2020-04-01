@@ -81,6 +81,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private static final int WALLET = 2;
     private static final int SCANQR = 3;
     private static final int SIGNOUT = 4;
+    private static final int OFFLINE_REQS = 5;
 
     //permissions / result codes
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
@@ -199,6 +200,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 }else if (position == SIGNOUT) {
                     /**start the scanQR activity**/
                     signOut();
+                    driverSpinner.setSelection(MENU);
+                }else if (position == SIGNOUT) {
+                    /**view your offline reqs**/
+                    currOfflineReqs();
                     driverSpinner.setSelection(MENU);
                 }
             }
@@ -358,6 +363,13 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         signOutConfirm.putExtra("SignOut", "TRUE");
         setResult(RC_SIGN_OUT, signOutConfirm);
         finish();
+    }
+
+    private void currOfflineReqs(){
+        Intent viewOfflineReqs = new Intent(MapsDriverActivity.this, CurrentRequestsOffline.class);
+        User currDriver = ((UserData)(getApplicationContext())).getUser();
+        viewOfflineReqs.putExtra("DRIVER_EMAIL", currDriver.getEmail());
+        startActivity(viewOfflineReqs);
     }
 
     /****************************************END SPINNER METHODS***********************************************/
@@ -706,9 +718,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     routeInProgress = false;
                     offerAccepted = false;
                     guuberDriverMap.clear();
-                    User currDriver = ((UserData)(getApplicationContext())).getUser();
-                    //driverDBHelper.clearRideOver(riderEmail, currDriver.getEmail()); //clear the appropriate fields from the database
-
                     drawOpenRequests();
                 } else {
                     Toast.makeText(this, "Transaction failed. Try Paying your Driver Again", Toast.LENGTH_SHORT).show();

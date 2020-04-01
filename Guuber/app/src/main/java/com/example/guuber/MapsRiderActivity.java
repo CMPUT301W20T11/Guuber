@@ -91,6 +91,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int  QR = 3;
     private static final int QR_REQ_CODE = 3;
     private static final int SIGNOUT = 4;
+    private static final int OFFLINE_REQS = 5;
 
     // for signing out of app
     private static final int RC_SIGN_OUT = 1000;
@@ -194,6 +195,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     signOut();
                     riderSpinner.setSelection(MENU);
                 }
+                else if (position == SIGNOUT) {
+                    /**Finish the maps activity**/
+                    currOfflineReqs();
+                    riderSpinner.setSelection(MENU);
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
@@ -226,6 +232,12 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     public void onSuccess(Location location) {
                         if (location != null) {
                             android.util.Log.i("LOCATION = ", "NONNULL");
+                            if (getOrigin() == null) {
+                                android.util.Log.i("LOCATION = ", ", in getOrigin = null");
+                                LatLng riderLocation = new LatLng(location.getLatitude(), location.getLongitude());
+                                setOrigin(riderLocation);
+                                setChangingCoordinate("Destination");
+                            }
                         }else {
                             pleaseCloseAndOpenAppDialog();
                         }
@@ -327,6 +339,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         signOutConfirm.putExtra("SignOut", "TRUE");
         setResult(RC_SIGN_OUT, signOutConfirm);
         finish();
+    }
+
+    private void currOfflineReqs(){
+        Intent viewOfflineReqs = new Intent(MapsRiderActivity.this, CurrentRequestsOffline.class);
+        User currDriver = ((UserData)(getApplicationContext())).getUser();
+        viewOfflineReqs.putExtra("RIDER_EMAIL", currDriver.getEmail());
+        startActivity(viewOfflineReqs);
     }
     /**********************************END SPINNER METHODS*****************************************/
 
@@ -600,7 +619,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 android.util.Log.i(TAG,"IN QR REC COE ON ACTIVITY FINISH");
                 if(resultCode == RESULT_OK){
                     Toast.makeText(this, "Transaction processed",  Toast.LENGTH_SHORT).show();
-                    riderDBHelper.clear();
                     guuberRiderMap.clear();
                     //tell database request is gone
                     rideInProgress = false;
