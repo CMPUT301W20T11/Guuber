@@ -201,7 +201,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     /**start the scanQR activity**/
                     signOut();
                     driverSpinner.setSelection(MENU);
-                }else if (position == SIGNOUT) {
+                }else if (position == OFFLINE_REQS) {
                     /**view your offline reqs**/
                     currOfflineReqs();
                     driverSpinner.setSelection(MENU);

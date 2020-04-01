@@ -4,10 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
-import android.Manifest;
+import androidx.navigation.ui.AppBarConfiguration;
+import android.os.Bundle;
+import android.view.View;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -16,28 +15,17 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.Gravity;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.DatePicker;
-import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
-import android.widget.TimePicker;
 import android.widget.Toast;
-
-
 import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
-import com.google.android.gms.auth.api.signin.GoogleSignInApi;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -51,7 +39,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -61,15 +48,8 @@ import com.google.maps.PendingResult;
 import com.google.maps.internal.PolylineEncoding;
 import com.google.maps.model.DirectionsResult;
 import com.google.maps.model.DirectionsRoute;
-import com.google.maps.model.Distance;
-
-import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static java.lang.Math.abs;
 
 
 /**
@@ -134,6 +114,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         setContentView(R.layout.activity_rider_maps);
 
 
+
+
         /**instructions for User to provide their destination
          * delayed to give time for map rendering**/
         new Handler().postDelayed(new Runnable() {
@@ -195,7 +177,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     signOut();
                     riderSpinner.setSelection(MENU);
                 }
-                else if (position == SIGNOUT) {
+                else if (position == OFFLINE_REQS) {
                     /**Finish the maps activity**/
                     currOfflineReqs();
                     riderSpinner.setSelection(MENU);
