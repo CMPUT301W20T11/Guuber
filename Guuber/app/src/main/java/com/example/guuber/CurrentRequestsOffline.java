@@ -4,8 +4,11 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.TextView;
 
 public class CurrentRequestsOffline extends AppCompatActivity {
+
+    private TextView title, pickupDropoff, riderOrDriverEmail, costTip, status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -13,6 +16,16 @@ public class CurrentRequestsOffline extends AppCompatActivity {
         setContentView(R.layout.offline_requests_activity);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+
+        title = findViewById(R.id.current_requests_title);
+        pickupDropoff = findViewById(R.id.pickup_and_dropoff);
+        riderOrDriverEmail = findViewById(R.id.driver_rider_email);
+        costTip = findViewById(R.id.cost_tip);
+        status = findViewById(R.id.req_status);
+
+
+
     }
 
     /**implement logic here for what you want to
