@@ -27,12 +27,25 @@ public class Transaction {
     /**
      * Transaction between wallets
      * @param amount - Transaction amount
+     * @param message - Transaction message
      */
     public Transaction(double amount, String message) {
         Date datetime = new Date();
         this.time = tFormat.format(datetime);
         this.date = dFormat.format(datetime);
+        this.amount = amount;
+        this.message = message;
+    }
 
+    /**
+     * Transaction constructor with Date dependency injection for testing
+     * @param amount - Transaction amount
+     * @param message - Transaction message
+     * @param date - Date object to be injected
+     */
+    public Transaction(double amount, String message, Date date) {
+        this.time = tFormat.format(date);
+        this.date = dFormat.format(date);
         this.amount = amount;
         this.message = message;
     }

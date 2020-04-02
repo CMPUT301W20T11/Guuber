@@ -18,6 +18,10 @@ public class TransactionControllerTest {
 		User user1 = mockUser();
 		User user2 = mockUser();
 
+		// Ensure start balances are correct
+		assertEquals(20, user1.getWallet().getBalance());
+		assertEquals(20, user2.getWallet().getBalance());
+
 		// Transfer 20 dollars from user2 to user1
 		TransactionController.processTrans(user1, user2, 20.0);
 
@@ -37,6 +41,9 @@ public class TransactionControllerTest {
 	public void depositTransactionTest(){
 		User user1 = mockUser();
 
+		// Ensure start balance is correct
+		assertEquals(20, user1.getWallet().getBalance());
+
 		// Deposit 20 dollars in two increments
 		TransactionController.processDeposit(user1, 10.0);
 		TransactionController.processDeposit(user1, 10.0);
@@ -49,6 +56,24 @@ public class TransactionControllerTest {
 		assertThrows(IllegalArgumentException.class, () -> {
 			assertFalse(TransactionController.processDeposit(user1,-10.0));
 		});
+	}
+
+	@Test
+	public void withdrawTransactionTest(){
+		User user1 = mockUser();
+
+		// Ensure start balance is correct
+		assertEquals(20, user1.getWallet().getBalance());
+
+		// Withdraw 20 dollars in two increments
+		TransactionController.processWithdrawal(user1, 10.0);
+		TransactionController.processWithdrawal(user1, 10.0);
+
+		// Ensure balance is updated
+		assertEquals(0, user1.getWallet().getBalance());
+
+		// Attempt to withdraw an invalid amount
+		assertFalse(TransactionController.processWithdrawal(user1,10.0));
 	}
 
 }

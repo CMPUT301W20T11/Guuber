@@ -1,17 +1,13 @@
 package com.example.guuber;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.test.espresso.internal.inject.InstrumentationContext;
 import androidx.test.platform.app.InstrumentationRegistry;
-import androidx.test.rule.ActivityTestRule ;
+import androidx.test.rule.ActivityTestRule;
 
 import com.example.guuber.model.User;
-import com.google.android.gms.common.internal.safeparcel.SafeParcelable;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.firestore.CollectionReference;
@@ -19,17 +15,12 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.robotium.solo.Solo ;
+import com.robotium.solo.Solo;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Rule;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 
 public class DatabaseAndroidTest {
