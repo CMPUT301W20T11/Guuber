@@ -8,17 +8,6 @@ import com.example.guuber.model.Wallet;
  * Static controller to handle transaction generation and execution
  */
 public class TransactionController {
-    // Global transaction id counter
-    private static long id = 1;
-
-    /**
-     * Generate a sequential id for a new transaction
-     * @return - Sequential transaction id
-     */
-    private static synchronized String createID(){
-        return String.valueOf(id++);
-    }
-
     /**
      * Generate and execute a transaction between two users
      * @param user1 - User receiving funds
@@ -36,12 +25,9 @@ public class TransactionController {
         String tMessage1 = "Deposit from " + email2;
         String tMessage2 = "Transfer to " + email1;
 
-        // Generate a common transaction ID
-        String tID = createID();
-
         // Generate the transaction records
-        Transaction transaction1 = new Transaction(amount, tID, tMessage1);
-        Transaction transaction2 = new Transaction(-amount, tID, tMessage2);
+        Transaction transaction1 = new Transaction(amount, tMessage1);
+        Transaction transaction2 = new Transaction(-amount, tMessage2);
 
         // Get wallet objects
         Wallet wallet1 = user1.getWallet();
@@ -72,7 +58,7 @@ public class TransactionController {
         String tMessage1 = "External deposit";
 
         // Generate transaction
-        Transaction transaction = new Transaction(amount, createID(), tMessage1);
+        Transaction transaction = new Transaction(amount, tMessage1);
 
         // Get wallet object
         Wallet wallet1 = user1.getWallet();
@@ -96,7 +82,7 @@ public class TransactionController {
         String tMessage1 = "External withdrawal";
 
         // Generate transaction
-        Transaction transaction = new Transaction(-amount, createID(), tMessage1);
+        Transaction transaction = new Transaction(-amount, tMessage1);
 
         // Get wallet object
         Wallet wallet1 = user1.getWallet();

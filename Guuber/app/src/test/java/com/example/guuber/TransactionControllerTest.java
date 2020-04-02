@@ -8,7 +8,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TransactionControllerTest {
 	private User mockUser(){
-		User user = new User("780999999", "a@gmail.com", "Matthew", "Dziubina");
+		User user = new User("780", "email@email.com", "Matt", "D", "matt96", 0, 0);
 		user.getWallet().deposit(20);
 		return user;
 	}
@@ -29,10 +29,6 @@ public class TransactionControllerTest {
 		assertEquals(1, user1.getWallet().getTransactions().size());
 		assertEquals(1, user2.getWallet().getTransactions().size());
 
-		// Ensure proper ID was recorded (It's 4 because 3 transactions were done in the deposit test and id was incremented)
-		assertEquals("4", user1.getWallet().getTransactions().get(0).getId());
-		assertEquals("4", user2.getWallet().getTransactions().get(0).getId());
-
 		// Attempt to transfer an invalid amount according to balances
 		assertFalse(TransactionController.processTrans(user1, user2, 20.0));
 	}
@@ -47,10 +43,6 @@ public class TransactionControllerTest {
 
 		// Ensure balance is updated
 		assertEquals(40, user1.getWallet().getBalance());
-
-		// Ensure proper ID was recorded
-		assertEquals("1", user1.getWallet().getTransactions().get(0).getId());
-		assertEquals("2", user1.getWallet().getTransactions().get(1).getId());
 
 		// Attempt to deposit an invalid amount
 

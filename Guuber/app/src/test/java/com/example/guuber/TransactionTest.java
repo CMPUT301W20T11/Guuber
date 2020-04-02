@@ -16,6 +16,5 @@ public class TransactionTest {
 		Transaction transaction = mockTransaction();
 
 		assertEquals(10, transaction.getAmount());
-		assertEquals("1", transaction.getId());
 	}
 }
