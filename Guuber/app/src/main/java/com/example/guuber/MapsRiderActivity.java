@@ -764,7 +764,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         double tripCost = getTripCost();
 
 
-
         riderDBHelper.makeReq(currRider, tip, originLatitude , originLongitude, destinationLatitude,destinationLongitude,tripCost);
         riderDBHelper.setRequest(currRider.getEmail(), tip , originLatitude, originLongitude, destinationLatitude,destinationLongitude, tripCost); //changed this to double everywhere (apr 1)
         rideisPending = true;
@@ -880,6 +879,20 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      */
     private void driverIsHereDialog(String ridersEmail){
 
+        uRefUsers.document(ridersEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
+            assert documentSnapshot != null;
+            if (documentSnapshot.get("rideOfferFrom") != null) {
+                potentialOfferer = documentSnapshot.get("rideOfferFrom").toString();
+            }
+            if (documentSnapshot.get("tripCost") != null){
+                tripCost = (Double) documentSnapshot.get("tripCost");
+            }
+            if (documentSnapshot.get("reqTip") != null){
+                tip = (Double) documentSnapshot.get("reqTip");
+            }
+
+        });
+
         new Handler().postDelayed(() -> {
             polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripOverPolyLinesColors));
             final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
@@ -891,7 +904,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     .setPositiveButton("Pay driver", (dialog, id) -> {
                         final Intent payDriverIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
 
-                        String amount = String.valueOf(getTripCost() + getTip()); //get total fee
+                        String amount = String.valueOf(tip + tripCost); //get total fee
                         payDriverIntent.putExtra("INFO_TAG", ridersEmail +"," + amount);   // Send email and fee to intent by a comma separated string
                         startActivityForResult(payDriverIntent, 2);// Show the generated qr
                         rideisPending = false;
