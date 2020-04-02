@@ -3,6 +3,7 @@ package com.example.guuber;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
@@ -98,7 +99,8 @@ public class QrActivity extends AppCompatActivity {
 				if (documentSnapshot.exists()) {
 					changeCount++;
 					if (changeCount > 1){
-						setResult(RESULT_OK);
+						Intent transactionProcessed = new Intent();
+						setResult(Activity.RESULT_OK, transactionProcessed);
 						finish();
 					}
 				}

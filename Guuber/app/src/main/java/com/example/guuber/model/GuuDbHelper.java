@@ -331,6 +331,8 @@ public class GuuDbHelper {
         cancelRequest(rider);
         profile.update("canceled",FieldValue.delete());
         profile.update("arrived",FieldValue.delete());
+        ArrayList<Map<String,Object>> reqList =  getReqList();
+        reqList.clear();
     }
 
     /**

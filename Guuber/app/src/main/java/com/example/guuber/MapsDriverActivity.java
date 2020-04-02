@@ -637,7 +637,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     routeInProgress = false;
                     offerAccepted = false;
                     guuberDriverMap.clear();
-                    drawOpenRequests();
                 } else {
                     makeText(this, "Transaction failed. Try Paying your Driver Again", Toast.LENGTH_SHORT).show();
                     routeInProgress = true;
@@ -660,13 +659,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
         if(!offerSent && !offerAccepted) {
             builder
-                    .setMessage("What would you like to do?").setCancelable(false)
+                    .setMessage("What would you like to do?")
                     .setPositiveButton("View  Riders Profile", (dialog, which) -> viewRiderProfile(riderEmail))
-                    .setNeutralButton("Exit", (dialog, which) -> {
-                        guuberDriverMap.clear();
-                        drawOpenRequests();
-                        dialog.dismiss();
-                    })
                     .setNegativeButton("Offer Them a Ride", (dialog, id) -> {
                         offerSent = true;
                         try {

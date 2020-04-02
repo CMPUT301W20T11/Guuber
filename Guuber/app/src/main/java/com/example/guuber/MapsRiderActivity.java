@@ -226,9 +226,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         uRefUsers.document(currRider.getEmail()).addSnapshotListener(this, (documentSnapshot, e) -> {
             assert documentSnapshot != null;
             if (documentSnapshot.get("canceled") != null){
-                rideInProgress = true; //the route is in progress
+                android.util.Log.i(TAG, "canceled in non null after ride end");
+                rideInProgress = true; //the route is in progress --> could be limiting rider
                 rideisPending = false;
             }else if (documentSnapshot.get("oriLat") != null){
+                android.util.Log.i(TAG, "ori lat in non null after ride end");
                 rideisPending = true; //the route is pending
             }
         });
@@ -350,14 +352,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     setDestination(arg0);
                     destinationSetToast();
                 }
-
                 guuberRiderMap.clear(); //clear the screen of other routes if you choose to build a new one
                 setMarker(getOrigin(), "Origin");
                 setMarker(getDestination(), "Destination");
                 calculateDirections(); //automatically calculates directions and draws a route
-
-            } else if (paymentFailed) {
-                payDriverFirstToast();
             }else{
                 cancelRequestFirstToast();
             }
@@ -569,15 +567,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             }
             case QR_REQ_CODE:{
                 if(resultCode == RESULT_OK){
+                    android.util.Log.i(TAG,"transaction processed");
                     Toast.makeText(this, "Transaction processed",  Toast.LENGTH_SHORT).show();
                     guuberRiderMap.clear();
                     rideInProgress = false;
                     rideisPending = false;
-                }else{
-                    rideInProgress = false;
-                    rideisPending = false;
-                    paymentFailed = true; //should only be here if QR code didn't scan. Rider may not post request if they dont have enough money
-                    Toast.makeText(this, "Transaction failed. Please Pay Your Driver",  Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -909,7 +903,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         final Intent payDriverIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
                         String amount = String.valueOf(tip + tripCost); //get total fee
                         payDriverIntent.putExtra("INFO_TAG", ridersEmail +"," + amount);   // Send email and fee to intent by a comma separated string
-                        startActivityForResult(payDriverIntent, 2);// Show the generated qr
+                        startActivityForResult(payDriverIntent, QR_REQ_CODE);// Show the generated qr
                         riderDBHelper.rideIsOver(currRider);
                         guuberRiderMap.clear();
                     });
