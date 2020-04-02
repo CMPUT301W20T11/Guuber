@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class GuuDbHelper {
+
     private static FirebaseFirestore db;
     private static CollectionReference requests;
     private static CollectionReference users;
@@ -34,7 +35,6 @@ public class GuuDbHelper {
     public static ArrayList<Map<String, Object>> reqList = new ArrayList<Map<String, Object>>();
     public static String offerer;
     public static String offerStat = "none";
-
     public static String arrivee;
     public static String arriver;
     public static String arrivalStatus = "false";
@@ -44,11 +44,6 @@ public class GuuDbHelper {
     public static Map<String,Object> profileInformation;
 
 
-
-    //public static Wallet wall;
-    //private static CollectionReference wallet;
-    //public static Map<String,Object> Wallet = new HashMap<>();
-    //public static ArrayList<Map<String, String>> walletList = new ArrayList<Map<String, String>>();
 
     /**
      * on create
@@ -70,30 +65,23 @@ public class GuuDbHelper {
      * @param email - the email of the document to find
      */
     public synchronized void findUser(String email) throws InterruptedException {
-        users.document(email).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    Log.d("user", "found user");
-                    setUser(documentSnapshot.get("phoneNumber").toString(),
-                            documentSnapshot.get("email").toString(),
-                            documentSnapshot.get("firstName").toString(),
-                            documentSnapshot.get("lastName").toString(),
-                            documentSnapshot.get("username").toString(),
-                            (int) (long) documentSnapshot.get("rider"),
-                            (int) (long) documentSnapshot.get("posRating"),
-                            (int) (long) documentSnapshot.get("negRating")
-
-                            //,documentSnapshot.getDouble("balance"),
-                            //(ArrayList<Double>) documentSnapshot.get("transactions")
-                    );
-                }
-                else {
-                    Log.d("user", "user does not exist");
-                }
+        users.document(email).get(Source.SERVER).addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                Log.d("user", "found user");
+                setUser(documentSnapshot.get("phoneNumber").toString(),
+                        documentSnapshot.get("email").toString(),
+                        documentSnapshot.get("firstName").toString(),
+                        documentSnapshot.get("lastName").toString(),
+                        documentSnapshot.get("username").toString(),
+                        (int) (long) documentSnapshot.get("rider"),
+                        (int) (long) documentSnapshot.get("posRating"),
+                        (int) (long) documentSnapshot.get("negRating")
+                );
+            }
+            else {
+                Log.d("user", "user does not exist");
             }
         });
-        Thread.sleep(1000);
     }
 
 
@@ -120,9 +108,6 @@ public class GuuDbHelper {
             this.user.setRider(rider);
             this.user.setPosRating(posRating);
             this.user.setNegRating(negRating);
-
-            //this.user.setBalance(balance);
-            //this.user.setTransHistory(transactions);
     }
 
 
@@ -153,28 +138,22 @@ public class GuuDbHelper {
         user.put("email",newUser.getEmail());
         user.put("username",newUser.getUsername());
         user.put("phoneNumber",newUser.getPhoneNumber());
-        //user.put("uid",newUser.getUid());
         user.put("rider",newUser.getRider());
-
         user.put("posRating", newUser.getPosRating());
         user.put("negRating", newUser.getNegRating());
-        //user.put("balance", newUser.getBalance());
-        //user.put("transactions", newUser.getTransHistory());
 
 
-        users.document(newUser.getEmail()).get(Source.SERVER).addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if( !documentSnapshot.exists()){
-                    Log.d("checking email in db","Email does not exist");
-                    createUser(user, newUser);
-                }
-                else{
-                    Log.d("checking email in db","Email exist");
-                }
+        users.document(newUser.getEmail()).get(Source.SERVER).addOnSuccessListener(documentSnapshot -> {
+            if( !documentSnapshot.exists()){
+                Log.d("checking email in db","Email does not exist");
+                createUser(user, newUser);
+            }
+            else{
+                Log.d("checking email in db","Email exist");
             }
         });
     }
+
 
     /**
      * Helper function for checkEmail
@@ -183,6 +162,7 @@ public class GuuDbHelper {
     public synchronized void createUser(Map<String,Object> info,User newUser){
         users.document(newUser.getEmail()).set(info);
     }
+
 
     /**
      * Helper function
@@ -220,7 +200,7 @@ public class GuuDbHelper {
         users.document(email).update("phoneNumber",number);
     }
 
-    // Every time you update either of the ratings it automatically increments
+
     /**
      * automatically increments the positive rating of the user
      * @param email - the email of the user
@@ -228,6 +208,7 @@ public class GuuDbHelper {
     public synchronized void updatePosRating(String email){
         users.document(email).update("posRating", FieldValue.increment(1));
     }
+
 
     /**
      * automatically increments the negative rating of the user
@@ -237,26 +218,6 @@ public class GuuDbHelper {
         users.document(email).update("negRating", FieldValue.increment(1));
     }
 
-    /**************
-    public synchronized void  updateProfileAll(User user) throws InterruptedException {
-        String email = user.getEmail();
-        //User oldUser = getUser(user.getEmail());
-        //instead!!!!! just use the user the is passed in, because that is equivalent to users information who is currentley using the app
-        if (!user.getPhoneNumber().equals(user.getPhoneNumber())){
-            updatePhoneNumber(email, user.getPhoneNumber());
-        }
-        if (user.getNegRating()!=user.getNegRating()){
-            updateNegRating(email);
-        }
-        if (user.getPosRating()!=user.getPosRating()){
-            updateNegRating(email);
-        }
-        if (user.getUsername().equals(user.getUsername())){
-            updateUsername(email, user.getEmail());
-        }
-
-    }
-     ************************/
 
     /**
      * returns an ArrayList of profile information
@@ -265,10 +226,8 @@ public class GuuDbHelper {
      */
     public synchronized Map<String,Object> getProfileAll(String email) {
         setProfile(email);
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                profileInformation = documentSnapshot.getData();
+        profile.get().addOnSuccessListener(documentSnapshot -> {
+            profileInformation = documentSnapshot.getData();
 //                String t = documentSnapshot.get("phoneNumber").toString();
 //                profileInformation.add(t);
 //                String i = documentSnapshot.get("email").toString();
@@ -283,27 +242,8 @@ public class GuuDbHelper {
 //                profileInformation.add(h);
 //                String e = documentSnapshot.get("negRating").toString();
 //                profileInformation.add(e);
-            }
         });
         return profileInformation;
-    }
-
-
-
-
-
-
-
-
-
-    /**
-     * Updates users balance (also updates transactions by appending amount to be added to balance to the transactions list)
-     * @param email - the email of the user
-     */
-    public synchronized void updateBalance(String email, Double amount)
-    {
-        users.document(email).update("balance", FieldValue.increment(amount));
-        users.document(email).update("transactions", FieldValue.arrayUnion(amount)); // currently treats array as a kind of key value pair so transactions with the same amount will not be appended, I am trying to fix this...
     }
 
 
@@ -328,7 +268,7 @@ public class GuuDbHelper {
         details.put("desLng",desLng);
         details.put("tripCost",tripCost);
 
-        //details.put("driverArrive", driverArrive = false);
+
         this.profile.update(details);
         this.requests.document(rider.getEmail()).set(details);
     }
@@ -373,14 +313,24 @@ public class GuuDbHelper {
                         reqInfo.put("email",doc.get("email"));
                         reqInfo.put("tripCost",doc.get("tripCost"));
 
-
                         requests.document(rider.getEmail()).delete();
                         reqList.remove(reqInfo);
-
                     }
                 }
             }
         });
+    }
+
+    /**
+     * Cancels the user's request
+     * @param rider - rider who want to cancel their request
+     *  >WORKS
+     */
+    public synchronized void rideIsOver(User rider) {
+        setProfile(rider.getEmail());
+        cancelRequest(rider);
+        profile.update("canceled",FieldValue.delete());
+        profile.update("arrived",FieldValue.delete());
     }
 
     /**
@@ -411,19 +361,13 @@ public class GuuDbHelper {
      */
     public synchronized Map<String,Object> getRiderRequest(User rider) throws InterruptedException {
         setProfile(rider.getEmail());
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-               setRequest(documentSnapshot.get("email").toString(), documentSnapshot.get("reqTip"),
-                       documentSnapshot.get("oriLat"), documentSnapshot.get("oriLng"), documentSnapshot.get("desLat"),
-                       documentSnapshot.get("desLng"), documentSnapshot.get("tripCost"));
-            }
-        });
-
-        return Request;
+        profile.get().addOnSuccessListener(documentSnapshot -> setRequest(documentSnapshot.get("email").toString(), documentSnapshot.get("reqTip"),
+                documentSnapshot.get("oriLat"), documentSnapshot.get("oriLng"), documentSnapshot.get("desLat"),
+                documentSnapshot.get("desLng"), documentSnapshot.get("tripCost")));
+        return Request; //sigh :(
     }
 
-    //gets the first document of the driver request
+
     /**
      * Get the information of the driver's current active request they have
      * @param  driver - the driver with a request
@@ -451,27 +395,29 @@ public class GuuDbHelper {
        return Request;
     }
 
+
+
     /**
      * Gets a list of current request that riders post
      * @return - an ArrayList<Map<String,Object>> </String,Object> of request that need a driver
      * */
     public synchronized ArrayList<Map<String,Object>> getReqList(){
-        requests.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()){
-                    for(QueryDocumentSnapshot document : task.getResult()){
-                        Log.d("requestList",document.getId());
-                        updateReqList(document.getId(),document.getData());
-                    }
+        requests.get().addOnCompleteListener(task -> {
+            if(task.isSuccessful()){
+                for(QueryDocumentSnapshot document : task.getResult()){
+                    Log.d("requestList",document.getId());
+                    updateReqList(document.getId(),document.getData());
                 }
-                else{
-                    Log.d("requestList","failed");
-                }
+            }
+            else{
+                Log.d("requestList","failed");
             }
         });
         return this.reqList;
     }
+
+
+
     /**
      * Helper function
      * add the user email to the request detail
@@ -482,6 +428,7 @@ public class GuuDbHelper {
             this.reqList.add(reqDetails);
         }
     }
+
 
     /**
      * Driver can offer a rider a ride but pending on riders approval
@@ -503,22 +450,19 @@ public class GuuDbHelper {
      */
     public synchronized String seeOffer(User rider) throws InterruptedException {
         setProfile(rider.getEmail());
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists()){
-                    if(documentSnapshot.get("rideOfferFrom")!= null){
-                        setOfferer(documentSnapshot.get("rideOfferFrom").toString());
-                    }
-                    else{
-                        offerer = null;
-                    }
+        profile.get().addOnSuccessListener(documentSnapshot -> {
+            if(documentSnapshot.exists()){
+                if(documentSnapshot.get("rideOfferFrom")!= null){
+                    setOfferer(documentSnapshot.get("rideOfferFrom").toString());
+                }
+                else{
+                    offerer = null;
                 }
             }
         });
-        //Thread.sleep(1000);
         return offerer;
     }
+
 
     /**
      * Helper function for seeOffer
@@ -527,6 +471,8 @@ public class GuuDbHelper {
     public synchronized void setOfferer(String driver){
         offerer = driver;
     }
+
+
 
     /**
      * Let the rider decline the offer from the driver
@@ -542,6 +488,7 @@ public class GuuDbHelper {
         setProfile(offerer);
         profile.update("offerStatus","declined");
     }
+
 
     /**
      * the rider accepting the offer they recieved
@@ -573,6 +520,7 @@ public class GuuDbHelper {
         profile.get().addOnSuccessListener(documentSnapshot -> canceled = documentSnapshot.get("canceled").toString());
         return canceled;
     }
+
 
     /**
      * get the status of a cancelation
@@ -657,7 +605,7 @@ public class GuuDbHelper {
                 }
             }
         });
-        return offerStat;
+        return offerStat; //where we first realized these are asynchronous
     }
 
 
@@ -672,18 +620,13 @@ public class GuuDbHelper {
      */
     public synchronized void reqAccepted(User rider, User driver) throws InterruptedException {
 
+        //don't delete the ride offer from and ride offer to fields!
         setProfile(rider.getEmail());
-        //profile.update("rideOfferFrom",FieldValue.delete());
         profile.update("reqDriver",driver.getEmail());
 
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                setRequest(documentSnapshot.get("email").toString(), documentSnapshot.get("reqTip"),
-                        documentSnapshot.get("oriLat"), documentSnapshot.get("oriLng"), documentSnapshot.get("desLat"),
-                        documentSnapshot.get("desLng"), documentSnapshot.get("tripCost").toString());
-            }
-        });
+        profile.get().addOnSuccessListener(documentSnapshot -> setRequest(documentSnapshot.get("email").toString(), documentSnapshot.get("reqTip"),
+                documentSnapshot.get("oriLat"), documentSnapshot.get("oriLng"), documentSnapshot.get("desLat"),
+                documentSnapshot.get("desLng"), documentSnapshot.get("tripCost").toString()));
 
         Map<String,Object> reqDetails = getRiderRequest(rider);
 
@@ -691,7 +634,6 @@ public class GuuDbHelper {
         requests.document(rider.getEmail()).delete();
 
         setProfile(driver.getEmail());
-        //profile.update("offerStatus",FieldValue.delete());
         profile.collection("driveRequest").document(rider.getEmail()).set(reqDetails);
 
     }
@@ -715,66 +657,6 @@ public class GuuDbHelper {
         setProfile(rider.getEmail());
         profile.update(delete);
     }
-    /**
-     * Checks if driver has arrived to riders requested location
-     * returns true if driverLocation == riderLocation
-     *
-     * @param rider - the rider with the request
-     *
-     * @param dLat - the current Latitude of the driver (str)
-     * @param dLng - the current Longitude of the driver (str)
-     *
-     */
-    public synchronized  Boolean driverArrive(User rider, String dLat, String dLng) {
-        // rider coordinates
-        final Double[] rLat = new Double[1];
-        final Double[] rLng = new Double[1];
-
-
-        setProfile(rider.getEmail());
-        DocumentReference riderRef = db.collection("Users").document(rider.getEmail());
-        riderRef.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                DocumentSnapshot document = task.getResult();
-                assert document != null;
-                rLat[0] = (Double) document.getDouble("oriLat");
-                rLng[0] = (Double) document.getDouble("oriLng");
-
-            }
-        });
-
-
-        /** Convert Coordinates to doubles
-         If one of the coordinates is a word or anything except numbers this function cannot work and returns a false
-        try{
-            Double testCurrentLat = new Double(currentLat).doubleValue();
-            Double testCurrentLng = new Double(currentLng).doubleValue();
-        }catch (Exception e) {return false;}
-        */
-
-
-        // Cut off after 5th decimal, so when you compare the drivers coordinates to the users, they don't have to be EXACTLY on them
-        DecimalFormat df = new DecimalFormat("#.#####");
-        String ddLat = df.format(Double.parseDouble(dLat));
-        String ddLng = df.format(Double.parseDouble(dLng));
-
-        String rrLat = df.format(rLat[0]);
-        String rrLng = df.format(rLng[0]);
-
-
-        if (rrLat == ddLat && rrLng == ddLng) {
-            return true; // driver has arrived to riders location
-        }
-        else {
-            return false; // driver is not at rider location
-        }
-
-            //Map<String,Object> location;
-            //Map<String,Object> location = profile.collection("requests").document(rider.getEmail()).;
-            //String Lat = location.get("oriLat"));
-            //String Lng = location.get("oriLng"));
-        }
 
 
     /**
@@ -789,6 +671,7 @@ public class GuuDbHelper {
         profile.update("vehColor",car.getColor());
     }
 
+
     /**
      * Gets the information of the vehicle the user has
      * @param driver - The person who own the vehicle
@@ -796,28 +679,26 @@ public class GuuDbHelper {
      */
     public synchronized Vehicle getCarDetail(User driver){
         setProfile(driver.getEmail());
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.exists()){
-                    Log.d("doc","found document");
-                    if(documentSnapshot.get("vehMake") != null){
-                        Log.d("carDetails","car exist");
-                        setVehicle(documentSnapshot.get("vehMake").toString(),documentSnapshot.get("vehModel").toString(),
-                                documentSnapshot.get("vehColor").toString(),documentSnapshot.getId());
-                    }
-                    else{
-                        Log.d("carDetails","car does not exist");
-                    }
-
+        profile.get().addOnSuccessListener(documentSnapshot -> {
+            if(documentSnapshot.exists()){
+                Log.d("doc","found document");
+                if(documentSnapshot.get("vehMake") != null){
+                    Log.d("carDetails","car exist");
+                    setVehicle(documentSnapshot.get("vehMake").toString(),documentSnapshot.get("vehModel").toString(),
+                            documentSnapshot.get("vehColor").toString(),documentSnapshot.getId());
                 }
                 else{
-                    Log.d("doc","Cannot find document");
+                    Log.d("carDetails","car does not exist");
                 }
+            }
+            else{
+                Log.d("doc","Cannot find document");
             }
         });
         return car;
     }
+
+
 
     /**
      * Helper function
@@ -835,7 +716,6 @@ public class GuuDbHelper {
 
     }
     
-
 
 }
 

@@ -2,6 +2,7 @@ package com.example.guuber;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -727,11 +728,21 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         dialog.dismiss();
                     })
                     .setNeutralButton("View rider profile", (dialog, which) -> viewRiderProfile(riderEmail))
-                    .setPositiveButton("Let rider know you've arrived", (dialog, which) -> driverDBHelper.setArrival(currDriver.getEmail()));
+                    .setPositiveButton("Let rider know you've arrived", (dialog, which) -> {
+                        weHaveToldThemToast();
+                        driverDBHelper.setArrival(currDriver.getEmail());
+                        });
+                    }
             final AlertDialog alert = builder.create();alert.show();
         }
-    }
 
+
+    /**
+     Let the Driver know, they have notified the ride of their arrival
+     */
+    private void weHaveToldThemToast(){
+        new Handler().postDelayed(() -> makeText(MapsDriverActivity.this,"Rider is notified of your arrival", Toast.LENGTH_LONG).show(), 500);
+    }
 
     /**
      Let the Driver know, that the rider has not cancelled the request

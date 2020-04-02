@@ -355,6 +355,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 setMarker(getOrigin(), "Origin");
                 setMarker(getDestination(), "Destination");
                 calculateDirections(); //automatically calculates directions and draws a route
+
             } else if (paymentFailed) {
                 payDriverFirstToast();
             }else{
@@ -573,6 +574,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     rideInProgress = false;
                     rideisPending = false;
                 }else{
+                    rideInProgress = false;
+                    rideisPending = false;
                     paymentFailed = true; //should only be here if QR code didn't scan. Rider may not post request if they dont have enough money
                     Toast.makeText(this, "Transaction failed. Please Pay Your Driver",  Toast.LENGTH_SHORT).show();
                 }
@@ -878,19 +881,18 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * displays after you have checked if the driver has arrived, and they "have"
      */
     private void driverIsHereDialog(String ridersEmail){
+        User currRider = ((UserData)(getApplicationContext())).getUser();
+        rideInProgress = false;
+        rideisPending = false;
 
         uRefUsers.document(ridersEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
             assert documentSnapshot != null;
             if (documentSnapshot.get("rideOfferFrom") != null) {
-                potentialOfferer = documentSnapshot.get("rideOfferFrom").toString();
-            }
+                potentialOfferer = documentSnapshot.get("rideOfferFrom").toString(); }
             if (documentSnapshot.get("tripCost") != null){
-                tripCost = (Double) documentSnapshot.get("tripCost");
-            }
+                tripCost = (Double) documentSnapshot.get("tripCost"); }
             if (documentSnapshot.get("reqTip") != null){
-                tip = (Double) documentSnapshot.get("reqTip");
-            }
-
+                tip = (Double) documentSnapshot.get("reqTip"); }
         });
 
         new Handler().postDelayed(() -> {
@@ -899,16 +901,16 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             builder
                     .setTitle("Your diver has arrived!! That was pretty fast... ").setCancelable(false)
                     .setNegativeButton("Rate driver", (dialog, which) -> {
-                        viewDriverProfile(potentialOfferer); //view driver profile, this will crash as well
+                        viewDriverProfile(potentialOfferer);
                     })
                     .setPositiveButton("Pay driver", (dialog, id) -> {
+                        rideisPending = false;
+                        rideInProgress = false;
                         final Intent payDriverIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
-
                         String amount = String.valueOf(tip + tripCost); //get total fee
                         payDriverIntent.putExtra("INFO_TAG", ridersEmail +"," + amount);   // Send email and fee to intent by a comma separated string
                         startActivityForResult(payDriverIntent, 2);// Show the generated qr
-                        rideisPending = false;
-                        rideInProgress = false;
+                        riderDBHelper.rideIsOver(currRider);
                         guuberRiderMap.clear();
                     });
             final AlertDialog alert = builder.create(); alert.show();

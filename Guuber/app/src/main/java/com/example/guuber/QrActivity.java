@@ -60,8 +60,6 @@ public class QrActivity extends AppCompatActivity {
 //		qrButton = findViewById(R.id.qr_button);
 		qrEText = findViewById(R.id.qr_text);
 
-		// Display the back button
-		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
 		// Get the passed qr info
 		Intent intent = getIntent();
@@ -147,17 +145,5 @@ public class QrActivity extends AppCompatActivity {
 		}
 	}
 
-	/**implement logic here for what you want to
-	 * happen upon back button press**/
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case android.R.id.home:
-				this.finish();
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-		}
-	}
 }
 
