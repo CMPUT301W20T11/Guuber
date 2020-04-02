@@ -331,8 +331,8 @@ public class GuuDbHelper {
         cancelRequest(rider);
         profile.update("canceled",FieldValue.delete());
         profile.update("arrived",FieldValue.delete());
-        ArrayList<Map<String,Object>> reqList =  getReqList();
-        reqList.clear();
+        reqList.clear(); //update request list without this request in it
+        //non working
     }
 
     /**
@@ -420,6 +420,8 @@ public class GuuDbHelper {
 
 
 
+
+
     /**
      * Helper function
      * add the user email to the request detail
@@ -430,6 +432,18 @@ public class GuuDbHelper {
             this.reqList.add(reqDetails);
         }
     }
+
+    /**
+     * Helper function
+     * add the user email to the request detail
+     */
+    public synchronized void deleteFromReqList(String email,Map<String,Object> reqDetails){
+        reqDetails.put("email", email);
+        if(reqList.contains(reqDetails)) {
+            this.reqList.remove(reqDetails);
+        }
+    }
+
 
 
     /**
