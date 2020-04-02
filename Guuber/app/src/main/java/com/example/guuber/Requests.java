@@ -15,7 +15,7 @@ public class Requests implements Parcelable {
     private Double tip;
 
 
-    public Requests(){
+    public Requests(LatLng pickup, LatLng dropoff, String email, String status, Double cost, Double tip){
         this.pickup = pickup;
         this.dropoff = dropoff;
         this.email = email;
@@ -100,6 +100,10 @@ public class Requests implements Parcelable {
 
     public Double getCost(){
         return cost;
+    }
+
+    public void setStatus(String status){
+        this.status = status;
     }
 
 

@@ -19,10 +19,7 @@ import com.google.firebase.firestore.Source;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.TimeUnit;
 
 public class GuuDbHelper {
     private static FirebaseFirestore db;
@@ -320,9 +317,8 @@ public class GuuDbHelper {
      * @param desLat - Latitudinal coordinate of the destination
      * @param desLng - Latitudinal coordinate of the destination
      * @param tripCost - the cost of the trip
-     *  >WORKS
      */
-    public synchronized void makeReq(User rider, Double tip, double oriLat, double oriLng, double desLat, double desLng, String tripCost){
+    public synchronized void makeReq(User rider, Double tip, double oriLat, double oriLng, double desLat, double desLng, double tripCost){
         setProfile(rider.getEmail());
         Map<String,Object> details = new HashMap<>();
         details.put("reqTip",tip);
@@ -348,41 +344,39 @@ public class GuuDbHelper {
     public synchronized void cancelRequest(User rider) {
         setProfile(rider.getEmail());
 
-        profile.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if (task.isSuccessful()) {
-                    DocumentSnapshot doc = task.getResult();
-                    if (doc.exists()) {
-                        Map<String, Object> delete = new HashMap<>();
-                        delete.put("reqTip", FieldValue.delete());
-                        delete.put("oriLat", FieldValue.delete());
-                        delete.put("oriLng", FieldValue.delete());
-                        delete.put("desLat", FieldValue.delete());
-                        delete.put("desLng", FieldValue.delete());
-                        delete.put("tripCost",FieldValue.delete());
-                        //checks if there is a driver for the request
-                        if (doc.get("reqDriver") != null) {
-                            delete.put("reqDriver", FieldValue.delete());
-                            setProfile(doc.get("reqDriver").toString());
-                            profile.collection("driveRequest").document(rider.getEmail()).delete();
-                            setProfile(rider.getEmail());
-                            profile.update(delete);
-                        } else {
-                            setProfile(rider.getEmail());
-                            Map<String,Object> reqInfo = new HashMap<>();
-                            reqInfo.put("reqTip", doc.get("reqTip"));
-                            reqInfo.put("oriLat",doc.get("oriLat"));
-                            reqInfo.put("oriLng",doc.get("oriLng"));
-                            reqInfo.put("desLat",doc.get("desLat"));
-                            reqInfo.put("desLng",doc.get("desLng"));
-                            reqInfo.put("email",doc.get("email"));
-                            reqInfo.put("tripCost",doc.get("tripCost"));
-                            profile.update(delete);
-                            requests.document(rider.getEmail()).delete();
-                            reqList.remove(reqInfo);
+        profile.get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                DocumentSnapshot doc = task.getResult();
+                if (doc.exists()) {
+                    Map<String, Object> delete = new HashMap<>();
+                    delete.put("reqTip", FieldValue.delete());
+                    delete.put("oriLat", FieldValue.delete());
+                    delete.put("oriLng", FieldValue.delete());
+                    delete.put("desLat", FieldValue.delete());
+                    delete.put("desLng", FieldValue.delete());
+                    delete.put("tripCost",FieldValue.delete());
+                    //checks if there is a driver for the request
+                    if (doc.get("reqDriver") != null) {
+                        delete.put("reqDriver", FieldValue.delete());
+                        setProfile(doc.get("reqDriver").toString());
+                        profile.collection("driveRequest").document(rider.getEmail()).delete();
+                        setProfile(rider.getEmail());
+                        profile.update(delete);
+                    } else {
+                        setProfile(rider.getEmail());
+                        Map<String,Object> reqInfo = new HashMap<>();
+                        reqInfo.put("reqTip", doc.get("reqTip"));
+                        reqInfo.put("oriLat",doc.get("oriLat"));
+                        reqInfo.put("oriLng",doc.get("oriLng"));
+                        reqInfo.put("desLat",doc.get("desLat"));
+                        reqInfo.put("desLng",doc.get("desLng"));
+                        reqInfo.put("email",doc.get("email"));
+                        reqInfo.put("tripCost",doc.get("tripCost"));
 
-                        }
+
+                        requests.document(rider.getEmail()).delete();
+                        reqList.remove(reqInfo);
+
                     }
                 }
             }
@@ -400,7 +394,7 @@ public class GuuDbHelper {
      * @param desLng - Latitudinal coordinate of the destination
      * @param tripCost - the cost of the trip
      */
-    public synchronized void setRequest(String email, Object tip , Object oriLat, Object oriLng, Object desLat, Object desLng, String tripCost){
+    public synchronized void setRequest(String email, Object tip , Object oriLat, Object oriLng, Object desLat, Object desLng, Object tripCost){
         this.Request.put("reqTip", tip);
         this.Request.put("oriLat",oriLat);
         this.Request.put("oriLng",oriLng);
@@ -422,7 +416,7 @@ public class GuuDbHelper {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                setRequest(documentSnapshot.get("email").toString(), documentSnapshot.get("reqTip"),
                        documentSnapshot.get("oriLat"), documentSnapshot.get("oriLng"), documentSnapshot.get("desLat"),
-                       documentSnapshot.get("desLng"), documentSnapshot.get("tripCost").toString());
+                       documentSnapshot.get("desLng"), documentSnapshot.get("tripCost"));
             }
         });
 
@@ -540,13 +534,10 @@ public class GuuDbHelper {
      */
     public synchronized void declineOffer(User rider){
         setProfile(rider.getEmail());
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                offerer = documentSnapshot.get("rideOfferFrom").toString();
-                setProfile(offerer);
-                profile.update("offerStatus", "declined");
-            }
+        profile.get().addOnSuccessListener(documentSnapshot -> {
+            offerer = documentSnapshot.get("rideOfferFrom").toString();
+            setProfile(offerer);
+            profile.update("offerStatus", "declined");
         });
         setProfile(offerer);
         profile.update("offerStatus","declined");
@@ -558,20 +549,17 @@ public class GuuDbHelper {
      */
     public synchronized void acceptOffer(User rider){
         setProfile(rider.getEmail());
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                arrivee = rider.getEmail();
-                setProfile(arrivee);
-                profile.update("arrived","false"); //rider now has a field
-                profile.update("canceled","false"); //rider now has a field
+        profile.get().addOnSuccessListener(documentSnapshot -> {
+            arrivee = rider.getEmail();
+            setProfile(arrivee);
+            profile.update("arrived","false"); //rider now has a field
+            profile.update("canceled","false"); //rider now has a field
 
-                offerer = documentSnapshot.get("rideOfferFrom").toString();
-                setProfile(offerer);
-                profile.update("offerStatus","accepted");
-                profile.update("arrived","false"); //driver now has a field
-                profile.update("canceled","false"); //rider now has a field
-            }
+            offerer = documentSnapshot.get("rideOfferFrom").toString();
+            setProfile(offerer);
+            profile.update("offerStatus","accepted");
+            profile.update("arrived","false"); //driver now has a field
+            profile.update("canceled","false"); //rider now has a field
         });
     }
 
@@ -582,12 +570,7 @@ public class GuuDbHelper {
      */
     public synchronized String getCancellationStatus(String driverEmail){
         setProfile(driverEmail);
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                canceled = documentSnapshot.get("canceled").toString();
-            }
-        });
+        profile.get().addOnSuccessListener(documentSnapshot -> canceled = documentSnapshot.get("canceled").toString());
         return canceled;
     }
 
@@ -598,17 +581,14 @@ public class GuuDbHelper {
      */
     public synchronized String setCancellationStatus(String riderEmail, String driverEmail){
         setProfile(riderEmail);
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                canceler = riderEmail;
-                setProfile(canceler);
-                profile.update("canceled","true");
+        profile.get().addOnSuccessListener(documentSnapshot -> {
+            canceler = riderEmail;
+            setProfile(canceler);
+            profile.update("canceled","true");
 
-                cancelee = driverEmail;
-                setProfile(cancelee);
-                profile.update("canceled","true"); //driver now has a field
-            }
+            cancelee = driverEmail;
+            setProfile(cancelee);
+            profile.update("canceled","true"); //driver now has a field
         });
         return canceled;
     }
@@ -621,23 +601,18 @@ public class GuuDbHelper {
      */
     public synchronized void setArrival(String email){
         setProfile(email);
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                arriver = email;
-                setProfile(arriver);
-                profile.update("arrived","true");
+        profile.get().addOnSuccessListener(documentSnapshot -> {
+            arriver = email;
+            setProfile(arriver);
+            profile.update("arrived","true");
 
-                arrivee = documentSnapshot.get("offerTo").toString();
-                setProfile(arrivee);
-                profile.update("arrived","true"); //driver now has a field
-            }
+            arrivee = documentSnapshot.get("offerTo").toString();
+            setProfile(arrivee);
+            profile.update("arrived","true"); //driver now has a field
         });
     }
 
-    public synchronized  void notifyRider(User driver){
 
-}
     /**
      * function to get the status of the arrival
      * @param email is the riders email
@@ -645,15 +620,12 @@ public class GuuDbHelper {
      */
     public synchronized String getArrival(String email){
         setProfile(email);
-        users.document(email).get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                arrivalStatus = documentSnapshot.get("arrived").toString();
-                if (arrivalStatus.equals("true")){
-                    android.util.Log.i("ARRIVAL STATUS =", "true");
-                }else if (arrivalStatus.equals("false")){
-                    android.util.Log.i("ARRIVAL STATUS =", "false");
-                }
+        users.document(email).get().addOnSuccessListener(documentSnapshot -> {
+            arrivalStatus = documentSnapshot.get("arrived").toString();
+            if (arrivalStatus.equals("true")){
+                Log.i("ARRIVAL STATUS =", "true");
+            }else if (arrivalStatus.equals("false")){
+                Log.i("ARRIVAL STATUS =", "false");
             }
         });
         return arrivalStatus;
@@ -661,9 +633,6 @@ public class GuuDbHelper {
     }
 
 
-    public synchronized String returnMe(String x){
-        return x;
-    }
 
     /**
      * Allows the driver to see the status of their offer to the rider
@@ -677,17 +646,14 @@ public class GuuDbHelper {
     public synchronized String checkOfferStatus(User driver) throws InterruptedException {
         setProfile(driver.getEmail());
 
-        profile.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if(documentSnapshot.get("offerStatus") != null){
-                    offerStat = documentSnapshot.get("offerStatus").toString();
-                } else{
-                    offerStat = "none"; }
-                if(offerStat != null){
-                    if(offerStat.equals("declined")){
-                        profile.update("offerStatus",FieldValue.delete());
-                    }
+        profile.get().addOnSuccessListener(documentSnapshot -> {
+            if(documentSnapshot.get("offerStatus") != null){
+                offerStat = documentSnapshot.get("offerStatus").toString();
+            } else{
+                offerStat = "none"; }
+            if(offerStat != null){
+                if(offerStat.equals("declined")){
+                    profile.update("offerStatus",FieldValue.delete());
                 }
             }
         });

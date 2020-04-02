@@ -67,8 +67,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int MYPROFILE = 1;
     private static final int  WALLET = 2;
     private static final int  QR = 3;
-    private static final int SIGNOUT = 4;
-    private static final int OFFLINE_REQS = 5;
+    private static final int OFFLINE_REQS = 4;
+    private static final int SIGNOUT = 5;
 
     //permissions / results codes
     private static final int QR_REQ_CODE = 3;
@@ -96,6 +96,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private GeoApiContext geoRiderApiContext = null;
     LocationManager locationManager;
     Criteria criteria = new Criteria();
+
 
 
     /***********the database******/
@@ -149,10 +150,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     openRiderWallet();
                 }else if (position == QR){
                     makeQR();
-                }else if (position == SIGNOUT) {
-                    signOut();
-                } else if (position == OFFLINE_REQS) {
+                }else if (position == OFFLINE_REQS ) {
                     currOfflineReqs();
+                } else if (position == SIGNOUT) {
+                    signOut();
                 }
                 riderSpinner.setSelection(MENU);
             }
@@ -202,7 +203,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         }
         //if there is an unfinished ride, re draw it
         updateMapPendingRider();
+
     }
+
 
     /**
      * upon first app open, we need to grab you location. your location may not have been intialized with the
@@ -218,12 +221,21 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     }
 
     protected void updateMapPendingRider() {
-        User currUser = ((UserData)(getApplicationContext())).getUser(); //current rider
-        String email = currUser.getEmail();
-        uRefRequests.document(email).addSnapshotListener(this, (documentSnapshot, e) -> {
+        User currRider = ((UserData)(getApplicationContext())).getUser(); //current rider
+
+        uRefUsers.document(currRider.getEmail()).addSnapshotListener(this, (documentSnapshot, e) -> {
+            assert documentSnapshot != null;
+            if (documentSnapshot.get("canceled") != null){
+                rideInProgress = true; //the route is in progress
+                rideisPending = false;
+            }else if (documentSnapshot.get("oriLat") != null){
+                rideisPending = true; //the route is pending
+            }
+        });
+
+        uRefRequests.document(currRider.getEmail()).addSnapshotListener(this, (documentSnapshot, e) -> {
             assert documentSnapshot != null;
             if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("desLat") != null) {
-                rideisPending = Boolean.TRUE;
                 android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
                 double originLat = Double.parseDouble(Objects.requireNonNull(documentSnapshot.get("oriLat")).toString());
                 double originLong = Double.parseDouble(Objects.requireNonNull(documentSnapshot.get("oriLng")).toString());
@@ -301,7 +313,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private void currOfflineReqs(){
         Intent viewOfflineReqs = new Intent(MapsRiderActivity.this, CurrentRequestsOffline.class);
         User currRider = ((UserData)(getApplicationContext())).getUser();
-        viewOfflineReqs.putExtra("RIDER_EMAIL", currRider.getEmail());
+        //requestsList = saveRequestForOffline.loadData(MapsRiderActivity.this);
+        viewOfflineReqs.putExtra("EMAIL", currRider.getEmail()); //send email through the intent
         startActivity(viewOfflineReqs);
     }
 
@@ -584,6 +597,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
         User currRider = ((UserData)(getApplicationContext())).getUser();
 
+        uRefUsers.document(currRider.getEmail()).addSnapshotListener(this, (documentSnapshot, e) -> {
+            assert documentSnapshot != null;
+            if (documentSnapshot.get("rideOfferFrom") != null) {
+                potentialOfferer = documentSnapshot.get("rideOfferFrom").toString();
+            }
+        });
+
         if (!rideInProgress && !rideisPending) {
             final NumberPicker numberPicker = new NumberPicker(MapsRiderActivity.this);
             numberPicker.setMaxValue(100); numberPicker.setMinValue(0);
@@ -606,7 +626,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     .setNeutralButton("Exit", (dialog, id) -> dialog.cancel());
             final AlertDialog alert = builder.create(); alert.show();
 
-        }else if (rideisPending){
+        }else if (rideisPending && !rideInProgress){
             builder
                 .setTitle("Ride Is Pending")
                     .setPositiveButton("Check For Offers", (dialog, which) -> {
@@ -623,8 +643,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         dialog.dismiss();
                     })
                     .setNegativeButton("Cancel request", (dialog, which) -> {
-                        rideisPending = false;
-                        riderDBHelper.cancelRequest(currRider);
+                        rideisPending = false; //unhandled from the drivers end.
+                        //requestsList.remove(0);//remove the request from the requestslist
+                        riderDBHelper.cancelRequest(currRider); //remove request from the database
                         guuberRiderMap.clear();
                         dialog.dismiss();
                     });
@@ -646,9 +667,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     .setNegativeButton("Cancel request", (dialog, which) -> {
                         rideisPending = false;
                         rideInProgress = false;
+                        //requestsList.remove(0);//remove the request from the requestslist
+                        riderDBHelper.setCancellationStatus(currRider.getEmail(), potentialOfferer); //set status as canceled in the database
+                        riderDBHelper.cancelRequest(currRider); //remove it from requests
                         guuberRiderMap.clear();
-                        riderDBHelper.setCancellationStatus(currRider.getEmail(), potentialOfferer);
-                        riderDBHelper.cancelRequest(currRider);
                         dialog.dismiss();
                     });
             final AlertDialog alert = builder.create();  alert.show();
@@ -684,14 +706,15 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * @param potentialOfferer is a global string containing the email of the potential drivers email
      */
     public void willYouAcceptThisOfferDialog(String potentialOfferer) {
+        User currRider = ((UserData)(getApplicationContext())).getUser();
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
         builder
                 .setTitle("Offer From: " + potentialOfferer).setCancelable(false)
                 .setPositiveButton("Accept", (dialog, which) -> {
                     rideInProgress = true;
                     rideisPending = false;
+                    //currRequest.setStatus("in Progress"); //is this changing in the array?
                     polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripInProgressPolyLinesColors));
-                    User currRider = ((UserData)(getApplicationContext())).getUser(); //should this be global
                     riderDBHelper.acceptOffer(currRider);
                     yourDriverIsOnTheWayToast();
                     dialog.dismiss();
@@ -699,8 +722,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     viewDriverProfile(potentialOfferer);
                     dialog.dismiss();
                 }).setNegativeButton("Decline", (dialog, which) -> {
-                    User currUser = ((UserData)(getApplicationContext())).getUser();
-                    riderDBHelper.declineOffer(currUser);
+                    riderDBHelper.declineOffer(currRider);
                     youDeclinedTheOfferToast();
                     dialog.dismiss();
         });
@@ -732,17 +754,19 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     public void makeRequest(Marker marker){
         Toast.makeText(this, "Request Pending! Click On Your Destination To Check for Offers or  To Cancel", Toast.LENGTH_LONG).show();
         polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripIsPendingPolyLinesColors));
-
         User currRider = ((UserData)(getApplicationContext())).getUser(); //should this be global
+
         double originLatitude = getOrigin().latitude;
         double originLongitude = getOrigin().longitude;
-        double destinationLatitude = marker.getPosition().latitude;
-        double destinationLongitude = marker.getPosition().longitude;
+        double destinationLatitude = getDestination().latitude; //new , test  this (apr 1)
+        double destinationLongitude = getDestination().longitude;
         double tip = getTip();
-        String tripCost = getTripCost().toString();
+        double tripCost = getTripCost();
+
+
 
         riderDBHelper.makeReq(currRider, tip, originLatitude , originLongitude, destinationLatitude,destinationLongitude,tripCost);
-        riderDBHelper.setRequest(currRider.getEmail(), tip , originLatitude, originLongitude, destinationLatitude,destinationLongitude, tripCost);
+        riderDBHelper.setRequest(currRider.getEmail(), tip , originLatitude, originLongitude, destinationLatitude,destinationLongitude, tripCost); //changed this to double everywhere (apr 1)
         rideisPending = true;
     }
 
@@ -837,7 +861,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     ));
                 }
                 polyline = guuberRiderMap.addPolyline(new PolylineOptions().addAll(newDecodedPath));
-                polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.drawPolyLinesColors));
+                if (!rideisPending && !rideInProgress){
+                    polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.drawPolyLinesColors));
+                } else if (rideInProgress) {
+                    polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripInProgressPolyLinesColors));
+                } else if (rideisPending) {
+                    polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripIsPendingPolyLinesColors));
+                }
             }
         });
     }
@@ -849,16 +879,18 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * displays after you have checked if the driver has arrived, and they "have"
      */
     private void driverIsHereDialog(String ridersEmail){
+
         new Handler().postDelayed(() -> {
             polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripOverPolyLinesColors));
             final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
             builder
                     .setTitle("Your diver has arrived!! That was pretty fast... ").setCancelable(false)
                     .setNegativeButton("Rate driver", (dialog, which) -> {
-                        viewDriverProfile(potentialOfferer); //view driver profile
+                        viewDriverProfile(potentialOfferer); //view driver profile, this will crash as well
                     })
                     .setPositiveButton("Pay driver", (dialog, id) -> {
                         final Intent payDriverIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
+
                         String amount = String.valueOf(getTripCost() + getTip()); //get total fee
                         payDriverIntent.putExtra("INFO_TAG", ridersEmail +"," + amount);   // Send email and fee to intent by a comma separated string
                         startActivityForResult(payDriverIntent, 2);// Show the generated qr

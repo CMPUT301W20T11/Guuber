@@ -66,8 +66,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private static final int MYPROFILE = 1;
     private static final int WALLET = 2;
     private static final int SCANQR = 3;
-    private static final int SIGNOUT = 4;
-    private static final int OFFLINE_REQS = 5;
+    private static final int OFFLINE_REQS = 4;
+    private static final int SIGNOUT = 5;
+
 
     //permissions / result codes
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
@@ -147,11 +148,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     openDriverWallet();
                 } else if (position == SCANQR) {
                     scanQR();
+                }else if (position == OFFLINE_REQS ) {
+                    currOfflineReqs();
                 }else if (position == SIGNOUT) {
                     signOut();
-                }else if (position == OFFLINE_REQS) {
-                    currOfflineReqs();
-                }
+            }
                 driverSpinner.setSelection(MENU);
             }
 
@@ -214,17 +215,20 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     protected void updateMapDriver() {
         User currRider = ((UserData)(getApplicationContext())).getUser(); //current rider
+
         uRefUsers.document(currRider.getEmail()).addSnapshotListener(this, (documentSnapshot, e) -> {
             // these fields should only be populated if there is an active request or pending request
             assert documentSnapshot != null;
             if (documentSnapshot.get("offerTo") != null && documentSnapshot.get("offerStatus") != null) {
-                //rideisPending = Boolean.TRUE;
+                offerSent = Boolean.TRUE;
 
                 // check if active
                 if (Objects.requireNonNull(documentSnapshot.get("offerStatus")).toString().equals("accepted")) {
                     String offerToEmail = Objects.requireNonNull(documentSnapshot.get("offerTo")).toString();
+                    offerAccepted = true;
+                    offerSent = false;
+                    routeInProgress = true;
                     getRideDetails(offerToEmail);
-
                 }
                 else if (Objects.requireNonNull(documentSnapshot.get("offerStatus")).toString().equals("pending")) {
                     String offerToEmail = Objects.requireNonNull(documentSnapshot.get("offerTo")).toString();
@@ -316,6 +320,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         Intent viewOfflineReqs = new Intent(MapsDriverActivity.this, CurrentRequestsOffline.class);
         User currDriver = ((UserData)(getApplicationContext())).getUser();
         viewOfflineReqs.putExtra("DRIVER_EMAIL", currDriver.getEmail());
+        //requestsList = saveRequestForOffline.loadData(MapsRiderActivity.this);
         startActivity(viewOfflineReqs);
     }
 
@@ -753,6 +758,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         riderEmail = marker.getTitle();
         offerSent = true;
         guuberDriverMap.clear();
+
+        new Handler().postDelayed(() -> makeText(MapsDriverActivity.this,"Your ride has been offered", Toast.LENGTH_LONG).show(), 500);
 
         LatLng currReqMarker = new LatLng(marker.getPosition().latitude, marker.getPosition().longitude);
         setMarker(currReqMarker, riderEmail);
