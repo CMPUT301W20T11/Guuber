@@ -14,7 +14,7 @@ import org.junit.Test;
 /**
  * Intent testing for the scanQrActivity.
  *  Tests are based on current app functionality
- *  Test currently fails due to requiring the User singleton to be populated
+ *  User singleton must be populated before running this test IMPORTANT will fail otherwise
  */
 public class ScanQrActivityTest {
 
