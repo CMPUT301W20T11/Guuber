@@ -573,12 +573,15 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 }
             }
             case QR_REQ_CODE:{
-                if(resultCode == RESULT_OK){
-                    android.util.Log.i(TAG,"transaction processed");
-                    Toast.makeText(this, "Transaction processed",  Toast.LENGTH_SHORT).show();
+                if(resultCode == RESULT_OK) {
+                    android.util.Log.i(TAG, "transaction processed");
+                    Toast.makeText(this, "Transaction processed", Toast.LENGTH_SHORT).show();
                     guuberRiderMap.clear();
                     rideInProgress = false;
                     rideisPending = false;
+                }else{
+                    paymentFailed = true;
+                    payDriverFirstToast();
                 }
             }
         }
@@ -648,7 +651,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     })
                     .setNegativeButton("Cancel request", (dialog, which) -> {
                         rideisPending = false; //unhandled from the drivers end.
-                        //requestsList.remove(0);//remove the request from the requestslist
                         riderDBHelper.cancelRequest(currRider); //remove request from the database
                         guuberRiderMap.clear();
                         dialog.dismiss();

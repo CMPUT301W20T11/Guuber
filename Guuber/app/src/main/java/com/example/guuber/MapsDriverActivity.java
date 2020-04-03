@@ -40,6 +40,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PendingResult;
@@ -385,6 +386,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     public void drawOpenRequests() {
         Double offeredTip = null, destinationLat = null, destinationLong = null, originLat = null, originLong = null, tripCost = null;
         String email = null;
+
 
         ArrayList<Map<String, Object>> openRequestList = driverDBHelper.getReqList(); //needs to be called twice to draw open requests. fine fore now
         android.util.Log.i(TAG, "OPEN REQUEST LIST RAW" + openRequestList.toString());
