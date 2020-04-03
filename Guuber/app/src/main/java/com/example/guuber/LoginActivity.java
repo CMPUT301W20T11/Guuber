@@ -57,14 +57,13 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 	private FirebaseAuth mAuth;
 	private static final String TAG = "LoginActivity";
 	private GoogleSignInClient mGoogleSignInClient;
-	//private RadioGroup radioGroup;
 
 	private FirebaseFirestore db = FirebaseFirestore.getInstance();
 	private DocumentReference uRef;
 
 	private static final int RC_SIGN_OUT = 1000;
 
-	//location client
+	// location client
 	private FusedLocationProviderClient fusedLocationClient;
 	Location currLocation;
 
@@ -74,7 +73,6 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		SignInButton signInButton = findViewById(R.id.sign_in_button);
-		//radioGroup = findViewById(R.id.radio_group);
 
 		// Configure sign-in to request the user's ID, email address, and basic
 		// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -98,27 +96,24 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		});
 
 
-		/******INITIALIZING LOCATION CLIENT*********/
+		// INITIALIZING LOCATION CLIENT
 		fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 		fusedLocationClient.getLastLocation()
 				.addOnSuccessListener(this, new OnSuccessListener<Location>() {
 					@Override
 					public void onSuccess(Location location) {
-						android.util.Log.i("Holy shit", "location is null");
+						android.util.Log.i("Bad", "location is null");
 						if (location != null) {
 							currLocation = location;
 						}
 					}
 				});
-		/**********************************************/
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
-		FirebaseUser currentUser = mAuth.getCurrentUser();
-		currentUser = null; // TODO delete when login activity is perfectly working
-		updateUI(currentUser);
+		updateUI(null);
 
 	}
 
@@ -240,12 +235,6 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 	}
 
 	private void updateUI(FirebaseUser user) {
-		// TODO check what type of user is logged in and display its appropriate homepage
-
-		//int radioButtonID = radioGroup.getCheckedRadioButtonId();
-		//View radioButton = radioGroup.findViewById(radioButtonID);
-		//int signInType = 0;
-		User loggedUser = null;
 		Context context = LoginActivity.this;
 		if (user != null) {
 			// Populate the singleton
@@ -274,7 +263,7 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 				}
 			});
 		} else {
-			/**if the user has never registered before we have to get permissions**/
+			// if the user has never registered before we have to get permissions
 			checkUserPermissions();
 		}
 
