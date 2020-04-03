@@ -2,7 +2,6 @@ package com.example.guuber;
 
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -41,7 +40,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.maps.DirectionsApiRequest;
 import com.google.maps.GeoApiContext;
 import com.google.maps.PendingResult;
@@ -273,7 +271,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * Starts activity to display drivers profile
      **/
     public void viewDriverProfile() {
-        Intent driverProfileIntent = new Intent(MapsDriverActivity.this, DriverProfilActivity.class);
+        Intent driverProfileIntent = new Intent(MapsDriverActivity.this, DriverProfileActivity.class);
         driverProfileIntent.putExtra("caller", "internal");
         startActivity(driverProfileIntent);
     }
@@ -301,7 +299,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * Starts activity to allow rider to generate QR
      **/
     public void scanQR() {
-        final Intent scanQrProfileIntent = new Intent(MapsDriverActivity.this, scanQrActivity.class);
+        final Intent scanQrProfileIntent = new Intent(MapsDriverActivity.this, ScanQrActivity.class);
         startActivityForResult(scanQrProfileIntent, QR_SCAN_CODE);
     }
 

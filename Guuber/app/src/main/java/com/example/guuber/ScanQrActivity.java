@@ -29,7 +29,7 @@ import java.util.List;
  * it enables their ability to scan a QR
  * Source: https://www.youtube.com/watch?v=Fe7F4Jx7rwo
  */
-public class scanQrActivity extends AppCompatActivity {
+public class ScanQrActivity extends AppCompatActivity {
 	private List<String> qrInfo;
 	private FirebaseFirestore db = FirebaseFirestore.getInstance();
 	private CollectionReference usersCol = db.collection("Users");

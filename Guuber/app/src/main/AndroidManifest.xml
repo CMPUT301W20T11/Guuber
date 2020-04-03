@@ -23,9 +23,9 @@
         <activity android:name=".TransactionFragment" />
         <activity android:name=".ViewProfileActivity" />
         <activity android:name=".WalletActivity" />
-        <activity android:name=".scanQrActivity" />
+        <activity android:name=".ScanQrActivity" />
         <activity android:name=".QrActivity" />
-        <activity android:name=".DriverProfilActivity" />
+        <activity android:name=".DriverProfileActivity" />
         <activity android:name=".RiderProfileActivity" />
         <activity
             android:name=".LoginActivity"
