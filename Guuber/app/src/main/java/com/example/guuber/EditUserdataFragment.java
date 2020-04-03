@@ -13,6 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
+/**
+ * Provides a user with an interface to edit their username and phone number information on their profile
+ * */
 public class EditUserdataFragment extends DialogFragment {
     private EditText oldText;
     private EditText confirmText;

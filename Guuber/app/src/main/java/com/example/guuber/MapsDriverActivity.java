@@ -278,6 +278,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
 
     /**
      * Starts activity to display drivers profile
+     * Important flag, "internal", allows for editing of profile information
      **/
     public void viewDriverProfile() {
         Intent driverProfileIntent = new Intent(MapsDriverActivity.this, DriverProfileActivity.class);
