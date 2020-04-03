@@ -769,7 +769,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
         riderDBHelper.makeReq(currRider, tip, originLatitude , originLongitude, destinationLatitude,destinationLongitude,tripCost);
-        riderDBHelper.setRequest(currRider.getEmail(), tip , originLatitude, originLongitude, destinationLatitude,destinationLongitude, tripCost); //changed this to double everywhere (apr 1)
         rideisPending = true;
     }
 

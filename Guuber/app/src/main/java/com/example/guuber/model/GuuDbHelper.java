@@ -330,6 +330,7 @@ public class GuuDbHelper {
         profile.update("canceled",FieldValue.delete());
         profile.update("arrived",FieldValue.delete());
 
+
         //reqList.remove();
         reqList.clear(); //update request list without this request in it
         android.util.Log.i("REQ List", reqList.toString());
