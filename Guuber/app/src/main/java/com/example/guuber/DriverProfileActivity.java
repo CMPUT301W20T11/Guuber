@@ -54,12 +54,8 @@ public class DriverProfileActivity extends AppCompatActivity {
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-<<<<<<< HEAD:Guuber/app/src/main/java/com/example/guuber/DriverProfilActivity.java
-        Toast.makeText(DriverProfilActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
-=======
-
         Toast.makeText(DriverProfileActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
->>>>>>> da86671f01a1534a1b011716696a6134db2f97d5:Guuber/app/src/main/java/com/example/guuber/DriverProfileActivity.java
+
 
 
 
@@ -132,27 +128,12 @@ public class DriverProfileActivity extends AppCompatActivity {
 
             });
             //like and dislike buttons onclick listeners to rate drivers and riders from their profile view
-<<<<<<< HEAD:Guuber/app/src/main/java/com/example/guuber/DriverProfilActivity.java
-            likeButton.setOnClickListener(v -> {
-                if (!editable){userInfo.adjustRating(true);
-                    Toast.makeText(DriverProfilActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-                    rateUser(true);
-                    //updateDatabase();
-                    likeButton.setClickable(false);
-                }
-            });
 
-            dislikeButton.setOnClickListener(v -> {
-                if (!editable){userInfo.adjustRating(true);
-                    Toast.makeText(DriverProfilActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
-                    rateUser(false);
-                    //updateDatabase();
-                    dislikeButton.setClickable(false);
-=======
             likeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!editable){userInfo.adjustRating(true);
+                    if (!editable) {
+                        userInfo.adjustRating(true);
                         Toast.makeText(DriverProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
                         rateUser(true);
                         //updateDatabase();
@@ -160,34 +141,34 @@ public class DriverProfileActivity extends AppCompatActivity {
                     }
                 }
             });
-
             dislikeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!editable){userInfo.adjustRating(true);
+                    if (!editable) {
+                        userInfo.adjustRating(true);
                         Toast.makeText(DriverProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
                         rateUser(false);
                         //updateDatabase();
                         dislikeButton.setClickable(false);
                     }
->>>>>>> da86671f01a1534a1b011716696a6134db2f97d5:Guuber/app/src/main/java/com/example/guuber/DriverProfileActivity.java
                 }
             });
-            //onClickListeners for email and phone number fields to contact User
+                            //onClickListeners for email and phone number fields to contact User
 
             emailField.setOnClickListener(v -> {
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
-                intent.setData(Uri.parse("mailto:"+ email));
+                intent.setData(Uri.parse("mailto:" + email));
                 startActivity(intent);
             });
 
             phoneNumberField.setOnClickListener(v -> {
                 Intent intent = new Intent(Intent.ACTION_DIAL);
-                intent.setData(Uri.parse("tel:"+phoneNumber));
+                intent.setData(Uri.parse("tel:" + phoneNumber));
                 startActivity(intent);
             });
 
         } //finish uneditable else
+
 
         deleteButton = findViewById(R.id.deleteAccButtonDrIn);
         if (!editable){deleteButton.setVisibility(View.INVISIBLE);}
@@ -201,6 +182,7 @@ public class DriverProfileActivity extends AppCompatActivity {
         });
 
     }
+
     /**implement logic here for what you want to
      * happen upon back button press**/
     @Override
