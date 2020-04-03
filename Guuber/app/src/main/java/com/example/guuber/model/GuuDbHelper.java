@@ -1,5 +1,11 @@
 package com.example.guuber.model;
 
+
+//Citation: getting data
+//https://firebase.google.com/docs/firestore/query-data/get-data
+//Citation: creating documents and collections
+//https://firebase.google.com/docs/reference/android/com/google/firebase/firestore/DocumentReference#get()
+
 import android.util.Log;
 
 import androidx.annotation.NonNull;
