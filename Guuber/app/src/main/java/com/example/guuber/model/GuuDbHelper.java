@@ -1,6 +1,5 @@
 package com.example.guuber.model;
 
-
 //Citation: getting data
 //https://firebase.google.com/docs/firestore/query-data/get-data
 //Citation: creating documents and collections
@@ -408,6 +407,11 @@ public class GuuDbHelper {
         });
     }
 
+
+    /**
+     *
+     * @return list of requests in the databse
+     */
     public synchronized ArrayList<Map<String,Object>> getReqList(){
         return this.reqList;
     }
@@ -415,11 +419,11 @@ public class GuuDbHelper {
 
 
 
-
-
     /**
      * Helper function
      * add the user email to the request detail
+     * @param email the requesters email
+     * @param reqDetails hashmap containing the request details
      */
     public synchronized void updateReqList(String email,Map<String,Object> reqDetails){
 
