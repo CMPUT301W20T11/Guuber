@@ -319,6 +319,9 @@ public class GuuDbHelper {
                         profile.update("desLng", FieldValue.delete());
                         profile.update("oriLat", FieldValue.delete());
                         profile.update("oriLng", FieldValue.delete());
+                        profile.update("reqTip", FieldValue.delete());
+                        profile.update("tripCost", FieldValue.delete());
+                        profile.update("rideOfferFrom", FieldValue.delete());
                     }
                 }
             }
@@ -412,7 +415,7 @@ public class GuuDbHelper {
      * Gets a list of current request that riders post
      * @return - an ArrayList<Map<String,Object>> </String,Object> of request that need a driver
      * */
-    public synchronized ArrayList<Map<String,Object>> getReqList(){
+    public synchronized void setReqList(){
         requests.get().addOnCompleteListener(task -> {
             if(task.isSuccessful()){
                 for(QueryDocumentSnapshot document : task.getResult()){
@@ -424,8 +427,12 @@ public class GuuDbHelper {
                 Log.d("requestList","failed");
             }
         });
+    }
+
+    public synchronized ArrayList<Map<String,Object>> getReqList(){
         return this.reqList;
     }
+
 
 
 
@@ -436,11 +443,13 @@ public class GuuDbHelper {
      * add the user email to the request detail
      */
     public synchronized void updateReqList(String email,Map<String,Object> reqDetails){
+
         reqDetails.put("email", email);
         if(!reqList.contains(reqDetails)) {
             this.reqList.add(reqDetails);
         }
     }
+
 
     /**
      * Helper function
@@ -564,6 +573,17 @@ public class GuuDbHelper {
             profile.update("canceled","true"); //driver now has a field
         });
         return canceled;
+    }
+
+    /**
+     * takes care of deleting hanging fields when
+     * the drive is canceled on when they have offered a request, but ride was still pending for rider
+     * @param driverEmail the drivers email
+     */
+    public synchronized void deleteOfferStatOfferToFields(String driverEmail){
+        setProfile(driverEmail);
+        profile.update("offerStatus", FieldValue.delete());
+        profile.update("offerTo", FieldValue.delete());
     }
 
 

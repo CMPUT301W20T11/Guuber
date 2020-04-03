@@ -1,15 +1,12 @@
 package com.example.guuber;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -58,7 +55,7 @@ public class EditUserdataFragment extends DialogFragment {
                             if (activit.equals("RiderProfileActivity")){
                             ((RiderProfileActivity) getActivity()).updateData(fields, confirmText.getText().toString());}
                             else{
-                                ((DriverProfilActivity) getActivity()).updateData(fields, confirmText.getText().toString());
+                                ((DriverProfileActivity) getActivity()).updateData(fields, confirmText.getText().toString());
                             }
 
 

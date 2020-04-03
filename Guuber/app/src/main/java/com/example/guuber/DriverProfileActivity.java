@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
-import com.example.guuber.model.Vehicle;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * Code to display drivers information on their profile
  */
 
-public class DriverProfilActivity extends AppCompatActivity {
+public class DriverProfileActivity extends AppCompatActivity {
     String username;
     String email;
     String phoneNumber;
@@ -59,7 +58,7 @@ public class DriverProfilActivity extends AppCompatActivity {
         /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        Toast.makeText(DriverProfilActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
+        Toast.makeText(DriverProfileActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
 
 
 
@@ -142,7 +141,7 @@ public class DriverProfilActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (!editable){userInfo.adjustRating(true);
-                        Toast.makeText(DriverProfilActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(DriverProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
                         rateUser(true);
                         //updateDatabase();
                         likeButton.setClickable(false);
@@ -154,7 +153,7 @@ public class DriverProfilActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     if (!editable){userInfo.adjustRating(true);
-                        Toast.makeText(DriverProfilActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(DriverProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
                         rateUser(false);
                         //updateDatabase();
                         dislikeButton.setClickable(false);
@@ -236,7 +235,7 @@ public class DriverProfilActivity extends AppCompatActivity {
 
     public void deleteSelf(){
             driverDBHelper.deleteUser(userInfo.getEmail());
-            Toast.makeText(DriverProfilActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DriverProfileActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);

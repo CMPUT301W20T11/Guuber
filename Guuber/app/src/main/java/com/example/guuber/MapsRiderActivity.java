@@ -3,6 +3,7 @@ package com.example.guuber;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.ui.AppBarConfiguration;
 import android.os.Bundle;
@@ -95,6 +96,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private GeoApiContext geoRiderApiContext = null;
     LocationManager locationManager;
     Criteria criteria = new Criteria();
+    private boolean hasRated;
 
 
 
@@ -147,8 +149,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     viewRiderProfile();
                 }else if (position == WALLET){
                     openRiderWallet();
-                }else if (position == QR){
-                    makeQR();
                 } else if (position == SIGNOUT) {
                     signOut();
                 }
@@ -281,30 +281,17 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * @param d_email driver email
      */
     public void viewDriverProfile(String d_email) {
-        Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
-        driverProfileIntent.putExtra("caller", "external");
-        driverProfileIntent.putExtra("external_email", d_email);
+        Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity.class);
+        driverProfileIntent.putExtra("EMAIL", d_email);
         startActivity(driverProfileIntent);
     }
-
-
+    
     /**
      * Starts activity to display riders wallet information
      **/
     public void openRiderWallet(){
         final Intent riderWalletIntent = new Intent(MapsRiderActivity.this, WalletActivity.class);
         startActivity(riderWalletIntent);
-    }
-
-    /**
-     * Starts activity to allow rider to generate QR
-     **/
-    public void makeQR(){
-        final Intent qrProfileIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
-        // TODO: Template for how I expect the QR info to be passed (rideremail,amount)
-        String info = "md801003@gmail.com,20";
-        qrProfileIntent.putExtra("INFO_TAG", info);
-        startActivityForResult(qrProfileIntent, QR_REQ_CODE);
     }
 
     /**
@@ -603,6 +590,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         });
 
         if (!rideInProgress && !rideisPending) {
+            hasRated = false;
             final NumberPicker numberPicker = new NumberPicker(MapsRiderActivity.this);
             numberPicker.setMaxValue(100); numberPicker.setMinValue(0);
             builder
@@ -641,8 +629,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         dialog.dismiss();
                     })
                     .setNegativeButton("Cancel request", (dialog, which) -> {
-                        rideisPending = false; //unhandled from the drivers end.
-                        riderDBHelper.cancelRequest(currRider); //remove request from the database
+                        rideisPending = false;
+                        rideInProgress = false;
+                        riderDBHelper.cancelRequest(currRider);
                         guuberRiderMap.clear();
                         dialog.dismiss();
                     });
@@ -664,7 +653,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     .setNegativeButton("Cancel request", (dialog, which) -> {
                         rideisPending = false;
                         rideInProgress = false;
-                        //requestsList.remove(0);//remove the request from the requestslist
                         riderDBHelper.setCancellationStatus(currRider.getEmail(), potentialOfferer); //set status as canceled in the database
                         riderDBHelper.cancelRequest(currRider); //remove it from requests
                         guuberRiderMap.clear();
@@ -893,7 +881,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
             builder
                     .setTitle("Your diver has arrived!! That was pretty fast... ").setCancelable(false)
-                    .setNegativeButton("Rate driver", (dialog, which) -> {
+                    .setNegativeButton("View profile", (dialog, which) -> {
                         viewDriverProfile(potentialOfferer);
                     })
                     .setPositiveButton("Pay driver", (dialog, id) -> {
@@ -904,7 +892,14 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         payDriverIntent.putExtra("INFO_TAG", ridersEmail +"," + amount);   // Send email and fee to intent by a comma separated string
                         startActivityForResult(payDriverIntent, QR_REQ_CODE);// Show the generated qr
                         riderDBHelper.rideIsOver(currRider);
+                        riderDBHelper.setReqList(); //new
                         guuberRiderMap.clear();
+
+                        if(!hasRated){
+                            hasRated = true;
+                            DialogFragment rateFrag = RateFragment.newInstance(potentialOfferer);
+                            rateFrag.show(getSupportFragmentManager(), "Rating");
+                        }
                     });
             final AlertDialog alert = builder.create(); alert.show();
         },1000);
