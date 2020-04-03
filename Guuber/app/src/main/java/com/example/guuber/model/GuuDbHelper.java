@@ -5,7 +5,6 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
@@ -16,7 +15,6 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -331,9 +329,13 @@ public class GuuDbHelper {
         cancelRequest(rider);
         profile.update("canceled",FieldValue.delete());
         profile.update("arrived",FieldValue.delete());
+
+        //reqList.remove();
         reqList.clear(); //update request list without this request in it
+        android.util.Log.i("REQ List", reqList.toString());
         //non working
     }
+
 
     /**
      * Helper function for getRiderRequest
@@ -437,7 +439,7 @@ public class GuuDbHelper {
      * Helper function
      * add the user email to the request detail
      */
-    public synchronized void deleteFromReqList(String email,Map<String,Object> reqDetails){
+    public synchronized void deleteFromReqList(String email, Map<String,Object> reqDetails){
         reqDetails.put("email", email);
         if(reqList.contains(reqDetails)) {
             this.reqList.remove(reqDetails);

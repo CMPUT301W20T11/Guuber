@@ -342,7 +342,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
          */
         guuberRiderMap.setOnMapClickListener(arg0 -> {
             //cant build a route unless you cancel the current one
-            if (!rideisPending && !rideInProgress) {
+            if (!rideisPending || !rideInProgress) {
                 if (getChangingCoordinate().equals("Origin")) {
                     setMarker(arg0, "Origin");
                     setOrigin(arg0);
