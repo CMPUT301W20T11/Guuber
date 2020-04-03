@@ -116,7 +116,7 @@ public class GuuDbHelperTest {
         assertEquals((Integer) 0, obtain.getRider());
         User user = dbHelper.getUser("kluc1@ualberta.ca");
         Thread.sleep(1000);
-        dbHelper.makeReq(user, (double) 20,1620,1620,1080,1080, "30");
+        dbHelper.makeReq(user, (double) 20,1620,1620,1080,1080, 30);
         Thread.sleep(1000);
         Map<String,Object> reqDetail = dbHelper.getRiderRequest(user);
         Thread.sleep(1000);
@@ -170,7 +170,7 @@ public class GuuDbHelperTest {
         Thread.sleep(5000);
         User user = dbHelper.getUser("m@gmail.com");
         Thread.sleep(1000);
-        dbHelper.makeReq(user, (double) 60, 0000,0000,1000,1000,"5050");
+        dbHelper.makeReq(user, (double) 60, 0000,0000,1000,1000,5050);
         Thread.sleep(1000);
 
         //Boolean mike = dbHelper.driverArrive(user, "0000", "0000");
@@ -203,11 +203,11 @@ public class GuuDbHelperTest {
         Thread.sleep(1000);
         User user = dbHelper.getUser("m@gmail.com");
         Thread.sleep(1000);
-        dbHelper.makeReq(user, (double) 60,0000,0000,1000,1000,"60");
+        dbHelper.makeReq(user, (double) 60,0000,0000,1000,1000,60);
         Thread.sleep(1000);
         user = dbHelper.getUser("k@gmail.com");
         Thread.sleep(1000);
-        dbHelper.makeReq(user, (double) 10,9999,9999,7777,7777,"100");
+        dbHelper.makeReq(user, (double) 10,9999,9999,7777,7777,100);
         Thread.sleep(1000);
         ArrayList<Map<String,Object>> reqList = new ArrayList<Map<String,Object>>();
         reqList = dbHelper.getReqList();
@@ -243,7 +243,7 @@ public class GuuDbHelperTest {
         String availOffer = dbHelper.checkOfferStatus(mockUser3());
         assertEquals("none",availOffer);
         Thread.sleep(1000);
-        dbHelper.makeReq(mockUser2(),(double)10,69.312031230,72.01230345,30.12031204,50.12312415,"20");
+        dbHelper.makeReq(mockUser2(),(double)10,69.312031230,72.01230345,30.12031204,50.12312415,20);
         Thread.sleep(1000);
         availOffer = dbHelper.seeOffer(mockUser2());
         assertEquals(null,availOffer);
@@ -278,7 +278,7 @@ public class GuuDbHelperTest {
     public void completingRequestTest() throws InterruptedException{
         dbHelper.checkEmail(mockUser2());
         Thread.sleep(1000);
-        dbHelper.makeReq(mockUser2(),(double)10,69.312031230,72.01230345,30.12031204,50.12312415,"20");
+        dbHelper.makeReq(mockUser2(),(double)10,69.312031230,72.01230345,30.12031204,50.12312415,20);
         Thread.sleep(1000);
         dbHelper.reqAccepted(mockUser2(),mockUser3());
         Thread.sleep(1000);
