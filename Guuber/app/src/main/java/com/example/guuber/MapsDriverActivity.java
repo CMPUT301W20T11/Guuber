@@ -252,11 +252,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                 LatLng end = new LatLng(destinationLat, destinationLong);
 
                 setMarker(start, offerToEmail);
-                setMarker(end, offerToEmail);
+                //setMarker(end, offerToEmail);
 
                 Marker startMarker =  guuberDriverMap.addMarker(new MarkerOptions().position(start).flat(false).title(offerToEmail));
                 calculateDirectionsToPickup(startMarker);
-                calculateDirectionsBetweenPickupandDropOff(offerToEmail,start, end);
+                //calculateDirectionsBetweenPickupandDropOff(offerToEmail,start, end);
             }
         });
     }
@@ -375,7 +375,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         Double offeredTip = null, destinationLat = null, destinationLong = null, originLat = null, originLong = null, tripCost = null;
         String email = null;
 
-
+        if (guuberDriverMap != null){
+            guuberDriverMap.clear(); //wll this fix the driver thing?
+        }
+        driverDBHelper.setReqList();
+        driverDBHelper.setReqList();
         ArrayList<Map<String, Object>> openRequestList = driverDBHelper.getReqList(); //needs to be called twice to draw open requests. fine fore now
         android.util.Log.i(TAG, "OPEN REQUEST LIST RAW" + openRequestList.toString());
 
@@ -627,6 +631,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     routeInProgress = false;
                     offerAccepted = false;
                     guuberDriverMap.clear();
+                    driverDBHelper.setReqList();
                 } else {
                     makeText(this, "Transaction failed. Try Paying your Driver Again", Toast.LENGTH_SHORT).show();
                     routeInProgress = true;
@@ -666,33 +671,38 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             builder
                     .setMessage("Offer has been sent")
                     .setPositiveButton("Check status", (dialog, which) -> {
-                        /**@TODO check if the request collection contains this rider email, if it doesnt , they have bee canceled on**/
-                        String statusCheck = null;
-                        try {
-                            statusCheck = driverDBHelper.checkOfferStatus(currDriver);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (statusCheck != null) {
-                            if (statusCheck.equals("accepted")) {
-                                offerAccepted = true;
-                                routeInProgress = true;
-                                try {
-                                    offerAccepted(riderEmail, marker);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            } else if (statusCheck.equals("declined")) {
+                        /**@TODO check if the request collection contains this rider email, if it does not , they have been canceled on**/
+                        uRefUsers.document(riderEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
+                            if (null == documentSnapshot.get("oriLat")) {
+                                guuberDriverMap.clear();
+                                driverDBHelper.deleteOfferStatOfferToFields(currDriver.getEmail());
+                                youHaveBeenCancelledOnToast();
                                 offerAccepted = false;
+                                routeInProgress = false;
                                 offerSent = false;
-                                offerDeclined();
                                 dialog.dismiss();
-                            } else {
-                                stillPendingToast();
-                                dialog.dismiss();
+                            }else{
+                                if (null != documentSnapshot.get("offerStatus")){
+                                    String statusCheck = documentSnapshot.get("offerStatus").toString();
+                                    if (statusCheck.equals("accepted")) {
+                                        offerAccepted = true;
+                                        routeInProgress = true;
+                                        try {
+                                            offerAccepted(riderEmail, marker);
+                                        } catch (InterruptedException ex) {
+                                            ex.printStackTrace();
+                                        }
+                                    }else if (statusCheck.equals("declined")) {
+                                        offerAccepted = false;
+                                        offerSent = false;
+                                        offerDeclined();
+                                    }else{
+                                        stillPendingToast();
+                                    }
+                                }
                             }
-                        }
+                            dialog.dismiss();
+                        });
                     });
             final AlertDialog alert = builder.create();alert.show();
 
@@ -704,18 +714,20 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                         cancelled = driverDBHelper.getCancellationStatus(currDriver.getEmail());
                         if (cancelled.equals("false")){
                             youHaveNotBeenCancelledOnToast();
+                            dialog.dismiss();
                         }else{
                             routeInProgress = false; offerSent = false; offerAccepted = false;
                             youHaveBeenCancelledOnToast();
                             guuberDriverMap.clear(); //clear the map
                             drawOpenRequests(); //draw the open requests
+                            dialog.dismiss();
                         }
-                        dialog.dismiss();
                     })
                     .setNeutralButton("View rider profile", (dialog, which) -> viewRiderProfile(riderEmail))
                     .setPositiveButton("Let rider know you've arrived", (dialog, which) -> {
                         weHaveToldThemToast();
                         driverDBHelper.setArrival(currDriver.getEmail());
+                        dialog.dismiss();
                         });
                     }
             final AlertDialog alert = builder.create();alert.show();
@@ -749,9 +761,10 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * Offer a ride to the Rider and be accepted or denied
      */
     public void offerRide(Marker marker) throws InterruptedException {
+        riderEmail = marker.getTitle();
         calculateDirectionsToPickup(marker); //null pointer if location is null
         User currDriver = ((UserData)(getApplicationContext())).getUser();
-        riderEmail = marker.getTitle();
+
         offerSent = true;
         guuberDriverMap.clear();
 
