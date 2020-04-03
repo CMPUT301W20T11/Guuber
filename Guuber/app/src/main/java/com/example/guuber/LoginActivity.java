@@ -272,7 +272,8 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
 	// Register fragment cancel button onClick listener implementation
 	@Override
-	public void onCancelPressed(){
+	public void onCancelPressed(String message){
+		Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 		signOut();
 	}
 

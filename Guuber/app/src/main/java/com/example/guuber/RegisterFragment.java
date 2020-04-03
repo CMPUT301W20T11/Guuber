@@ -22,8 +22,12 @@ import android.widget.Toast;
 
 import com.example.guuber.model.User;
 import com.example.guuber.model.Wallet;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -59,7 +63,7 @@ public class RegisterFragment extends DialogFragment {
 	// Implemented within Login
 	public interface OnFragmentInteractionListener {
 		void onOkPressed();
-		void onCancelPressed();
+		void onCancelPressed(String message);
 	}
 
 	@Override
@@ -125,7 +129,7 @@ public class RegisterFragment extends DialogFragment {
 				.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						listener.onCancelPressed();
+						listener.onCancelPressed("Registration cancelled");
 					}
 				})
 				.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -149,13 +153,28 @@ public class RegisterFragment extends DialogFragment {
 							if (isRider == 0) {
 								user.setRider(0);
 							}
-							// Query the username to ensure its unique before adding to database TODO
+							// Query the username to ensure its unique before adding to database
+							uRef.whereEqualTo("username", userNameS).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+								@Override
+								public void onComplete(@NonNull Task<QuerySnapshot> task) {
+									if (task.isSuccessful()) {
+										if(task.getResult().isEmpty()){
+											Log.d("Query", "Result was empty", task.getException());
+											uRef.document(user.getEmail()).set(user);
+											listener.onOkPressed();
+										}else{
+											listener.onCancelPressed("Username must be unique");
+											for (QueryDocumentSnapshot document : task.getResult()) {
+												Log.d("Query", document.getId() + " => " + document.getData());
+											}
+										}
+									} else {
+										Log.d("Query", "Error getting documents: ", task.getException());
+									}
 
-							uRef.document(user.getEmail()).set(user);
-
-							listener.onOkPressed();
-
-
+								}
+							});
+							
 						}catch (Exception e){
 							Log.d("Database", "Failed to register user", e);
 							Toast toast = Toast.makeText(getActivity(), "Registration failed", Toast.LENGTH_SHORT);
