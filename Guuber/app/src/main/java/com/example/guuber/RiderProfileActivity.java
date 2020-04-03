@@ -146,7 +146,10 @@ public class RiderProfileActivity extends AppCompatActivity {
             });
 
             //onClickListeners for email and phone number fields to contact User
-
+            //Citation: https://stackoverflow.com/a/43975144
+            //Solution: by Tabish Khan and S. Spieker
+            //Question: android studio calling button by Andrew Bennett
+            //Email inferred solution from calling button solution
             emailField.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
