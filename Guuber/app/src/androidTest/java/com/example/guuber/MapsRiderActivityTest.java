@@ -1,14 +1,8 @@
 package com.example.guuber;
 
-import android.view.View;
-import android.widget.Spinner;
-import android.widget.TextView;
-
 import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.rule.ActivityTestRule;
-
 import com.robotium.solo.Solo;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -36,21 +30,20 @@ public class MapsRiderActivityTest {
     public void setUp() throws Exception{
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
         solo.waitForActivity(LoginActivity.class, 2000);
-        solo.clickOnText("As Rider");
-        solo.clickOnText("Sign in");
-        //solo.clickOnView(solo.getView(android.R.id.gso));
+        solo.clickOnText("Sign In");
     }
 
     /**
-     * check the rider make request button
-     * before providing coordinates
+     * check that when profile is clicked the activity is changed
+     * to rider  profile
      */
     @Test
-    public void makeRequestButton(){
+    public void testProfileActivity(){
         solo.waitForActivity(MapsRiderActivity.class, 1000);
-        solo.clickOnText("Make Request");
-        solo.assertCurrentActivity("full coordinates not provided: Should remain on MapsRiderActivity", MapsRiderActivity.class);
+        solo.pressSpinnerItem(0,1);
+        solo.assertCurrentActivity("Activity should change to profile activity", RiderProfileActivity.class);
     }
+
 
     /**
      * check the rider make request button
@@ -62,6 +55,7 @@ public class MapsRiderActivityTest {
         solo.pressSpinnerItem(0,3);
         solo.assertCurrentActivity("Activity should change to log in activity", LoginActivity.class);
     }
+
 
     /**
      * closes the activity after each test
