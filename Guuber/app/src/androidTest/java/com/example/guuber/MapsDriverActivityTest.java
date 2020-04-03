@@ -59,14 +59,16 @@ public class MapsDriverActivityTest {
     }
 
     /**
-     * check the Offer Request Button Function
+     * check that when profile is clicked the activity is changed
+     * to driver profile
      */
     @Test
-    public void driverOfferRequestButton(){
+    public void testProfileActivity(){
         solo.waitForActivity(MapsDriverActivity.class, 1000);
-        solo.clickOnText("Offer Request");
-        solo.assertCurrentActivity("Should remain on Driver Activity",MapsDriverActivity.class);
+        solo.pressSpinnerItem(0,1);
+        solo.assertCurrentActivity("Activity should change to profile activity", DriverProfileActivity.class);
     }
+
 
     /**
      * closes the activity after each test

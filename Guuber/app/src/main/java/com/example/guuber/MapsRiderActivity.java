@@ -237,16 +237,16 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 }
             }else if (documentSnapshot.get("oriLat") != null){
                 android.util.Log.i(TAG, "ori lat in non null after ride end");
-                rideisPending = true; //the route is pending
-                rideInProgress = false;
+                //rideisPending = true; //the route is pending
+                //rideInProgress = false;
             }
         });
         // check requests
         uRefRequests.document(currRider.getEmail()).addSnapshotListener(this, (documentSnapshot, e) -> {
             assert documentSnapshot != null;
             if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("desLat") != null) {
-                //rideisPending = true;
-                //rideInProgress = false;
+                rideisPending = true;
+                rideInProgress = false;
                 android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
                 double originLat = Double.parseDouble(Objects.requireNonNull(documentSnapshot.get("oriLat")).toString());
                 double originLong = Double.parseDouble(Objects.requireNonNull(documentSnapshot.get("oriLng")).toString());
@@ -321,14 +321,14 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         guuberRiderMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
         guuberRiderMap.setOnInfoWindowClickListener(MapsRiderActivity.this);
 
-        /**
+        /*
          * logs the coordinates in console upon map click this is giving the user a chance to set their pickup
          * location and drop-off location
          * @params latitude on longitude retrieved from map click
-         **/
+         */
         guuberRiderMap.setOnMapClickListener(arg0 -> {
             //cant build a route unless you cancel the current one
-            if (!rideisPending || !rideInProgress) {
+            if (!rideisPending && !rideInProgress) {
                 if (getChangingCoordinate().equals("Origin")) {
                     setMarker(arg0, "Origin");
                     setOrigin(arg0);
@@ -494,6 +494,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
     /**
+     * CITATION:
      * OPENS UP SETTINGS FOR THEM TO TURN ON GPS IF IT IN NOT ALREADY ON
      **/
     private void buildAlertMessageNoGps() {
@@ -559,6 +560,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     rideInProgress = false;
                     rideisPending = false;
                 }else{
+                    rideInProgress = false; //for testing
+                    rideisPending = false; // for testing
                     paymentFailed = true;
                     payDriverFirstToast();
                 }
@@ -583,6 +586,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
         User currRider = ((UserData)(getApplicationContext())).getUser();
 
+        //potential offerer is the drivers email
         uRefUsers.document(currRider.getEmail()).addSnapshotListener(this, (documentSnapshot, e) -> {
             assert documentSnapshot != null;
             if (documentSnapshot.get("rideOfferFrom") != null) {
@@ -637,7 +641,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     });
                 final AlertDialog alert = builder.create(); alert.show();
 
-            }else if (rideInProgress) {
+            }else if (rideInProgress && !rideisPending) {
                 builder
                     .setTitle("Driver Is On Way")
                         .setNeutralButton("View driver profile", (dialog, which) -> viewDriverProfile(potentialOfferer))
@@ -742,7 +746,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         double originLatitude = getOrigin().latitude;
         double originLongitude = getOrigin().longitude;
-        double destinationLatitude = getDestination().latitude; //new , test  this (apr 1)
+        double destinationLatitude = getDestination().latitude;
         double destinationLongitude = getDestination().longitude;
         double tip = getTip();
         double tripCost = getTripCost();
@@ -867,6 +871,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         rideInProgress = false;
         rideisPending = false;
 
+        //getting the trip cost from the databse just in case you leave --> signout --> log in to driver --> sign in
         uRefUsers.document(ridersEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
             assert documentSnapshot != null;
             if (documentSnapshot.get("rideOfferFrom") != null) {

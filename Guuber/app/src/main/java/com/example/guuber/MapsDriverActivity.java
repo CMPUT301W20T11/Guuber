@@ -233,6 +233,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     offerAccepted = true;
                     offerSent = false;
                     routeInProgress = true;
+                    guuberDriverMap.clear();
                     getRideDetails(offerToEmail);
                 }
                 else if (Objects.requireNonNull(documentSnapshot.get("offerStatus")).toString().equals("pending")) {
@@ -340,7 +341,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         guuberDriverMap.setOnInfoWindowClickListener(MapsDriverActivity.this);
 
         EditText geoLocationSearch = findViewById(R.id.geo_location_EditText);
-        /* logs the coordinates in console upon map click this is giving the driver a chance to browse
+        /*logs the coordinates in console upon map click this is giving the driver a chance to browse
            a specified area for open requests
            @params latitude on longitude retrieved from map click */
         guuberDriverMap.setOnMapClickListener(arg0 -> {
@@ -387,7 +388,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         if (guuberDriverMap != null){
             guuberDriverMap.clear(); //wll this fix the driver thing?
         }
-
+        driverDBHelper.setReqList();
         ArrayList<Map<String, Object>> openRequestList = driverDBHelper.getReqList(); //needs to be called twice to draw open requests. fine fore now
         android.util.Log.i(TAG, "OPEN REQUEST LIST RAW" + openRequestList.toString());
 
