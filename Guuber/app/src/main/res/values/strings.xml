@@ -17,7 +17,6 @@
         <item>MENU</item>
         <item>My Profile</item>
         <item>Wallet</item>
-        <item>Generate QR</item>
         <item>Sign Out</item>
     </string-array>
     <string-array name="menuDriver">

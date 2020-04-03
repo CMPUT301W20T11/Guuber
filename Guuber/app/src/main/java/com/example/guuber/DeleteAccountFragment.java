@@ -42,7 +42,7 @@ public class DeleteAccountFragment extends DialogFragment {
         if ("rider".equals(activit)){
         ((RiderProfileActivity) getActivity()).deleteSelf();}
         else if ("driver".equals(activit)){
-        ((DriverProfilActivity) getActivity()).deleteSelf();}
+        ((DriverProfileActivity) getActivity()).deleteSelf();}
         }
         })//add click listener that calls Main activity method
          .create();

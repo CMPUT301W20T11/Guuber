@@ -41,8 +41,14 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+
+// Citation: Authenticate Using Google Sign-in On Android
+// https://firebase.google.com/docs/auth/android/google-signin
+// Citation: Firebase Quickstart Samples for Android
+// https://github.com/firebase/quickstart-android
+
 /**
- * class to implement the Login Activity
+ * Class to implement the Login Activity
  * includes google sign in and ability
  * to log in as rider or driver
  */
@@ -56,14 +62,13 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 	private FirebaseAuth mAuth;
 	private static final String TAG = "LoginActivity";
 	private GoogleSignInClient mGoogleSignInClient;
-	//private RadioGroup radioGroup;
 
 	private FirebaseFirestore db = FirebaseFirestore.getInstance();
 	private DocumentReference uRef;
 
 	private static final int RC_SIGN_OUT = 1000;
 
-	//location client
+	// location client
 	private FusedLocationProviderClient fusedLocationClient;
 	Location currLocation;
 
@@ -73,7 +78,6 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_login);
 		SignInButton signInButton = findViewById(R.id.sign_in_button);
-		//radioGroup = findViewById(R.id.radio_group);
 
 		// Configure sign-in to request the user's ID, email address, and basic
 		// profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -97,31 +101,26 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		});
 
 
-		/******INITIALIZING LOCATION CLIENT*********/
+		// INITIALIZING LOCATION CLIENT
 		fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 		fusedLocationClient.getLastLocation()
 				.addOnSuccessListener(this, new OnSuccessListener<Location>() {
 					@Override
 					public void onSuccess(Location location) {
-						android.util.Log.i("Holy shit", "location is null");
+						android.util.Log.i("Bad", "location is null");
 						if (location != null) {
 							currLocation = location;
 						}
 					}
 				});
-		/**********************************************/
 	}
 
 	@Override
 	protected void onStart() {
 		super.onStart();
-		FirebaseUser currentUser = mAuth.getCurrentUser();
-		currentUser = null; // TODO delete when login activity is perfectly working
-		updateUI(currentUser);
+		updateUI(null);
 
 	}
-
-
 
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -159,6 +158,11 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 	}
 
 	// [START auth_with_google]
+
+	/**
+	 * Perform the firebase authentication with google sign in
+	 * @param acct the google account
+	 */
 	private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 		Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
@@ -203,13 +207,18 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 	}
 	// [END auth_with_google]
 
-	// [START signin]
+	/**
+	 * Sign in to the google sign in client
+	 */
 	private void signIn() {
 		Intent signInIntent = mGoogleSignInClient.getSignInIntent();
 		startActivityForResult(signInIntent, RC_SIGN_IN);
 	}
 	// [END signin]
 
+	/**
+	 * Initiate the sign out from both firebase and google sign out
+	 */
 	private void signOut() {
 		// Firebase sign out
 		mAuth.signOut();
@@ -238,13 +247,11 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 				});
 	}
 
+	/**
+	 * Update the interface for the user, if successful opens the proper map activity depending on driver or rider account
+	 * @param user The Firebase user
+	 */
 	private void updateUI(FirebaseUser user) {
-		// TODO check what type of user is logged in and display its appropriate homepage
-
-		//int radioButtonID = radioGroup.getCheckedRadioButtonId();
-		//View radioButton = radioGroup.findViewById(radioButtonID);
-		//int signInType = 0;
-		User loggedUser = null;
 		Context context = LoginActivity.this;
 		if (user != null) {
 			// Populate the singleton
@@ -273,38 +280,46 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 				}
 			});
 		} else {
-			/**if the user has never registered before we have to get permissions**/
+			// if the user has never registered before we have to get permissions
 			checkUserPermissions();
-			}
-
 		}
 
+	}
 
-	// Register fragment cancel button onClick listener implementation
+	/**
+	 * Register fragment cancel button onClick listener implementation
+	 */
 	@Override
-	public void onCancelPressed(){
+	public void onCancelPressed(String message){
+		Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 		signOut();
 	}
 
-	// Register fragment ok button onClick listener implementation
+	/**
+	 * Register fragment ok button onClick listener implementation
+ 	 */
 	@Override
 	public void onOkPressed(){
 		final FirebaseUser user = mAuth.getCurrentUser();
 		updateUI(user);
 	}
 
+	/**
+	 * Checks User permissions for location access
+	 * @return Boolean of if there location is on or off
+	 */
 	public boolean checkUserPermissions(){
 		if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
 				android.Manifest.permission.ACCESS_FINE_LOCATION)
 				== PackageManager.PERMISSION_GRANTED) {
-					isLocationPermissionGranted = true;
-					return true;
-			} else {
-				ActivityCompat.requestPermissions(this,
-						new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
-						PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
-				return false;
-				}
+			isLocationPermissionGranted = true;
+			return true;
+		} else {
+			ActivityCompat.requestPermissions(this,
+					new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+					PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION);
+			return false;
+		}
 	}
 
 	@Override
@@ -325,23 +340,25 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		}
 	}
 
-
+	/**
+	 * The permission dialog popup
+	 */
 	public  void userPermissionsRationale(){
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Hey there Friend. To have the best experience with this application, " +
+		builder.setMessage("Hey there Friend. To have the best experience with this application, " +
 				"we ask you provide us your location. Don't worry. We are just going to sell your data and " +
 				"exploit information that makes you vulnerable. If you have chosen to not be asked again, " +
-                "please visit your app setting and grant us your location permissions")
+				"please visit your app setting and grant us your location permissions")
 				.setCancelable(false)
-                .setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
+				.setPositiveButton("Got It!", new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						checkUserPermissions();
 						dialog.dismiss();
 					}
 				});
-	final AlertDialog alert = builder.create();
-        alert.show();
+		final AlertDialog alert = builder.create();
+		alert.show();
 	}
 
 }

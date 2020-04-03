@@ -5,13 +5,11 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.guuber.model.User;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 /**
@@ -19,22 +17,22 @@ import com.google.firebase.firestore.FirebaseFirestore;
  */
 
 public class ViewProfileActivity extends AppCompatActivity {
-    String username;
-    String email;
-    String phoneNumber;
-    Integer posRate;
-    Integer negRate;
+    private String username;
+    private String email;
+    private String phoneNumber;
+    private Integer posRate;
+    private Integer negRate;
 
-    TextView emailField;
-    TextView usernameField;
-    TextView phoneNumberField;
-    TextView posRateDisplay;
-    TextView negRateDisplay;
-    ImageView likeButton;
-    ImageView dislikeButton;
-    ImageView profileImg;
+    private TextView emailField;
+    private TextView usernameField;
+    private TextView phoneNumberField;
+    private TextView posRateDisplay;
+    private TextView negRateDisplay;
+    private ImageView likeButton;
+    private ImageView dislikeButton;
+    private ImageView profileImg;
 
-    User user;
+    private User user;
 
     // Instantiate the database
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -62,18 +60,6 @@ public class ViewProfileActivity extends AppCompatActivity {
         // Get the passed email info
         Intent intent = getIntent();
         email = intent.getExtras().getString("EMAIL");
-
-        // On like button
-        likeButton.setOnClickListener(v -> {
-           rateUser(true);
-            Toast.makeText(ViewProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-        });
-
-        // On dislike button
-        dislikeButton.setOnClickListener(v -> {
-            rateUser(false);
-            Toast.makeText(ViewProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
-        });
     }
 
     @Override
@@ -107,19 +93,6 @@ public class ViewProfileActivity extends AppCompatActivity {
                 profileImg.setImageResource(R.drawable.driverprf);
             }
         });
-
-        // On like button
-        likeButton.setOnClickListener(v -> {
-           rateUser(true);
-           Toast.makeText(ViewProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-        });
-
-        // On dislike button
-        dislikeButton.setOnClickListener(v -> {
-            rateUser(false);
-            Toast.makeText(ViewProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
-        });
-
     }
 
     // On back button pressed
@@ -130,16 +103,5 @@ public class ViewProfileActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    // Rate the user
-    public void rateUser(Boolean rating){
-
-        // Update the db object's rating
-        if(!rating){
-            uRef.document(email).update("negRating", FieldValue.increment(1));
-        }else{
-            uRef.document(email).update("posRating", FieldValue.increment(1));
-        }
     }
 }

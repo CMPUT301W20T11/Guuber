@@ -20,8 +20,8 @@ public class ScanQrActivityTest {
     private Solo solo;
 
     @Rule
-    public ActivityTestRule<scanQrActivity> rule =
-            new ActivityTestRule<>(scanQrActivity.class,true,true);
+    public ActivityTestRule<ScanQrActivity> rule =
+            new ActivityTestRule<>(ScanQrActivity.class,true,true);
 
     /**
      * runs before all tests and creates solo instance.
@@ -30,7 +30,7 @@ public class ScanQrActivityTest {
     @Before
     public void setUp() throws Exception{
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
-        solo.waitForActivity(scanQrActivity.class, 2000);
+        solo.waitForActivity(ScanQrActivity.class, 2000);
     }
 
     /**
@@ -39,9 +39,9 @@ public class ScanQrActivityTest {
      */
     @Test
     public void onScanButtonClick(){
-        solo.waitForActivity(scanQrActivity.class, 1000);
+        solo.waitForActivity(ScanQrActivity.class, 1000);
         solo.clickOnText("Scan");
-        solo.assertCurrentActivity("Activity should stay in scanQrActivity", scanQrActivity.class);
+        solo.assertCurrentActivity("Activity should stay in scanQrActivity", ScanQrActivity.class);
     }
 
     /**

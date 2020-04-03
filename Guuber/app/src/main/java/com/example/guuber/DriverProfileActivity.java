@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
-import com.example.guuber.model.Vehicle;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -23,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * Code to display drivers information on their profile
  */
 
-public class DriverProfilActivity extends AppCompatActivity {
+public class DriverProfileActivity extends AppCompatActivity {
     String username;
     String email;
     String phoneNumber;
@@ -56,7 +55,12 @@ public class DriverProfilActivity extends AppCompatActivity {
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+<<<<<<< HEAD:Guuber/app/src/main/java/com/example/guuber/DriverProfilActivity.java
         Toast.makeText(DriverProfilActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
+=======
+
+        Toast.makeText(DriverProfileActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
+>>>>>>> da86671f01a1534a1b011716696a6134db2f97d5:Guuber/app/src/main/java/com/example/guuber/DriverProfileActivity.java
 
 
 
@@ -129,6 +133,7 @@ public class DriverProfilActivity extends AppCompatActivity {
 
             });
             //like and dislike buttons onclick listeners to rate drivers and riders from their profile view
+<<<<<<< HEAD:Guuber/app/src/main/java/com/example/guuber/DriverProfilActivity.java
             likeButton.setOnClickListener(v -> {
                 if (!editable){userInfo.adjustRating(true);
                     Toast.makeText(DriverProfilActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
@@ -144,6 +149,29 @@ public class DriverProfilActivity extends AppCompatActivity {
                     rateUser(false);
                     //updateDatabase();
                     dislikeButton.setClickable(false);
+=======
+            likeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!editable){userInfo.adjustRating(true);
+                        Toast.makeText(DriverProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
+                        rateUser(true);
+                        //updateDatabase();
+                        likeButton.setClickable(false);
+                    }
+                }
+            });
+
+            dislikeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (!editable){userInfo.adjustRating(true);
+                        Toast.makeText(DriverProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+                        rateUser(false);
+                        //updateDatabase();
+                        dislikeButton.setClickable(false);
+                    }
+>>>>>>> da86671f01a1534a1b011716696a6134db2f97d5:Guuber/app/src/main/java/com/example/guuber/DriverProfileActivity.java
                 }
             });
             //onClickListeners for email and phone number fields to contact User
@@ -212,7 +240,7 @@ public class DriverProfilActivity extends AppCompatActivity {
 
     public void deleteSelf(){
             driverDBHelper.deleteUser(userInfo.getEmail());
-            Toast.makeText(DriverProfilActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(DriverProfileActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
             Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(intent);
