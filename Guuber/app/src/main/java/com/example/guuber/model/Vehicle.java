@@ -26,11 +26,6 @@ public class Vehicle {
 		this.reg = reg;
 	}
 
-	/**
-	 * Get the person the car is registered to
-	 * @return - register driver
-	 */
-	public String getReg() { return reg; }
 
 	/**
 	 * set the person the car is registered to

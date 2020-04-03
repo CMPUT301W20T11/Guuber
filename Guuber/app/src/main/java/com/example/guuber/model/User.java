@@ -27,12 +27,7 @@ public class User implements Serializable {
 
     private Integer posRating;
     private Integer negRating;
-    private Integer percentNegative;
-    private Integer percentPositive;
 
-//    /***********the database******/
-//    private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
-//    private GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
 
     /**
      * Empty constructor for firebase use
@@ -80,39 +75,7 @@ public class User implements Serializable {
         this.negRating = negRating;
     }
 
-    // In case we need vehicle objects, may be deleted
-//    /**
-//     * Get vehicle object
-//     * @return
-//     */
-//    public Vehicle getVehicle() {
-//        return vehicle;
-//    }
-//
-//    /**
-//     * Set vehicle object
-//     * @param vehicle
-//     */
-//    public void setVehicle(Vehicle vehicle) {
-//        this.vehicle = vehicle;
-//    }
 
-    public int getPercentNegative(){
-        Integer total = getNegRating() + getPosRating();
-        if (total==0){
-            return 0;}
-        else{
-            Integer neg = (getNegRating() * 100) / total;
-            return neg;}
-    }
-    public int getPercentPositive(){
-        Integer total = getNegRating() + getPosRating();
-        if (total==0){
-            return 0;}
-        else{
-            Integer pos = (getPosRating() * 100) / total;
-            return pos;}
-    }
 
     public int getPosRating(){return this.posRating;}
 
@@ -257,12 +220,6 @@ public class User implements Serializable {
         this.username = username;
     }
 
-    /**
-     * Rate a user TODO
-     * Uses AggPositive + AggNegative from db to make AggTotal (then from there you can easily make a percentage of Negative to Positive reviews for each user)
-     * When a user gets a new rating add it to either the AggPositive or AggNegative
-     */
-    public void rateUser() {
-    }
+
 }
 

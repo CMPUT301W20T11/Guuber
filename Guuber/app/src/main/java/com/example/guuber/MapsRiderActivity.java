@@ -638,9 +638,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         dialog.dismiss();
                     })
                     .setNegativeButton("Cancel request", (dialog, which) -> {
-                        rideisPending = false;
-                        rideInProgress = false;
-                        riderDBHelper.cancelRequest(currRider);
+                        rideisPending = false; //unhandled from the drivers end.
+                        riderDBHelper.cancelRequest(currRider); //remove request from the database
                         guuberRiderMap.clear();
                         dialog.dismiss();
                     });
@@ -662,6 +661,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     .setNegativeButton("Cancel request", (dialog, which) -> {
                         rideisPending = false;
                         rideInProgress = false;
+                        //requestsList.remove(0);//remove the request from the requestslist
                         riderDBHelper.setCancellationStatus(currRider.getEmail(), potentialOfferer); //set status as canceled in the database
                         riderDBHelper.cancelRequest(currRider); //remove it from requests
                         guuberRiderMap.clear();
@@ -901,7 +901,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         payDriverIntent.putExtra("INFO_TAG", ridersEmail +"," + amount);   // Send email and fee to intent by a comma separated string
                         startActivityForResult(payDriverIntent, QR_REQ_CODE);// Show the generated qr
                         riderDBHelper.rideIsOver(currRider);
-                        riderDBHelper.setReqList(); //new
                         guuberRiderMap.clear();
                     });
             final AlertDialog alert = builder.create(); alert.show();

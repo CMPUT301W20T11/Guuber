@@ -53,12 +53,9 @@ public class DriverProfilActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.driver_profile_disp);
-        //UserData userData = UserData.getInstance();
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
-        /**display the back button**/
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         Toast.makeText(DriverProfilActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
 
 
@@ -83,32 +80,26 @@ public class DriverProfilActivity extends AppCompatActivity {
             /**
              * allows for editing userdata
              */
-            phoneNumberField.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    EditUserdataFragment fragment = new EditUserdataFragment();
-                    Bundle phoneBundle = new Bundle();
-                    phoneBundle.putString("field", "phone number");
-                    phoneBundle.putString("old", phoneNumber);
-                    phoneBundle.putString("activity", "DriverProfilActivity");
-                    fragment.setArguments(phoneBundle);
-                    fragment.show(getSupportFragmentManager(), "Edit Phone Number");
-                    return true;
-                }
+            phoneNumberField.setOnLongClickListener(v -> {
+                EditUserdataFragment fragment = new EditUserdataFragment();
+                Bundle phoneBundle = new Bundle();
+                phoneBundle.putString("field", "phone number");
+                phoneBundle.putString("old", phoneNumber);
+                phoneBundle.putString("activity", "DriverProfilActivity");
+                fragment.setArguments(phoneBundle);
+                fragment.show(getSupportFragmentManager(), "Edit Phone Number");
+                return true;
             });
 
-            usernameField.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-                    EditUserdataFragment fragment = new EditUserdataFragment();
-                    Bundle phoneBundle = new Bundle();
-                    phoneBundle.putString("field", "username");
-                    phoneBundle.putString("old", username);
-                    phoneBundle.putString("activity", "DriverProfilActivity");
-                    fragment.setArguments(phoneBundle);
-                    fragment.show(getSupportFragmentManager(), "Edit Phone Number");
-                    return true;
-                }
+            usernameField.setOnLongClickListener(v -> {
+                EditUserdataFragment fragment = new EditUserdataFragment();
+                Bundle phoneBundle = new Bundle();
+                phoneBundle.putString("field", "username");
+                phoneBundle.putString("old", username);
+                phoneBundle.putString("activity", "DriverProfilActivity");
+                fragment.setArguments(phoneBundle);
+                fragment.show(getSupportFragmentManager(), "Edit Phone Number");
+                return true;
             });
             phoneNumberField.setText(phoneNumber);
             usernameField.setText(username);
@@ -138,63 +129,48 @@ public class DriverProfilActivity extends AppCompatActivity {
 
             });
             //like and dislike buttons onclick listeners to rate drivers and riders from their profile view
-            likeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!editable){userInfo.adjustRating(true);
-                        Toast.makeText(DriverProfilActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
-                        rateUser(true);
-                        //updateDatabase();
-                        likeButton.setClickable(false);
-                    }
+            likeButton.setOnClickListener(v -> {
+                if (!editable){userInfo.adjustRating(true);
+                    Toast.makeText(DriverProfilActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
+                    rateUser(true);
+                    //updateDatabase();
+                    likeButton.setClickable(false);
                 }
             });
 
-            dislikeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!editable){userInfo.adjustRating(true);
-                        Toast.makeText(DriverProfilActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
-                        rateUser(false);
-                        //updateDatabase();
-                        dislikeButton.setClickable(false);
-                    }
+            dislikeButton.setOnClickListener(v -> {
+                if (!editable){userInfo.adjustRating(true);
+                    Toast.makeText(DriverProfilActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+                    rateUser(false);
+                    //updateDatabase();
+                    dislikeButton.setClickable(false);
                 }
             });
             //onClickListeners for email and phone number fields to contact User
 
-            emailField.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_SENDTO);
-                    intent.setData(Uri.parse("mailto:"+ email));
-                    startActivity(intent);
-                }
+            emailField.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setData(Uri.parse("mailto:"+ email));
+                startActivity(intent);
             });
 
-            phoneNumberField.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(Intent.ACTION_DIAL);
-                    intent.setData(Uri.parse("tel:"+phoneNumber));
-                    startActivity(intent);
-                }
+            phoneNumberField.setOnClickListener(v -> {
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:"+phoneNumber));
+                startActivity(intent);
             });
 
         } //finish uneditable else
 
         deleteButton = findViewById(R.id.deleteAccButtonDrIn);
         if (!editable){deleteButton.setVisibility(View.INVISIBLE);}
-        deleteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (editable){
-                    DeleteAccountFragment deleteFragment = new DeleteAccountFragment();
-                    Bundle callingActivity = new Bundle();
-                    callingActivity.putString("callingActivity", "driver");
-                    deleteFragment.setArguments(callingActivity);
-                    deleteFragment.show(getSupportFragmentManager(), "Delete Account");}
-            }
+        deleteButton.setOnClickListener(v -> {
+            if (editable){
+                DeleteAccountFragment deleteFragment = new DeleteAccountFragment();
+                Bundle callingActivity = new Bundle();
+                callingActivity.putString("callingActivity", "driver");
+                deleteFragment.setArguments(callingActivity);
+                deleteFragment.show(getSupportFragmentManager(), "Delete Account");}
         });
 
     }
@@ -249,12 +225,9 @@ public class DriverProfilActivity extends AppCompatActivity {
         email = userInfo.getEmail();
         posRate = userInfo.getPosRating();
         negRate = userInfo.getNegRating();
-
         phoneNumberField.setText(phoneNumber);
         usernameField.setText(username);
         emailField.setText(email);
-        //negRateDisplay.setText(negRate.toString()+"%");
-        //posRateDisplay.setText(posRate.toString()+"%");
         negRateDisplay.setText(negRate.toString());
         posRateDisplay.setText(posRate.toString());
     }

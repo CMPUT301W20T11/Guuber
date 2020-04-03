@@ -378,8 +378,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         if (guuberDriverMap != null){
             guuberDriverMap.clear(); //wll this fix the driver thing?
         }
-        driverDBHelper.setReqList();
-        driverDBHelper.setReqList();
+
         ArrayList<Map<String, Object>> openRequestList = driverDBHelper.getReqList(); //needs to be called twice to draw open requests. fine fore now
         android.util.Log.i(TAG, "OPEN REQUEST LIST RAW" + openRequestList.toString());
 

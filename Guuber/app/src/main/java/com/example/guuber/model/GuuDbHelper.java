@@ -217,33 +217,6 @@ public class GuuDbHelper {
     }
 
 
-    /**
-     * returns an ArrayList of profile information
-     * @param email
-     * @return
-     */
-    public synchronized Map<String,Object> getProfileAll(String email) {
-        setProfile(email);
-        profile.get().addOnSuccessListener(documentSnapshot -> {
-            profileInformation = documentSnapshot.getData();
-//                String t = documentSnapshot.get("phoneNumber").toString();
-//                profileInformation.add(t);
-//                String i = documentSnapshot.get("email").toString();
-//                profileInformation.add(i);
-//                String n = documentSnapshot.get("firstName").toString();
-//                profileInformation.add(n);
-//                String a = documentSnapshot.get("lastName").toString();
-//                profileInformation.add(a);
-//                String s = documentSnapshot.get("username").toString();
-//                profileInformation.add(s);
-//                String h = documentSnapshot.get("posRating").toString();
-//                profileInformation.add(h);
-//                String e = documentSnapshot.get("negRating").toString();
-//                profileInformation.add(e);
-        });
-        return profileInformation;
-    }
-
 
 
     /**
@@ -447,18 +420,6 @@ public class GuuDbHelper {
         reqDetails.put("email", email);
         if(!reqList.contains(reqDetails)) {
             this.reqList.add(reqDetails);
-        }
-    }
-
-
-    /**
-     * Helper function
-     * add the user email to the request detail
-     */
-    public synchronized void deleteFromReqList(String email, Map<String,Object> reqDetails){
-        reqDetails.put("email", email);
-        if(reqList.contains(reqDetails)) {
-            this.reqList.remove(reqDetails);
         }
     }
 
