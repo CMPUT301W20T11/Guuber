@@ -42,7 +42,9 @@ public class DriverProfileActivity extends AppCompatActivity {
     private User userInfo;
     private Boolean editable;
 
-    /***********the database******/
+    /**
+     * Handle to the firebase database helper class and the collection of user profiles in the database
+     * */
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper driverDBHelper = new GuuDbHelper(driverMapsDB);
     private CollectionReference uRef = driverMapsDB.collection("Users");
@@ -51,13 +53,14 @@ public class DriverProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.driver_profile_disp);
+
+        /**Intent string extra with the id CALLER has 2 values internal and external
+         * If the caller is internal then the driver is viewing their own profile and if the caller is external then another user is viewing the user's profile
+         **/
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         Toast.makeText(DriverProfileActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
-
-
-
 
         phoneNumberField = findViewById(R.id.phoneTextDrIn);
         usernameField = findViewById(R.id.usernameTextDrIn);
@@ -136,7 +139,6 @@ public class DriverProfileActivity extends AppCompatActivity {
                         userInfo.adjustRating(true);
                         Toast.makeText(DriverProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
                         rateUser(true);
-                        //updateDatabase();
                         likeButton.setClickable(false);
                     }
                 }
@@ -148,7 +150,6 @@ public class DriverProfileActivity extends AppCompatActivity {
                         userInfo.adjustRating(true);
                         Toast.makeText(DriverProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
                         rateUser(false);
-                        //updateDatabase();
                         dislikeButton.setClickable(false);
                     }
                 }
@@ -183,8 +184,7 @@ public class DriverProfileActivity extends AppCompatActivity {
 
     }
 
-    /**implement logic here for what you want to
-     * happen upon back button press**/
+    /**when back button pressed activity finishes and returns to calling activity**/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -195,6 +195,13 @@ public class DriverProfileActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
+
+    /**
+     * Called exclusively by EditUserDataFragment, changes the value for whatever field has been updated in the user class
+     * calls separate methods to update the database and the views
+     * @param field
+     * @param value
+     */
     public void updateData(String field, String value) {
         if (field.equals("phone number")) {
             userInfo.setPhoneNumber(value);
@@ -205,13 +212,17 @@ public class DriverProfileActivity extends AppCompatActivity {
         updateViews();
     }
 
+    /**
+     * Updates the database with the new user information from when it was changed
+     * */
     public void updateDatabase(){
         uRef.document(userInfo.getEmail()).set(userInfo);
     }
 
+    /**
+     * directly increments the user rating in the database
+     * */
     public void rateUser(Boolean rating){
-
-        // Update the db object's rating
         if(!rating){
             uRef.document(email).update("negRating", FieldValue.increment(1));
         }else{
@@ -219,6 +230,10 @@ public class DriverProfileActivity extends AppCompatActivity {
         }
     }
 
+    /***
+     * deletes user's profile from the database records
+     * returns user to login screen
+     */
     public void deleteSelf(){
             driverDBHelper.deleteUser(userInfo.getEmail());
             Toast.makeText(DriverProfileActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
@@ -227,13 +242,16 @@ public class DriverProfileActivity extends AppCompatActivity {
             startActivity(intent);
     }
 
+    /**
+     * Updates the views with the current information on user profile
+     * */
     public void updateViews(){
-
         phoneNumber = userInfo.getPhoneNumber();
         username = userInfo.getUsername();
         email = userInfo.getEmail();
         posRate = userInfo.getPosRating();
         negRate = userInfo.getNegRating();
+
         phoneNumberField.setText(phoneNumber);
         usernameField.setText(username);
         emailField.setText(email);

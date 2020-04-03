@@ -56,27 +56,6 @@ public class User implements Serializable {
         this.negRating = negRating;
     }
 
-    /**
-     * Deprecated user constructor (Delete later)
-     *
-     * @param phoneNumber - User phone number
-     * @param email       - User email
-     * @param firstName   - User first name
-     * @param lastName    - User last name
-     */
-    public User(String phoneNumber, String email, String firstName, String lastName, int posRating, int negRating) {
-        this.phoneNumber = phoneNumber;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        wallet = new Wallet();
-
-        this.posRating = posRating;
-        this.negRating = negRating;
-    }
-
-
-
     public int getPosRating(){return this.posRating;}
 
     public void setPosRating(int posRating) {
@@ -101,7 +80,6 @@ public class User implements Serializable {
             this.negRating = this.negRating + 1;
         }
     }
-
 
     /**
      * Set rider status

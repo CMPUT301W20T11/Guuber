@@ -12,11 +12,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-/** requests for permission to delete the user's account
- * returns to profile page if permission denied
- * deletes the user's account from database and application records and
- * returns user to the sign in activity
-*/
+/**
+ * Requests for user confirmation to delete their account
+ * Provides a warning message to the user, prior to confirmation
+ * */
 public class DeleteAccountFragment extends DialogFragment {
     private TextView dialogueMessage;
     private TextView dialogueTitle;

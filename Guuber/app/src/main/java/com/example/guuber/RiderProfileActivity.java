@@ -22,7 +22,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 
 /**
- * Code to display riders information on their profile
+ * Activity to view a rider's profile and make changes to the appropriate fields based on the viewer
  */
 
 public class RiderProfileActivity extends AppCompatActivity {
@@ -44,18 +44,18 @@ public class RiderProfileActivity extends AppCompatActivity {
     private Integer posRate;
     private Integer negRate;
 
-    /***********the database******/
-    private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
-    private GuuDbHelper riderDBHelper = new GuuDbHelper(driverMapsDB);
-    private CollectionReference uRef = driverMapsDB.collection("Users");
+    /**
+     * Handle to the firebase database helper class and the collection of user profiles in the database
+     * */
+    private FirebaseFirestore riderMapsDB = FirebaseFirestore.getInstance();
+    private GuuDbHelper riderDBHelper = new GuuDbHelper(riderMapsDB);
+    private CollectionReference uRef = riderMapsDB.collection("Users");
     private static final String TAG = "RiderProfileActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rider_profile_disp);
-        //userInfo = ((UserData)(getApplicationContext())).getUser();
-
         Toast.makeText(RiderProfileActivity.this, "Click and hold the information you would like to edit !",Toast.LENGTH_LONG);
 
         /**display the back button**/
@@ -70,13 +70,14 @@ public class RiderProfileActivity extends AppCompatActivity {
         posRateDisplay = findViewById(R.id.posRate);
         negRateDisplay = findViewById(R.id.negRate);
 
-
+        /**Intent string extra with the id CALLER has 2 values internal and external
+         * If the caller is internal then the rider is viewing their own profile and if the caller is external then another user is viewing the user's profile
+         **/
         String caller = getIntent().getStringExtra("caller");
         editable = caller.equals("internal");
         if (editable){
 
             userInfo = ((UserData)(getApplicationContext())).getUser();
-            //System.out.println("wroooooooooooooooongnggggggggggggggggggggggggggggggggggggg");
             phoneNumber = userInfo.getPhoneNumber();
             username = userInfo.getUsername();
             email = userInfo.getEmail();
@@ -84,14 +85,13 @@ public class RiderProfileActivity extends AppCompatActivity {
             negRate = userInfo.getNegRating();
 
             phoneNumberField.setText(phoneNumber);
-            // for testing please disregard
-            //Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" +" "+userInfo.getPhoneNumber());
             usernameField.setText(username);
             emailField.setText(email);
             likeButton.setImageResource(R.drawable.smile);
             dislikeButton.setImageResource(R.drawable.frowny);
             negRateDisplay.setText(negRate.toString());
             posRateDisplay.setText(posRate.toString());
+
             /**
              * allows for editing userdata
              */
@@ -125,12 +125,10 @@ public class RiderProfileActivity extends AppCompatActivity {
 
         } //finish editable if
         else {
-            //userInfo = (User) getIntent().getSerializableExtra("riderProfile");
+
             String externalEmail = getIntent().getStringExtra("external_email");
-            //System.out.println("looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong " + externalEmail);
             uRef.document(externalEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
                 userInfo = documentSnapshot.toObject(User.class);
-                //System.out.println(userInfo.getPhoneNumber()+ "dataaaaaaaaaaaaaaaaaaaaaaaaaaaa");
                 phoneNumber = userInfo.getPhoneNumber();
                 username = userInfo.getUsername();
                 email = userInfo.getEmail();
@@ -138,8 +136,6 @@ public class RiderProfileActivity extends AppCompatActivity {
                 negRate = userInfo.getNegRating();
 
                 phoneNumberField.setText(phoneNumber);
-                // for testing please disregard
-                //Log.d(TAG, "documentSnapshot.getString(\"phoneNumber\")" +" "+userInfo.getPhoneNumber());
                 usernameField.setText(username);
                 emailField.setText(email);
                 likeButton.setImageResource(R.drawable.smile);
@@ -178,8 +174,6 @@ public class RiderProfileActivity extends AppCompatActivity {
                     if (!editable){userInfo.adjustRating(true);
                         Toast.makeText(RiderProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
                         rateUser(true);
-//                    userInfo.adjustRating(true);
-//                    updateDatabase();
                         likeButton.setClickable(false);
                     }
                 }
@@ -191,14 +185,11 @@ public class RiderProfileActivity extends AppCompatActivity {
                     if (!editable){userInfo.adjustRating(true);
                         Toast.makeText(RiderProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
                         rateUser(false);
-//                    userInfo.adjustRating(false);
-//                    updateDatabase();
                         dislikeButton.setClickable(false);
                     }
                 }
             });
         }// finish uneditable if
-        //System.out.println(userInfo.getPhoneNumber()+"interrrrrrrrrrrrrrrrrrrrrrrr");
 
         deleteButton = findViewById(R.id.deleteAccButtonRdIn);
         if (!editable){deleteButton.setVisibility(View.INVISIBLE);}
@@ -214,8 +205,7 @@ public class RiderProfileActivity extends AppCompatActivity {
             }
         });
     }
-    /**implement logic here for what you want to
-     * happen upon back button press**/
+    /**when back button pressed activity finishes and returns to calling activity**/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -226,7 +216,12 @@ public class RiderProfileActivity extends AppCompatActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
+    /**
+     * Called exclusively by EditUserDataFragment, changes the value for whatever field has been updated in the user class
+     * calls separate methods to update the database and the views
+     * @param field
+     * @param value
+     */
     public void updateData(String field, String value)  {
         if (field.equals("phone number")) {
             userInfo.setPhoneNumber(value);
@@ -237,12 +232,17 @@ public class RiderProfileActivity extends AppCompatActivity {
         updateViews();
     }
 
+    /**
+     * Updates the database with the new user information from when it was changed
+     * */
     public void updateDatabase(){
         uRef.document(userInfo.getEmail()).set(userInfo);
     }
 
+    /**
+     * directly increments the user rating in the database
+     * */
     public void rateUser(Boolean rating){
-        // Update the db object's rating
         if(!rating){
             uRef.document(email).update("negRating", FieldValue.increment(1));
         }else{
@@ -250,6 +250,10 @@ public class RiderProfileActivity extends AppCompatActivity {
         }
     }
 
+    /***
+     * deletes user's profile from the database records
+     * returns user to login screen
+     */
     public void deleteSelf(){
         riderDBHelper.deleteUser(userInfo.getEmail());
         Toast.makeText(RiderProfileActivity.this, "Account successfully deleted!", Toast.LENGTH_SHORT).show();
@@ -258,6 +262,9 @@ public class RiderProfileActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Updates the views with the current information on user profile
+     * */
     public void updateViews(){phoneNumber = userInfo.getPhoneNumber();
         username = userInfo.getUsername();
         email = userInfo.getEmail();
@@ -267,9 +274,6 @@ public class RiderProfileActivity extends AppCompatActivity {
         phoneNumberField.setText(phoneNumber);
         usernameField.setText(username);
         emailField.setText(email);
-
-        //negRateDisplay.setText(negRate.toString()+"%");
-        //posRateDisplay.setText(posRate.toString()+"%");
         negRateDisplay.setText(negRate.toString());
         posRateDisplay.setText(posRate.toString());
     }
