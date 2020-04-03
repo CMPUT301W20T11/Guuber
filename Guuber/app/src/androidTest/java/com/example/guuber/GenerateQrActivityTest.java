@@ -13,6 +13,7 @@ import org.junit.Test;
 /**
  *Intent testing for the QrActivity Class.
  * Tests are based on current app functionality
+ * Test currently fails due to requiring an email and amount to be passed to it
  */
 public class GenerateQrActivityTest {
 
