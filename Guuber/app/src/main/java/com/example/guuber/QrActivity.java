@@ -23,10 +23,11 @@ import com.journeyapps.barcodescanner.BarcodeEncoder;
 import java.util.Arrays;
 import java.util.List;
 
+// Citation: Generate barcode in android app using Zxing.
+// https://medium.com/@aanandshekharroy/generate-barcode-in-android-app-using-zxing-64c076a5d83a
 
 /**
  * Generate and display a QR image used for transactions
- * Citation: https://medium.com/@aanandshekharroy/generate-barcode-in-android-app-using-zxing-64c076a5d83a
  */
 public class QrActivity extends AppCompatActivity {
 	private static final String TAG = "QrActivity";

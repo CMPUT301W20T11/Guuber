@@ -42,14 +42,15 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 
-//Citation: Authenticate Using Google Sign-in On Android
-//https://firebase.google.com/docs/auth/android/google-signin
+// Citation: Authenticate Using Google Sign-in On Android
+// https://firebase.google.com/docs/auth/android/google-signin
+// Citation: Firebase Quickstart Samples for Android
+// https://github.com/firebase/quickstart-android
 
 /**
  * Class to implement the Login Activity
  * includes google sign in and ability
  * to log in as rider or driver
- * Source: https://github.com/firebase/quickstart-android
  */
 public class LoginActivity extends AppCompatActivity implements RegisterFragment.OnFragmentInteractionListener {
 	private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 10;
