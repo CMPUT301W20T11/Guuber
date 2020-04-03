@@ -44,40 +44,11 @@ public class LoginActivityTest {
         solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
     }
 
-    /**checks soley the functionality of the sign in button**/
+    /**checks sole the functionality of the sign in button**/
     @Test
     public void checkSignIn(){
         solo.waitForActivity(LoginActivity.class, 1000);
-        solo.clickOnText("Sign in");
-        solo.assertCurrentActivity("Wrong Activity", MapsRiderActivity.class);
-    }
-
-
-    /**
-     * This test checks the functionality of Rider sign in.
-     * because rider sign in is the default selection, it also checks the functionality
-     * of the sign in button
-     */
-    @Test
-    public void checkRiderSignIn(){
-        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.clickOnText("As Rider");
-        solo.clickOnText("Sign in");
-        solo.waitForActivity(MapsRiderActivity.class, 1000);
-        solo.assertCurrentActivity("Wrong Activity (supposed to launch Rider activity",MapsRiderActivity.class);
-    }
-
-    /**
-     * This test checks the functionality of Driver sign in.
-     */
-    @Test
-    public void checkDriverSignIn(){
-        solo.assertCurrentActivity("Wrong Activity", LoginActivity.class);
-        solo.clickOnText("As Driver");
-        solo.clickOnText("Sign in");
-        solo.waitForActivity(MapsRiderActivity.class, 1000);
-        solo.assertCurrentActivity("Wrong Activity (supposed to launch Driver activity)",MapsDriverActivity.class);
-
+        solo.clickOnText("Sign In");
     }
 
 
