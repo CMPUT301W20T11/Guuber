@@ -55,9 +55,11 @@ import java.util.Objects;
 
 
 /**
- * This class contains the home screen for a Rider. The home screen includes a menu enabling navigation
+ * This OTHER god class contains the home screen for a Rider. The home screen includes a menu enabling navigation
  *  between activities related to the account as well as the google map fragment
- *  and other functionality for making a ride request.Class is representative of current application functionality
+ *  and other functionality for making a ride request. This includes making a request
+ *  cancelling a request, checking your request status, and checking
+ *  for the arrival of the driver.
  */
 
 public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener{
@@ -67,8 +69,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int MENU = 0;
     private static final int MYPROFILE = 1;
     private static final int  WALLET = 2;
-    private static final int  QR = 3;
-    private static final int SIGNOUT = 4;
+    private static final int SIGNOUT = 3;
 
     //permissions / results codes
     private static final int QR_REQ_CODE = 3;
@@ -100,7 +101,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
 
-    /***********the database******/
+    //the database
     private FirebaseFirestore riderMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper riderDBHelper = new GuuDbHelper(riderMapsDB);
     private CollectionReference uRefRequests = riderMapsDB.collection("requests");
@@ -320,11 +321,11 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         guuberRiderMap.setMapStyle(new MapStyleOptions(getResources().getString(R.string.dark_mapstyle_json)));
         guuberRiderMap.setOnInfoWindowClickListener(MapsRiderActivity.this);
 
-        /*
+        /**
          * logs the coordinates in console upon map click this is giving the user a chance to set their pickup
          * location and drop-off location
          * @params latitude on longitude retrieved from map click
-         */
+         **/
         guuberRiderMap.setOnMapClickListener(arg0 -> {
             //cant build a route unless you cancel the current one
             if (!rideisPending || !rideInProgress) {
@@ -652,7 +653,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     .setNegativeButton("Cancel request", (dialog, which) -> {
                         rideisPending = false;
                         rideInProgress = false;
-                        //requestsList.remove(0);//remove the request from the requestslist
                         riderDBHelper.setCancellationStatus(currRider.getEmail(), potentialOfferer); //set status as canceled in the database
                         riderDBHelper.cancelRequest(currRider); //remove it from requests
                         guuberRiderMap.clear();
@@ -698,7 +698,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 .setPositiveButton("Accept", (dialog, which) -> {
                     rideInProgress = true;
                     rideisPending = false;
-                    //currRequest.setStatus("in Progress"); //is this changing in the array?
                     polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripInProgressPolyLinesColors));
                     riderDBHelper.acceptOffer(currRider);
                     yourDriverIsOnTheWayToast();
@@ -763,6 +762,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
     /**
+     * CITATION:
      * calculate the direction from the rider's origin to the riders destination
      */
     private void calculateDirections() {
@@ -829,6 +829,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
     /**
+     * CITATION:
      * add polyline to map based on the geo coords from the calculated route
      * @param result is the route determined by calculate directions
      **/
