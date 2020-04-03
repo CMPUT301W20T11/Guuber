@@ -24,6 +24,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * class to help interface
+ * with the database. setting and getting information
+ */
 public class GuuDbHelper {
 
     private static FirebaseFirestore db;
