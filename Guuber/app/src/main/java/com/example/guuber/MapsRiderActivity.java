@@ -227,17 +227,24 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             assert documentSnapshot != null;
             if (documentSnapshot.get("canceled") != null){
                 android.util.Log.i(TAG, "canceled in non null after ride end");
-                rideInProgress = true; //the route is in progress --> could be limiting rider
                 rideisPending = false;
+                if (documentSnapshot.get("canceled").toString().equals("true")) {
+                    rideInProgress = false; //the route is in progress --> could be limiting rider
+                }
+                else {
+                    rideInProgress = true;
+                }
             }else if (documentSnapshot.get("oriLat") != null){
                 android.util.Log.i(TAG, "ori lat in non null after ride end");
-                rideisPending = true; //the route is pending
+                //rideisPending = true; //the route is pending
             }
         });
 
         uRefRequests.document(currRider.getEmail()).addSnapshotListener(this, (documentSnapshot, e) -> {
             assert documentSnapshot != null;
             if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("desLat") != null) {
+                rideisPending = true;
+                rideInProgress = false;
                 android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
                 double originLat = Double.parseDouble(Objects.requireNonNull(documentSnapshot.get("oriLat")).toString());
                 double originLong = Double.parseDouble(Objects.requireNonNull(documentSnapshot.get("oriLng")).toString());
