@@ -18,13 +18,11 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+
 /**
  * Intent testing for the MapsDriverActivity.
  *  Tests are based on current app functionality.
- *  >>> USER MUST HAVE SIGNED IN  ONCE BEFORE RUNNING THESE TESTS.
+ *  >>> USER MUST HAVE SIGNED IN  ONCE AS A DRIVER BEFORE RUNNING THESE TESTS.
  *  Robotium does not want to click the google dialog yet
  */
 public class MapsDriverActivityTest {
@@ -44,8 +42,7 @@ public class MapsDriverActivityTest {
     public void setUp() throws Exception{
         solo = new Solo(InstrumentationRegistry.getInstrumentation(), rule.getActivity());
         solo.waitForActivity(LoginActivity.class, 2000);
-        solo.clickOnText("As Driver");
-        solo.clickOnText("Sign in");
+        solo.clickOnText("Sign In");
     }
 
     /**

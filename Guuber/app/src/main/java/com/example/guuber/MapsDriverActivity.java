@@ -233,7 +233,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     offerAccepted = true;
                     offerSent = false;
                     routeInProgress = true;
-                    guuberDriverMap.clear();
                     getRideDetails(offerToEmail);
                 }
                 else if (Objects.requireNonNull(documentSnapshot.get("offerStatus")).toString().equals("pending")) {
