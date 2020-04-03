@@ -563,6 +563,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * MAKING SURE GPS IS ENABLED ON THE DEVICE
      **/
+    // CITATION: https://www.youtube.com/watch?v=1f4b2-Y_q2A&list=PLgCYzUzKIBE-SZUrVOsbYMzH7tPigT3gi&index=4
     public boolean isMapsEnabled() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         assert manager != null;
@@ -576,6 +577,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /**
      * OPENS UP SETTINGS FOR THEM TO TURN ON GPS IF IT IN NOT ALREADY ON
      **/
+    // * CITATION: https://www.youtube.com/watch?v=1f4b2-Y_q2A&list=PLgCYzUzKIBE-SZUrVOsbYMzH7tPigT3gi&index=4
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("This application requires GPS to work properly, do you want to enable it?")
@@ -843,10 +845,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * @param pickup the riders pickup point
      * @param dropOff the riders dropoff point
      */
+    //* CITATION : https://www.youtube.com/watch?v=f47L1SL5S0o&list=PLgCYzUzKIBE-SZUrVOsbYMzH7tPigT3gi&index=19
     private void calculateDirectionsBetweenPickupandDropOff(String email, LatLng pickup, LatLng dropOff) {
         android.util.Log.i("USERS EMAIL", email);
-        //android.util.Log.i("USERS PICKUP", pickup.toString());
-        //android.util.Log.i("USERS DROPOFF", dropOff.toString());
 
         //from riders set destination
         com.google.maps.model.LatLng destination = new com.google.maps.model.LatLng(
@@ -881,6 +882,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * directions from the drivers location to the rider pickup
      * @param marker the marker indicating the riders pickup location
      */
+    //  CITATION : https://www.youtube.com/watch?v=f47L1SL5S0o&list=PLgCYzUzKIBE-SZUrVOsbYMzH7tPigT3gi&index=19
     private void calculateDirectionsToPickup(Marker marker) {
             driverLocation = new LatLng(currLocation.getLatitude(),currLocation.getLongitude());
             setDriverLocation(driverLocation);
@@ -918,6 +920,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * add polyline to map based on the geo coords from the calculated route
      * @param result is the route determined by calculate directions
      **/
+    //CITATION: https://www.youtube.com/watch?v=xl0GwkLNpNI&list=PLgCYzUzKIBE-SZUrVOsbYMzH7tPigT3gi&index=20
     private void addPolylinesToMap(final DirectionsResult result){
         new Handler(Looper.getMainLooper()).post(() -> {
             for(DirectionsRoute route: result.routes){

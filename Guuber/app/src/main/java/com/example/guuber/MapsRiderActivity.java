@@ -480,6 +480,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     /**
      * MAKING SURE GPS IS ENABLED ON THE DEVICE
      **/
+    // CITATION: https://www.youtube.com/watch?v=1f4b2-Y_q2A&list=PLgCYzUzKIBE-SZUrVOsbYMzH7tPigT3gi&index=4
     public boolean isMapsEnabled() {
         final LocationManager manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         assert manager != null;
@@ -492,9 +493,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
     /**
-     * CITATION:
      * OPENS UP SETTINGS FOR THEM TO TURN ON GPS IF IT IN NOT ALREADY ON
      **/
+    // CITATION: https://www.youtube.com/watch?v=1f4b2-Y_q2A&list=PLgCYzUzKIBE-SZUrVOsbYMzH7tPigT3gi&index=4
     private void buildAlertMessageNoGps() {
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("This application requires GPS to work properly, do you want to enable it?")
@@ -764,8 +765,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
     /**
-     * CITATION:
      * calculate the direction from the rider's origin to the riders destination
+     * https://www.youtube.com/watch?v=f47L1SL5S0o&list=PLgCYzUzKIBE-SZUrVOsbYMzH7tPigT3gi&index=19
      */
     private void calculateDirections() {
 
@@ -831,10 +832,10 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
     /**
-     * CITATION:
      * add polyline to map based on the geo coords from the calculated route
      * @param result is the route determined by calculate directions
      **/
+    // CITATION: https://www.youtube.com/watch?v=xl0GwkLNpNI&list=PLgCYzUzKIBE-SZUrVOsbYMzH7tPigT3gi&index=20
     private void addPolylinesToMap(final DirectionsResult result){
         new Handler(Looper.getMainLooper()).post(() -> {
             for(DirectionsRoute route: result.routes){
