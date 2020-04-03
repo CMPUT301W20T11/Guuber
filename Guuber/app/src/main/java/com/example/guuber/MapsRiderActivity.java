@@ -3,6 +3,7 @@ package com.example.guuber;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.navigation.ui.AppBarConfiguration;
 import android.os.Bundle;
@@ -95,6 +96,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private GeoApiContext geoRiderApiContext = null;
     LocationManager locationManager;
     Criteria criteria = new Criteria();
+    private boolean hasRated;
 
 
 
@@ -278,9 +280,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
      * @param d_email driver email
      */
     public void viewDriverProfile(String d_email) {
-        Intent driverProfileIntent = new Intent(MapsRiderActivity.this, DriverProfilActivity.class);
-        driverProfileIntent.putExtra("caller", "external");
-        driverProfileIntent.putExtra("external_email", d_email);
+        Intent driverProfileIntent = new Intent(MapsRiderActivity.this, ViewProfileActivity.class);
+        driverProfileIntent.putExtra("EMAIL", d_email);
         startActivity(driverProfileIntent);
     }
 
@@ -600,6 +601,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         });
 
         if (!rideInProgress && !rideisPending) {
+            hasRated = false;
             final NumberPicker numberPicker = new NumberPicker(MapsRiderActivity.this);
             numberPicker.setMaxValue(100); numberPicker.setMinValue(0);
             builder
@@ -890,7 +892,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
             final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
             builder
                     .setTitle("Your diver has arrived!! That was pretty fast... ").setCancelable(false)
-                    .setNegativeButton("Rate driver", (dialog, which) -> {
+                    .setNegativeButton("View profile", (dialog, which) -> {
                         viewDriverProfile(potentialOfferer);
                     })
                     .setPositiveButton("Pay driver", (dialog, id) -> {
@@ -902,6 +904,12 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                         startActivityForResult(payDriverIntent, QR_REQ_CODE);// Show the generated qr
                         riderDBHelper.rideIsOver(currRider);
                         guuberRiderMap.clear();
+
+                        if(!hasRated){
+                            hasRated = true;
+                            DialogFragment rateFrag = RateFragment.newInstance(potentialOfferer);
+                            rateFrag.show(getSupportFragmentManager(), "Rating");
+                        }
                     });
             final AlertDialog alert = builder.create(); alert.show();
         },1000);
