@@ -665,6 +665,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             builder
                     .setMessage("Offer has been sent")
                     .setPositiveButton("Check status", (dialog, which) -> {
+
                         String statusCheck = null;
                         try {
                             statusCheck = driverDBHelper.checkOfferStatus(currDriver);
