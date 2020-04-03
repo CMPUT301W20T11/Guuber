@@ -149,8 +149,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     viewRiderProfile();
                 }else if (position == WALLET){
                     openRiderWallet();
-                }else if (position == QR){
-                    makeQR();
                 } else if (position == SIGNOUT) {
                     signOut();
                 }
@@ -284,25 +282,13 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         driverProfileIntent.putExtra("EMAIL", d_email);
         startActivity(driverProfileIntent);
     }
-
-
+    
     /**
      * Starts activity to display riders wallet information
      **/
     public void openRiderWallet(){
         final Intent riderWalletIntent = new Intent(MapsRiderActivity.this, WalletActivity.class);
         startActivity(riderWalletIntent);
-    }
-
-    /**
-     * Starts activity to allow rider to generate QR
-     **/
-    public void makeQR(){
-        final Intent qrProfileIntent = new Intent(MapsRiderActivity.this, QrActivity.class);
-        // TODO: Template for how I expect the QR info to be passed (rideremail,amount)
-        String info = "md801003@gmail.com,20";
-        qrProfileIntent.putExtra("INFO_TAG", info);
-        startActivityForResult(qrProfileIntent, QR_REQ_CODE);
     }
 
     /**
