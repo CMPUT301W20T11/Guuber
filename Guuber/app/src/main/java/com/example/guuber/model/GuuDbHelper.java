@@ -313,6 +313,12 @@ public class GuuDbHelper {
 
                         requests.document(rider.getEmail()).delete();
                         reqList.remove(reqInfo);
+
+                        //delete the fields from the user profile
+                        profile.update("desLat", FieldValue.delete());
+                        profile.update("desLng", FieldValue.delete());
+                        profile.update("oriLat", FieldValue.delete());
+                        profile.update("oriLng", FieldValue.delete());
                     }
                 }
             }
