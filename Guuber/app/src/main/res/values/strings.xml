@@ -18,7 +18,6 @@
         <item>My Profile</item>
         <item>Wallet</item>
         <item>Generate QR</item>
-        <item>Current Requests</item>
         <item>Sign Out</item>
     </string-array>
     <string-array name="menuDriver">
@@ -26,7 +25,6 @@
         <item>My Profile</item>
         <item>Wallet</item>
         <item>Scan QR</item>
-        <item>Current Requests</item>
         <item>Sign Out</item>
     </string-array>
 

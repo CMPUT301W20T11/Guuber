@@ -67,8 +67,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int MYPROFILE = 1;
     private static final int  WALLET = 2;
     private static final int  QR = 3;
-    private static final int OFFLINE_REQS = 4;
-    private static final int SIGNOUT = 5;
+    private static final int SIGNOUT = 4;
 
     //permissions / results codes
     private static final int QR_REQ_CODE = 3;
@@ -150,8 +149,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     openRiderWallet();
                 }else if (position == QR){
                     makeQR();
-                }else if (position == OFFLINE_REQS ) {
-                    currOfflineReqs();
                 } else if (position == SIGNOUT) {
                     signOut();
                 }
@@ -316,16 +313,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         finish();
     }
 
-    /**
-     * view the details of a current request if you are offline
-     */
-    private void currOfflineReqs(){
-        Intent viewOfflineReqs = new Intent(MapsRiderActivity.this, CurrentRequestsOffline.class);
-        User currRider = ((UserData)(getApplicationContext())).getUser();
-        //requestsList = saveRequestForOffline.loadData(MapsRiderActivity.this);
-        viewOfflineReqs.putExtra("EMAIL", currRider.getEmail()); //send email through the intent
-        startActivity(viewOfflineReqs);
-    }
 
     /**********************************END SPINNER METHODS*****************************************/
 

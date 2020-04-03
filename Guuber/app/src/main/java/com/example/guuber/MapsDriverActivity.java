@@ -68,8 +68,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private static final int MYPROFILE = 1;
     private static final int WALLET = 2;
     private static final int SCANQR = 3;
-    private static final int OFFLINE_REQS = 4;
-    private static final int SIGNOUT = 5;
+    private static final int SIGNOUT = 4;
 
 
     //permissions / result codes
@@ -150,8 +149,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     openDriverWallet();
                 } else if (position == SCANQR) {
                     scanQR();
-                }else if (position == OFFLINE_REQS ) {
-                    currOfflineReqs();
                 }else if (position == SIGNOUT) {
                     signOut();
             }
@@ -315,16 +312,6 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         finish();
     }
 
-    /**
-     * view the details of a current request if you are offline
-     */
-    private void currOfflineReqs(){
-        Intent viewOfflineReqs = new Intent(MapsDriverActivity.this, CurrentRequestsOffline.class);
-        User currDriver = ((UserData)(getApplicationContext())).getUser();
-        viewOfflineReqs.putExtra("DRIVER_EMAIL", currDriver.getEmail());
-        //requestsList = saveRequestForOffline.loadData(MapsRiderActivity.this);
-        startActivity(viewOfflineReqs);
-    }
 
     /****************************************END SPINNER METHODS***********************************************/
 
