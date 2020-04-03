@@ -22,12 +22,14 @@ import com.google.zxing.integration.android.IntentResult;
 import java.util.Arrays;
 import java.util.List;
 
+// Citation: QR Code Scanner - Android Application using ZXing Library
+// https://www.youtube.com/watch?v=Fe7F4Jx7rwo
+
 /**
  * This class contains the activity the driver
  * will be directed to upon selecting "scan QR"
- * in their menu
- * it enables their ability to scan a QR
- * Source: https://www.youtube.com/watch?v=Fe7F4Jx7rwo
+ * in their menu, allows for QR scanning and processes
+ * transaction encoded in the QR
  */
 public class ScanQrActivity extends AppCompatActivity {
 	private List<String> qrInfo;

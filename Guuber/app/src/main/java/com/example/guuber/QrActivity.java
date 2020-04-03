@@ -87,6 +87,7 @@ public class QrActivity extends AppCompatActivity {
 
 	/**
 	 * Generate a qr code with info, to be called during OnCreate
+	 * @param info - Info to be encoded into the QR
 	 */
 	public void genQR(String info){
 		// If no input is provided, prompt user for input

@@ -59,10 +59,10 @@ public class MapsRiderActivityTest {
      * before providing coordinates
      */
     @Test
-    public void viewTripsActivity(){
+    public void testSignoutActivity(){
         solo.waitForActivity(MapsRiderActivity.class, 1000);
-        solo.pressSpinnerItem(0,2);
-        solo.assertCurrentActivity("Activity should change to view trips activity", ViewTripsActivity.class);
+        solo.pressSpinnerItem(0,3);
+        solo.assertCurrentActivity("Activity should change to log in activity", LoginActivity.class);
     }
 
     /**

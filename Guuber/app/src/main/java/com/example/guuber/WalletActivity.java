@@ -17,11 +17,10 @@ import com.example.guuber.model.Wallet;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+
 /**
- * This class contains the activity the rider and/or driver
- * will be directed to upon selecting "Wallet"
- * in their menu
- * it enables their ability to view their wallet and balance details
+ * Wallet dashboard that displays user transactions and balance
+ * External withdrawals and deposits enabled through the menu
  */
 public class WalletActivity extends AppCompatActivity implements TransactionFragment.OnFragmentInteractionListener {
     // Get the user email from the user singleton, used as db key
@@ -97,13 +96,19 @@ public class WalletActivity extends AppCompatActivity implements TransactionFrag
         return true;
     }
 
-    // Transaction fragment cancel button onClick listener implementation
+
+    /**
+     * Transaction fragment cancel button onClick listener implementation
+     */
     @Override
     public void onCancelPressed(){
         Toast.makeText(this, "Transaction cancelled", Toast.LENGTH_SHORT).show();
     }
 
-    // Transaction fragment ok button onClick listener implementation
+    /**
+     * Transaction fragment ok button onClick listener implementation
+     * @param amount - Amount to withdraw
+     */
     @Override
     public void onOkPressed(Double amount) {
         switch (id) {

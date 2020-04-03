@@ -55,9 +55,11 @@ import java.util.Objects;
 
 
 /**
- * This class contains the home screen for a Rider. The home screen includes a menu enabling navigation
+ * This OTHER god class contains the home screen for a Rider. The home screen includes a menu enabling navigation
  *  between activities related to the account as well as the google map fragment
- *  and other functionality for making a ride request.Class is representative of current application functionality
+ *  and other functionality for making a ride request. This includes making a request
+ *  cancelling a request, checking your request status, and checking
+ *  for the arrival of the driver.
  */
 
 public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener,GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener{
@@ -67,8 +69,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
     private static final int MENU = 0;
     private static final int MYPROFILE = 1;
     private static final int  WALLET = 2;
-    private static final int  QR = 3;
-    private static final int SIGNOUT = 4;
+    private static final int SIGNOUT = 3;
 
     //permissions / results codes
     private static final int QR_REQ_CODE = 3;
@@ -100,7 +101,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
 
-    /***********the database******/
+    //the database
     private FirebaseFirestore riderMapsDB = FirebaseFirestore.getInstance();
     private GuuDbHelper riderDBHelper = new GuuDbHelper(riderMapsDB);
     private CollectionReference uRefRequests = riderMapsDB.collection("requests");
@@ -236,16 +237,16 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 }
             }else if (documentSnapshot.get("oriLat") != null){
                 android.util.Log.i(TAG, "ori lat in non null after ride end");
-                rideisPending = true; //the route is pending
-                rideInProgress = false;
+                //rideisPending = true; //the route is pending
+                //rideInProgress = false;
             }
         });
         // check requests
         uRefRequests.document(currRider.getEmail()).addSnapshotListener(this, (documentSnapshot, e) -> {
             assert documentSnapshot != null;
             if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("desLat") != null) {
-                //rideisPending = true;
-                //rideInProgress = false;
+                rideisPending = true;
+                rideInProgress = false;
                 android.util.Log.i("ResumeMapTesting", documentSnapshot.toString());
                 double originLat = Double.parseDouble(Objects.requireNonNull(documentSnapshot.get("oriLat")).toString());
                 double originLong = Double.parseDouble(Objects.requireNonNull(documentSnapshot.get("oriLng")).toString());
@@ -327,7 +328,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
          */
         guuberRiderMap.setOnMapClickListener(arg0 -> {
             //cant build a route unless you cancel the current one
-            if (!rideisPending || !rideInProgress) {
+            if (!rideisPending && !rideInProgress) {
                 if (getChangingCoordinate().equals("Origin")) {
                     setMarker(arg0, "Origin");
                     setOrigin(arg0);
@@ -493,6 +494,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
     /**
+     * CITATION:
      * OPENS UP SETTINGS FOR THEM TO TURN ON GPS IF IT IN NOT ALREADY ON
      **/
     private void buildAlertMessageNoGps() {
@@ -558,6 +560,8 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     rideInProgress = false;
                     rideisPending = false;
                 }else{
+                    rideInProgress = false; //for testing
+                    rideisPending = false; // for testing
                     paymentFailed = true;
                     payDriverFirstToast();
                 }
@@ -582,6 +586,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         final AlertDialog.Builder builder = new AlertDialog.Builder(MapsRiderActivity.this);
         User currRider = ((UserData)(getApplicationContext())).getUser();
 
+        //potential offerer is the drivers email
         uRefUsers.document(currRider.getEmail()).addSnapshotListener(this, (documentSnapshot, e) -> {
             assert documentSnapshot != null;
             if (documentSnapshot.get("rideOfferFrom") != null) {
@@ -636,7 +641,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     });
                 final AlertDialog alert = builder.create(); alert.show();
 
-            }else if (rideInProgress) {
+            }else if (rideInProgress && !rideisPending) {
                 builder
                     .setTitle("Driver Is On Way")
                         .setNeutralButton("View driver profile", (dialog, which) -> viewDriverProfile(potentialOfferer))
@@ -652,7 +657,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                     .setNegativeButton("Cancel request", (dialog, which) -> {
                         rideisPending = false;
                         rideInProgress = false;
-                        //requestsList.remove(0);//remove the request from the requestslist
                         riderDBHelper.setCancellationStatus(currRider.getEmail(), potentialOfferer); //set status as canceled in the database
                         riderDBHelper.cancelRequest(currRider); //remove it from requests
                         guuberRiderMap.clear();
@@ -698,7 +702,6 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 .setPositiveButton("Accept", (dialog, which) -> {
                     rideInProgress = true;
                     rideisPending = false;
-                    //currRequest.setStatus("in Progress"); //is this changing in the array?
                     polyline.setColor(ContextCompat.getColor(MapsRiderActivity.this, R.color.TripInProgressPolyLinesColors));
                     riderDBHelper.acceptOffer(currRider);
                     yourDriverIsOnTheWayToast();
@@ -743,7 +746,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
         double originLatitude = getOrigin().latitude;
         double originLongitude = getOrigin().longitude;
-        double destinationLatitude = getDestination().latitude; //new , test  this (apr 1)
+        double destinationLatitude = getDestination().latitude;
         double destinationLongitude = getDestination().longitude;
         double tip = getTip();
         double tripCost = getTripCost();
@@ -763,6 +766,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
     /**
+     * CITATION:
      * calculate the direction from the rider's origin to the riders destination
      */
     private void calculateDirections() {
@@ -829,6 +833,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
 
 
     /**
+     * CITATION:
      * add polyline to map based on the geo coords from the calculated route
      * @param result is the route determined by calculate directions
      **/
@@ -866,6 +871,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         rideInProgress = false;
         rideisPending = false;
 
+        //getting the trip cost from the databse just in case you leave --> signout --> log in to driver --> sign in
         uRefUsers.document(ridersEmail).addSnapshotListener(this, (documentSnapshot, e) -> {
             assert documentSnapshot != null;
             if (documentSnapshot.get("rideOfferFrom") != null) {
