@@ -41,6 +41,10 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+
+//Citation: Authenticate Using Google Sign-in On Android
+//https://firebase.google.com/docs/auth/android/google-signin
+
 /**
  * class to implement the Login Activity
  * includes google sign in and ability
@@ -121,8 +125,6 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
 	}
 
-
-
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -159,6 +161,11 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 	}
 
 	// [START auth_with_google]
+
+	/**
+	 * Perform the firebase authentication with google sign in
+	 * @param acct the google account
+	 */
 	private void firebaseAuthWithGoogle(GoogleSignInAccount acct) {
 		Log.d(TAG, "firebaseAuthWithGoogle:" + acct.getId());
 
@@ -203,13 +210,18 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 	}
 	// [END auth_with_google]
 
-	// [START signin]
+	/**
+	 * Sign in to the google sign in client
+	 */
 	private void signIn() {
 		Intent signInIntent = mGoogleSignInClient.getSignInIntent();
 		startActivityForResult(signInIntent, RC_SIGN_IN);
 	}
 	// [END signin]
 
+	/**
+	 * Initiate the sign out from both firebase and google sign out
+	 */
 	private void signOut() {
 		// Firebase sign out
 		mAuth.signOut();
@@ -238,12 +250,12 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 				});
 	}
 
+	/**
+	 * Update the interface for the user, if successful opens the proper map activity depending on driver or rider account
+	 * @param user The Firebase user
+	 */
 	private void updateUI(FirebaseUser user) {
-		// TODO check what type of user is logged in and display its appropriate homepage
 
-		//int radioButtonID = radioGroup.getCheckedRadioButtonId();
-		//View radioButton = radioGroup.findViewById(radioButtonID);
-		//int signInType = 0;
 		User loggedUser = null;
 		Context context = LoginActivity.this;
 		if (user != null) {
@@ -279,20 +291,27 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 
 		}
 
-
-	// Register fragment cancel button onClick listener implementation
+	/**
+	 * Register fragment cancel button onClick listener implementation
+	 */
 	@Override
 	public void onCancelPressed(){
 		signOut();
 	}
 
-	// Register fragment ok button onClick listener implementation
+	/**
+	 * Register fragment ok button onClick listener implementation
+ 	 */
 	@Override
 	public void onOkPressed(){
 		final FirebaseUser user = mAuth.getCurrentUser();
 		updateUI(user);
 	}
 
+	/**
+	 * Checks User permissions for location access
+	 * @return Boolean of if there location is on or off
+	 */
 	public boolean checkUserPermissions(){
 		if (ContextCompat.checkSelfPermission(this.getApplicationContext(),
 				android.Manifest.permission.ACCESS_FINE_LOCATION)
@@ -325,7 +344,9 @@ public class LoginActivity extends AppCompatActivity implements RegisterFragment
 		}
 	}
 
-
+	/**
+	 * The permission dialog popup
+	 */
 	public  void userPermissionsRationale(){
 		final AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Hey there Friend. To have the best experience with this application, " +
