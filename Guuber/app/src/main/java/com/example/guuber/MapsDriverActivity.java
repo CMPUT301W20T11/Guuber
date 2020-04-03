@@ -55,10 +55,11 @@ import static android.widget.Toast.makeText;
 
 
 /**
- * This class contains the home screen for a Driver.
+ * This god class contains the home screen for a Driver.
  *  The home screen includes a menu enabling navigation between activities related to the account
- *  as well as the google map fragment and other related functionality for browsing ride requests.
- *  Class is representative of current application functionality
+ *  as well as the google map fragment and other related functionality for browsing ride requests,
+ *  offering rides, checking ride acceptance status, checking cancellation status, and letting the
+ *  ride know you're here.
  */
 public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCallback, GoogleMap.OnMyLocationButtonClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnMyLocationClickListener, EnableLocationServices.OnFragmentInteractionListener {
 
