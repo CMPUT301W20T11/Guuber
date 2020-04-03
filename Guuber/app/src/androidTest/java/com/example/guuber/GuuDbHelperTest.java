@@ -40,6 +40,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+// Test must be run sequentially from first test to last test
 
 public class GuuDbHelperTest {
     private static FirebaseFirestore db;
@@ -72,6 +73,7 @@ public class GuuDbHelperTest {
     @ClassRule
     public static ActivityTestRule<LoginActivity> rule =
             new ActivityTestRule<>(LoginActivity.class,true,true);
+
 
     @BeforeClass
     public static void setUp() throws InterruptedException {
