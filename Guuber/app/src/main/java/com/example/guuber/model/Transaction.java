@@ -15,7 +15,6 @@ public class Transaction {
     private String time;
     private String date;
     private double amount;
-    private String id;
     private String message;
 
     /**
@@ -28,15 +27,26 @@ public class Transaction {
     /**
      * Transaction between wallets
      * @param amount - Transaction amount
-     * @param id - Transaction id
+     * @param message - Transaction message
      */
-    public Transaction(double amount, String id, String message) {
+    public Transaction(double amount, String message) {
         Date datetime = new Date();
         this.time = tFormat.format(datetime);
         this.date = dFormat.format(datetime);
-
         this.amount = amount;
-        this.id = id;
+        this.message = message;
+    }
+
+    /**
+     * Transaction constructor with Date dependency injection for testing
+     * @param amount - Transaction amount
+     * @param message - Transaction message
+     * @param date - Date object to be injected
+     */
+    public Transaction(double amount, String message, Date date) {
+        this.time = tFormat.format(date);
+        this.date = dFormat.format(date);
+        this.amount = amount;
         this.message = message;
     }
 
@@ -87,22 +97,6 @@ public class Transaction {
      */
     public void setAmount(double amount) {
         this.amount = amount;
-    }
-
-    /**
-     * Get transaction id
-     * @return - Transaction id
-     */
-    public String getId() {
-        return id;
-    }
-
-    /**
-     * Set transaction id
-     * @param id - Transaction id
-     */
-    public void setId(String id) {
-        this.id = id;
     }
 
     /**

@@ -23,7 +23,7 @@
         android:theme="@style/Theme.AppCompat">
         <activity android:name=".CurrentRequestsOffline"></activity>
         <activity android:name=".TransactionFragment" />
-        <activity android:name=".ViewProfileActivity_Matt" />
+        <activity android:name=".ViewProfileActivity" />
         <activity android:name=".WalletActivity" />
         <activity android:name=".scanQrActivity" />
         <activity android:name=".QrActivity" />

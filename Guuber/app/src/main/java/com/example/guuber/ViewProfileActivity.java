@@ -3,28 +3,22 @@ package com.example.guuber;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.guuber.model.User;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.DocumentSnapshot;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 
 /**
  * Code to display drivers information on their profile
  */
 
-public class ViewProfileActivity_Matt extends AppCompatActivity {
+public class ViewProfileActivity extends AppCompatActivity {
     String username;
     String email;
     String phoneNumber;
@@ -72,13 +66,13 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
         // On like button
         likeButton.setOnClickListener(v -> {
            rateUser(true);
-            Toast.makeText(ViewProfileActivity_Matt.this, "Profile liked!", Toast.LENGTH_LONG).show();
+            Toast.makeText(ViewProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
         });
 
         // On dislike button
         dislikeButton.setOnClickListener(v -> {
             rateUser(false);
-            Toast.makeText(ViewProfileActivity_Matt.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+            Toast.makeText(ViewProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
         });
     }
 
@@ -105,18 +99,25 @@ public class ViewProfileActivity_Matt extends AppCompatActivity {
             profileImg.setImageResource(R.drawable.profilepic);
             negRateDisplay.setText(negRate.toString());
             posRateDisplay.setText(posRate.toString());
+
+            // Set the profile image
+            if(user.getRider() == 1){
+                profileImg.setImageResource(R.drawable.riderprf);
+            }else{
+                profileImg.setImageResource(R.drawable.driverprf);
+            }
         });
 
         // On like button
         likeButton.setOnClickListener(v -> {
            rateUser(true);
-           Toast.makeText(ViewProfileActivity_Matt.this, "Profile liked!", Toast.LENGTH_LONG).show();
+           Toast.makeText(ViewProfileActivity.this, "Profile liked!", Toast.LENGTH_LONG).show();
         });
 
         // On dislike button
         dislikeButton.setOnClickListener(v -> {
             rateUser(false);
-            Toast.makeText(ViewProfileActivity_Matt.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
+            Toast.makeText(ViewProfileActivity.this, "Profile NOT liked!", Toast.LENGTH_LONG).show();
         });
 
     }
