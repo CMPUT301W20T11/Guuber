@@ -21,7 +21,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat">
-        <activity android:name=".CurrentRequestsOffline"></activity>
+        <activity android:name=".RateFragment"></activity>
+        <activity android:name=".CurrentRequestsOffline" />
         <activity android:name=".TransactionFragment" />
         <activity android:name=".ViewProfileActivity" />
         <activity android:name=".WalletActivity" />
