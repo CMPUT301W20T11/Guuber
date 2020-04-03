@@ -197,6 +197,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             if(!isLocationPermissionGranted){
                 checkUserPermission(); }
         }
+        // update the map
         updateMapDriver();
     }
 
@@ -213,7 +214,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         alert.show();
     }
 
-
+    /**
+     * Query the database to see if the driver has any saved existing routes to be drawn
+     */
     protected void updateMapDriver() {
         User currRider = ((UserData)(getApplicationContext())).getUser(); //current rider
 
@@ -239,6 +242,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
     }
+
+    /**
+     * Get the ride details of the request associated in the offerTo email field
+     * @param offerToEmail the email of the last request a driver has offered
+     */
     protected void getRideDetails(String offerToEmail) {
 
         uRefUsers.document(offerToEmail).addSnapshotListener(this, (documentSnapshot, e) -> {

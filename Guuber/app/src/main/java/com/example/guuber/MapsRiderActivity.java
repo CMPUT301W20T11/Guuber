@@ -217,6 +217,9 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
         alert.show();
     }
 
+    /**
+     * Update the Map with pending requests for the Rider
+     */
     protected void updateMapPendingRider() {
         User currRider = ((UserData)(getApplicationContext())).getUser(); //current rider
 
@@ -237,7 +240,7 @@ public class MapsRiderActivity extends FragmentActivity implements OnMapReadyCal
                 rideInProgress = false;
             }
         });
-
+        // check requests
         uRefRequests.document(currRider.getEmail()).addSnapshotListener(this, (documentSnapshot, e) -> {
             assert documentSnapshot != null;
             if (documentSnapshot.get("oriLat") != null && documentSnapshot.get("desLat") != null) {
