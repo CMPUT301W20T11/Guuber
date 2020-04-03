@@ -22,6 +22,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentActivity;
 import com.example.guuber.model.GuuDbHelper;
 import com.example.guuber.model.User;
@@ -95,6 +96,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     private String riderEmail;
     private GoogleMap guuberDriverMap;
     private LatLng search, driverLocation;
+    private boolean hasRated;
 
 
     //database
@@ -119,6 +121,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
         driverSearchButton.setOnClickListener(v -> {
             if (!offerSent || !routeInProgress) {
                 if (getSearch() != null) {
+                    hasRated = false;
                     LatLng parse = getSearch();
                     drawOpenRequests(); //doest draw on first call
 
@@ -281,9 +284,8 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
      * @param r_email the riders email
      */
     public void viewRiderProfile(String r_email) {
-        Intent riderProfileIntent = new Intent(MapsDriverActivity.this, RiderProfileActivity.class);
-        riderProfileIntent.putExtra("caller", "external");
-        riderProfileIntent.putExtra("external_email", r_email);
+        Intent riderProfileIntent = new Intent(MapsDriverActivity.this, ViewProfileActivity.class);
+        riderProfileIntent.putExtra("EMAIL", r_email);
         startActivity(riderProfileIntent);
     }
 
@@ -317,7 +319,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
     /****************************************END SPINNER METHODS***********************************************/
 
     /**
-     * Manipulates the map once available.I f Google Play services is not installed on the device, the user will
+     * Manipulates the map once available.If Google Play services is not installed on the device, the user will
      * be prompted to install it inside the SupportMapFragment. This method will only be triggered once the user has
      * installed Google Play services and returned to the app.
      * @param googleMap the map to display
@@ -725,6 +727,11 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     })
                     .setNeutralButton("View rider profile", (dialog, which) -> viewRiderProfile(riderEmail))
                     .setPositiveButton("Let rider know you've arrived", (dialog, which) -> {
+                        if(!hasRated){
+                            hasRated = true;
+                            DialogFragment rateFrag = RateFragment.newInstance(riderEmail);
+                            rateFrag.show(getSupportFragmentManager(), "Rating");
+                        }
                         weHaveToldThemToast();
                         driverDBHelper.setArrival(currDriver.getEmail());
                         dialog.dismiss();
