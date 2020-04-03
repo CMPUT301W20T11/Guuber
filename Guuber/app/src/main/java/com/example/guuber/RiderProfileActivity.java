@@ -27,22 +27,22 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 public class RiderProfileActivity extends AppCompatActivity {
 
-    String username;
-    String email;
-    String phoneNumber;
-    TextView emailField;
-    TextView usernameField;
-    TextView phoneNumberField;
-    TextView posRateDisplay;
-    TextView negRateDisplay;
-    Button deleteButton;
-    ImageView likeButton;
-    ImageView dislikeButton;
-    ImageView profileImg;
-    User userInfo;
-    Boolean editable;
-    Integer posRate;
-    Integer negRate;
+    private String username;
+    private String email;
+    private String phoneNumber;
+    private TextView emailField;
+    private TextView usernameField;
+    private TextView phoneNumberField;
+    private TextView posRateDisplay;
+    private TextView negRateDisplay;
+    private Button deleteButton;
+    private ImageView likeButton;
+    private ImageView dislikeButton;
+    private ImageView profileImg;
+    private User userInfo;
+    private Boolean editable;
+    private Integer posRate;
+    private Integer negRate;
 
     /***********the database******/
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();

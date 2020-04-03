@@ -23,25 +23,24 @@ import com.google.firebase.firestore.FirebaseFirestore;
  */
 
 public class DriverProfileActivity extends AppCompatActivity {
-    String username;
-    String email;
-    String phoneNumber;
-    String carReg;
-    Integer posRate;
-    Integer negRate;
+    private String username;
+    private String email;
+    private String phoneNumber;
+    private Integer posRate;
+    private Integer negRate;
 
-    TextView emailField;
-    TextView usernameField;
-    TextView phoneNumberField;
-    TextView posRateDisplay;
-    TextView negRateDisplay;
-    ImageView likeButton;
-    ImageView dislikeButton;
-    ImageView profileImg;
+    private TextView emailField;
+    private TextView usernameField;
+    private TextView phoneNumberField;
+    private TextView posRateDisplay;
+    private TextView negRateDisplay;
+    private ImageView likeButton;
+    private ImageView dislikeButton;
+    private ImageView profileImg;
 
-    Button deleteButton;
-    User userInfo;
-    Boolean editable;
+    private Button deleteButton;
+    private User userInfo;
+    private Boolean editable;
 
     /***********the database******/
     private FirebaseFirestore driverMapsDB = FirebaseFirestore.getInstance();
