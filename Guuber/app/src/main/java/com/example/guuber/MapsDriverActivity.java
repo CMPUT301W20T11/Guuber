@@ -186,6 +186,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
                     if (location != null) {
                         driverLocation = new LatLng(location.getLatitude(), location.getLongitude());
                         setDriverLocation(driverLocation);
+                        currLocation = location;
                     }else {
                         pleaseCloseAndOpenAppDialogD();
                     }
@@ -349,9 +350,9 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             guuberDriverMap.setOnMyLocationButtonClickListener(this);
             guuberDriverMap.setOnMyLocationClickListener(this);
             //make sure you have location
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            /**locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
             assert locationManager != null;
-            currLocation = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));
+            currLocation = locationManager.getLastKnownLocation(Objects.requireNonNull(locationManager.getBestProvider(criteria, true)));**/
 
             if (currLocation != null) {
                 //create a new LatLng location object for the user current location
@@ -665,7 +666,7 @@ public class MapsDriverActivity extends FragmentActivity implements OnMapReadyCa
             builder
                     .setMessage("Offer has been sent")
                     .setPositiveButton("Check status", (dialog, which) -> {
-
+                        /**@TODO check if the request collection contains this rider email, if it doesnt , they have bee canceled on**/
                         String statusCheck = null;
                         try {
                             statusCheck = driverDBHelper.checkOfferStatus(currDriver);
