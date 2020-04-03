@@ -66,6 +66,28 @@ public class MapsDriverActivityTest {
         solo.assertCurrentActivity("Activity should change to profile activity", DriverProfileActivity.class);
     }
 
+    /**
+     * check that when profile is clicked the activity is changed
+     * to wallett activity
+     */
+    @Test
+    public void testWalletActivity(){
+        solo.waitForActivity(MapsDriverActivity.class, 1000);
+        solo.pressSpinnerItem(0,2);
+        solo.assertCurrentActivity("Activity should change to wallett activity", WalletActivity.class);
+    }
+
+    /**
+     * check that when profile is clicked the activity is changed
+     * to Scan QR activity
+     */
+    @Test
+    public void testScanQRActivity(){
+        solo.waitForActivity(MapsDriverActivity.class, 1000);
+        solo.pressSpinnerItem(0,3);
+        solo.assertCurrentActivity("Activity should change to scan QR activity", ScanQrActivity.class);
+    }
+
 
     /**
      * closes the activity after each test
